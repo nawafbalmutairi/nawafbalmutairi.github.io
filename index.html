@@ -1,350 +1,331 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sales Data Analysis Dashboard — Nawaf Almutairi</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nawaf Almutairi | IT Support · Business Intelligence · AI Machine Learning · UI/UX Design</title>
+<meta name="description" content="Nawaf Almutairi — Computer Science student specialising in IT Support, Business Intelligence, AI Machine Learning, and UI/UX Design. Python, SQL, Power BI, Azure ML, DAX, ETL, Data Analysis, Technical Support.">
+<meta name="keywords" content="IT Support, Business Intelligence, Power BI, Machine Learning, AI, UI/UX Design, Python, SQL, DAX, ETL, Data Analysis, Azure, Computer Science, Data Visualization, Technical Support, System Administration">
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
-:root{--bg:#0a0c10;--surface:#111418;--surface2:#181c22;--border:rgba(255,255,255,0.07);--green:#76ff7a;--green-dim:rgba(118,255,122,0.12);--amber:#ffb347;--red:#ff5f6d;--blue:#4fc3f7;--text:#e8eaf0;--text-muted:#6b7280;--text-sub:#9ca3af;}
-*{margin:0;padding:0;box-sizing:border-box;}
-body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;}
-body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(118,255,122,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(118,255,122,0.025) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0;}
-.wrapper{position:relative;z-index:1;max-width:1400px;margin:0 auto;padding:0 24px 60px;}
-header{padding:40px 0 32px;display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:20px;border-bottom:1px solid var(--border);margin-bottom:36px;}
-.badge{display:inline-flex;align-items:center;gap:8px;background:var(--green-dim);border:1px solid rgba(118,255,122,0.3);color:var(--green);font-family:'DM Mono',monospace;font-size:11px;letter-spacing:0.08em;padding:5px 12px;border-radius:2px;margin-bottom:16px;text-transform:uppercase;}
-.badge::before{content:'';width:6px;height:6px;background:var(--green);border-radius:50%;animation:pulse 2s infinite;}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
-h1{font-family:'Syne',sans-serif;font-size:clamp(26px,4vw,42px);font-weight:800;line-height:1.1;letter-spacing:-0.02em;color:#fff;}
-h1 span{color:var(--green);}
-.header-sub{margin-top:10px;font-size:14px;color:var(--text-sub);font-weight:300;max-width:500px;line-height:1.6;}
-.author-card{background:var(--surface);border:1px solid var(--border);padding:14px 20px;border-radius:4px;text-align:right;}
-.author-name{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:#fff;}
-.author-meta{font-size:12px;color:var(--text-muted);margin-top:3px;font-family:'DM Mono',monospace;}
-.section-label{font-family:'DM Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:0.14em;color:var(--text-muted);margin:32px 0 16px;display:flex;align-items:center;gap:12px;}
-.section-label::after{content:'';flex:1;height:1px;background:var(--border);}
-.kpi-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-bottom:28px;}
-.kpi-card{background:var(--surface);border:1px solid var(--border);padding:20px 18px 16px;position:relative;overflow:hidden;}
-.kpi-card::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
-.kpi-card.good::after{background:var(--green)}.kpi-card.warn::after{background:var(--amber)}.kpi-card.bad::after{background:var(--red)}.kpi-card.info::after{background:var(--blue)}
-.kpi-label{font-family:'DM Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);margin-bottom:10px;}
-.kpi-value{font-family:'Syne',sans-serif;font-size:22px;font-weight:700;line-height:1.1;letter-spacing:-0.01em;white-space:nowrap;}
-.kpi-card.good .kpi-value{color:var(--green)}.kpi-card.warn .kpi-value{color:var(--amber)}.kpi-card.bad .kpi-value{color:var(--red)}.kpi-card.info .kpi-value{color:var(--blue)}
-.kpi-unit{font-size:13px;font-weight:400;opacity:0.7;margin-left:2px;}
-.kpi-desc{font-size:11px;color:var(--text-muted);margin-top:8px;line-height:1.4;}
-.chart-card{background:var(--surface);border:1px solid var(--border);padding:24px;}
-.chart-card-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px;gap:12px;}
-.chart-title{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:#fff;letter-spacing:-0.01em;}
-.chart-subtitle{font-size:12px;color:var(--text-muted);margin-top:4px;font-weight:300;}
-.chart-tag{font-family:'DM Mono',monospace;font-size:10px;padding:4px 10px;background:var(--surface2);border:1px solid var(--border);color:var(--text-muted);border-radius:2px;white-space:nowrap;letter-spacing:0.05em;text-transform:uppercase;}
-.grid-2{display:grid;grid-template-columns:2fr 1fr;gap:16px;margin-bottom:16px;}
-.grid-equal{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;}
-.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:16px;}
-.legend{display:flex;gap:16px;flex-wrap:wrap;margin-top:14px;padding-top:14px;border-top:1px solid var(--border);}
-.legend-item{display:flex;align-items:center;gap:7px;font-size:11px;color:var(--text-sub);}
-.legend-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
-.filter-bar{display:flex;align-items:center;gap:12px;margin-bottom:28px;flex-wrap:wrap;}
-.filter-label{font-family:'DM Mono',monospace;font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.08em;}
-.filter-btn{font-family:'DM Mono',monospace;font-size:12px;padding:7px 16px;background:var(--surface);border:1px solid var(--border);color:var(--text-sub);cursor:pointer;border-radius:2px;transition:all 0.15s;letter-spacing:0.04em;}
-.filter-btn:hover,.filter-btn.active{background:var(--green-dim);border-color:rgba(118,255,122,0.4);color:var(--green);}
-table{width:100%;border-collapse:collapse;font-size:13px;margin-top:16px;}
-thead th{font-family:'DM Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);padding:0 12px 12px 0;text-align:left;border-bottom:1px solid var(--border);}
-tbody tr{border-bottom:1px solid rgba(255,255,255,0.04);}tbody tr:hover{background:rgba(255,255,255,0.03);}
-tbody td{padding:10px 12px 10px 0;color:var(--text-sub);font-size:13px;}tbody td:first-child{color:#fff;font-weight:500;}
-footer{border-top:1px solid var(--border);margin-top:48px;padding-top:28px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;}
-.footer-left{font-size:12px;color:var(--text-muted);line-height:1.7;}
-.footer-link{font-family:'DM Mono',monospace;font-size:11px;color:var(--text-muted);text-decoration:none;border-bottom:1px solid transparent;transition:all 0.15s;padding-bottom:1px;margin-left:16px;}
-.footer-link:hover{color:var(--green);border-color:var(--green);}
-.fade-in{opacity:0;transform:translateY(12px);animation:fadeIn 0.5s ease forwards;}
-@keyframes fadeIn{to{opacity:1;transform:none;}}
-canvas{display:block;}
-@media(max-width:900px){.kpi-grid{grid-template-columns:repeat(3,1fr)}.grid-2,.grid-3,.grid-equal{grid-template-columns:1fr}}
-@media(max-width:640px){.kpi-grid{grid-template-columns:repeat(2,1fr)}}
+  :root {
+    --bg:#0a0c10;--surface:#111418;--surface2:#181c22;--border:rgba(255,255,255,0.07);
+    --green:#76ff7a;--green-dim:rgba(118,255,122,0.12);--amber:#ffb347;--blue:#4fc3f7;
+    --text:#e8eaf0;--text-muted:#6b7280;--text-sub:#9ca3af;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;}
+  body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(118,255,122,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(118,255,122,0.025) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0;}
+  .wrapper{position:relative;z-index:1;max-width:1200px;margin:0 auto;padding:0 24px 80px;}
+
+  /* HEADER */
+  header{padding:48px 0 36px;display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:20px;border-bottom:1px solid var(--border);margin-bottom:40px;}
+  .badge{display:inline-flex;align-items:center;gap:8px;background:var(--green-dim);border:1px solid rgba(118,255,122,0.3);color:var(--green);font-family:'DM Mono',monospace;font-size:11px;letter-spacing:0.08em;padding:5px 12px;border-radius:2px;margin-bottom:16px;text-transform:uppercase;}
+  .badge::before{content:'';width:6px;height:6px;background:var(--green);border-radius:50%;animation:pulse 2s infinite;}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
+  h1{font-family:'Syne',sans-serif;font-size:clamp(32px,5vw,56px);font-weight:800;line-height:1.05;letter-spacing:-0.02em;color:#fff;}
+  h1 span{color:var(--green);}
+  .header-sub{margin-top:12px;font-size:14px;color:var(--text-sub);font-weight:300;max-width:480px;line-height:1.7;}
+  .header-right{display:flex;flex-direction:column;align-items:flex-end;gap:10px;}
+  .author-card{background:var(--surface);border:1px solid var(--border);padding:14px 20px;border-radius:4px;text-align:right;}
+  .author-name{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:#fff;}
+  .author-meta{font-size:12px;color:var(--text-muted);margin-top:3px;font-family:'DM Mono',monospace;}
+
+  /* SECTION LABEL */
+  .section-label{font-family:'DM Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:0.14em;color:var(--text-muted);margin:40px 0 16px;display:flex;align-items:center;gap:12px;}
+  .section-label::after{content:'';flex:1;height:1px;background:var(--border);}
+
+  /* STAT TILES */
+  .stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:8px;}
+  .stat-card{background:var(--surface);border:1px solid var(--border);padding:20px 18px 16px;position:relative;overflow:hidden;}
+  .stat-card::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
+  .stat-card.green::after{background:var(--green);}
+  .stat-card.blue::after{background:var(--blue);}
+  .stat-card.amber::after{background:var(--amber);}
+  .stat-label{font-family:'DM Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);margin-bottom:10px;}
+  .stat-value{font-family:'Syne',sans-serif;font-size:22px;font-weight:700;line-height:1.1;letter-spacing:-0.01em;color:var(--green);white-space:nowrap;}
+  .stat-card.blue .stat-value{color:var(--blue);}
+  .stat-card.amber .stat-value{color:var(--amber);}
+  .stat-desc{font-size:11px;color:var(--text-muted);margin-top:8px;line-height:1.4;}
+
+  /* CARDS */
+  .card{background:var(--surface);border:1px solid var(--border);padding:24px;}
+  .card-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px;gap:12px;}
+  .card-title{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:#fff;letter-spacing:-0.01em;}
+  .card-sub{font-size:12px;color:var(--text-muted);margin-top:4px;font-weight:300;line-height:1.5;}
+  .card-tag{font-family:'DM Mono',monospace;font-size:10px;padding:4px 10px;background:var(--surface2);border:1px solid var(--border);color:var(--text-muted);border-radius:2px;white-space:nowrap;letter-spacing:0.05em;text-transform:uppercase;flex-shrink:0;}
+  .card-tag.green{background:var(--green-dim);border-color:rgba(118,255,122,0.3);color:var(--green);}
+
+  /* GRIDS */
+  .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;}
+  .grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:16px;}
+
+  /* ABOUT */
+  .about-text{font-size:13px;color:var(--text-sub);line-height:1.85;font-weight:300;}
+  .about-text p+p{margin-top:14px;}
+
+  /* SKILLS */
+  .skill-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.04);}
+  .skill-row:last-child{border-bottom:none;}
+  .skill-name{font-family:'DM Mono',monospace;font-size:11px;color:var(--text-sub);text-transform:uppercase;letter-spacing:0.06em;width:130px;flex-shrink:0;}
+  .skill-bar{flex:1;height:3px;background:rgba(255,255,255,0.06);border-radius:2px;overflow:hidden;}
+  .skill-fill{height:100%;background:var(--green);border-radius:2px;transform:scaleX(0);transform-origin:left;transition:transform 1.2s ease;}
+  .skill-pct{font-family:'DM Mono',monospace;font-size:10px;color:var(--text-muted);width:30px;text-align:right;flex-shrink:0;}
+
+  /* PROJECT CARDS */
+  .project-card{background:var(--surface);border:1px solid var(--border);padding:24px;position:relative;overflow:hidden;transition:border-color 0.2s,transform 0.2s;}
+  .project-card::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--green);transform:scaleX(0);transition:transform 0.3s ease;}
+  .project-card:hover{border-color:rgba(118,255,122,0.2);transform:translateY(-2px);}
+  .project-card:hover::after{transform:scaleX(1);}
+  .project-card.featured{border-top:2px solid var(--green);grid-column:span 2;}
+  .project-card.featured::after{display:none;}
+  .project-type{font-family:'DM Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:0.1em;color:var(--green);margin-bottom:10px;display:flex;align-items:center;gap:10px;}
+  .new-badge{background:var(--green);color:#0a0c10;font-size:9px;padding:2px 6px;font-weight:700;letter-spacing:0.08em;}
+  .project-title{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;color:#fff;margin-bottom:10px;letter-spacing:-0.01em;line-height:1.3;}
+  .project-desc{font-size:13px;color:var(--text-sub);line-height:1.7;font-weight:300;}
+  .tag-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:16px;}
+  .tag{font-family:'DM Mono',monospace;font-size:10px;padding:3px 9px;background:var(--surface2);border:1px solid var(--border);color:var(--text-muted);letter-spacing:0.05em;text-transform:uppercase;}
+  .project-link{display:inline-flex;align-items:center;gap:6px;margin-top:16px;font-family:'DM Mono',monospace;font-size:11px;color:var(--green);text-decoration:none;letter-spacing:0.05em;transition:gap 0.2s;}
+  .project-link:hover{gap:10px;}
+  .project-year{font-family:'DM Mono',monospace;font-size:11px;color:var(--text-muted);margin-top:14px;}
+
+  /* CERT CARDS */
+  .cert-card{background:var(--surface);border:1px solid var(--border);padding:18px 20px;}
+  .cert-issuer{font-family:'DM Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:0.1em;color:var(--green);margin-bottom:7px;}
+  .cert-name{font-size:13px;color:#fff;font-weight:500;line-height:1.4;margin-bottom:7px;}
+  .cert-date{font-family:'DM Mono',monospace;font-size:10px;color:var(--text-muted);}
+
+  /* CONTACT */
+  .contact-link{display:flex;align-items:center;gap:14px;padding:16px 20px;background:var(--surface);border:1px solid var(--border);text-decoration:none;transition:border-color 0.15s;}
+  .contact-link:hover{border-color:rgba(118,255,122,0.3);}
+  .contact-icon{font-family:'DM Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:0.1em;color:var(--green);width:80px;flex-shrink:0;}
+  .contact-val{font-size:13px;color:var(--text-sub);}
+
+  /* FOOTER */
+  footer{border-top:1px solid var(--border);margin-top:60px;padding-top:28px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;}
+  .footer-left{font-size:12px;color:var(--text-muted);font-family:'DM Mono',monospace;}
+  .footer-links{display:flex;gap:20px;}
+  .footer-link{font-family:'DM Mono',monospace;font-size:11px;color:var(--text-muted);text-decoration:none;border-bottom:1px solid transparent;transition:all 0.15s;padding-bottom:1px;}
+  .footer-link:hover{color:var(--green);border-color:var(--green);}
+
+  /* FADE IN */
+  .fade-in{opacity:0;transform:translateY(12px);animation:fadeIn 0.5s ease forwards;}
+  @keyframes fadeIn{to{opacity:1;transform:none;}}
+  .fade-in:nth-child(1){animation-delay:0.05s}.fade-in:nth-child(2){animation-delay:0.1s}
+  .fade-in:nth-child(3){animation-delay:0.15s}.fade-in:nth-child(4){animation-delay:0.2s}
+  .fade-in:nth-child(5){animation-delay:0.25s}.fade-in:nth-child(6){animation-delay:0.3s}
+
+  @media(max-width:900px){.grid-2,.grid-3,.stat-grid{grid-template-columns:1fr 1fr;}.project-card.featured{grid-column:span 1;}}
+  @media(max-width:600px){.grid-2,.grid-3,.stat-grid{grid-template-columns:1fr;}}
 </style>
 </head>
 <body>
 <div class="wrapper">
+
   <header class="fade-in">
     <div>
-      <div class="badge">Data Analytics · Python & Pandas</div>
-      <h1>Sales Data <span>Analysis</span></h1>
-      <p class="header-sub">End-to-end exploratory data analysis of 2,121 US retail sales transactions — trend analysis, discount-profit correlation, and geographic comparison.</p>
+      <div class="badge">Open to opportunities · 2025</div>
+      <h1>Nawaf <span>Almutairi</span></h1>
+      <p class="header-sub">Computer Science student specialising in IT Support &amp; System Administration, Business Intelligence &amp; Data Analysis, AI &amp; Machine Learning, and UI/UX Design. Skilled in Python, SQL, Power BI, and Microsoft Azure.</p>
     </div>
-    <div style="display:flex;flex-direction:column;align-items:flex-end;gap:10px;">
+    <div class="header-right">
       <div class="author-card">
         <div class="author-name">Nawaf Almutairi</div>
         <div class="author-meta">BSc Computer Science</div>
         <div class="author-meta" style="margin-top:4px;">Northumbria University</div>
       </div>
-      <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--text-muted);">Dataset: 2,121 rows · 32 columns</div>
+      <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--text-muted);">Newcastle, UK · Available globally</div>
     </div>
   </header>
 
-  <!-- FILTER -->
-  <div class="filter-bar fade-in">
-    <span class="filter-label">Category:</span>
-    <button class="filter-btn cat-btn active" onclick="setCategory('all',this)">All</button>
-    <button class="filter-btn cat-btn" onclick="setCategory('Furniture',this)">Furniture</button>
-    <button class="filter-btn cat-btn" onclick="setCategory('Technology',this)">Technology</button>
-    <button class="filter-btn cat-btn" onclick="setCategory('Office Supplies',this)">Office Supplies</button>
-  </div>
-
-  <!-- KPIs -->
-  <div class="section-label">— Dataset Overview</div>
-  <div class="kpi-grid">
-    <div class="kpi-card good fade-in">
-      <div class="kpi-label">Total Transactions</div>
-      <div class="kpi-value" id="kpi-txn">2,121</div>
-      <div class="kpi-desc">Sales records analysed</div>
+  <div class="section-label">— Overview</div>
+  <div class="stat-grid">
+    <div class="stat-card green fade-in">
+      <div class="stat-label">Projects Delivered</div>
+      <div class="stat-value">15+</div>
+      <div class="stat-desc">AI/ML, BI, ITSM, HCI, full-stack</div>
     </div>
-    <div class="kpi-card good fade-in">
-      <div class="kpi-label">Total Sales</div>
-      <div class="kpi-value" id="kpi-sales">$753K</div>
-      <div class="kpi-desc">Aggregate revenue</div>
+    <div class="stat-card green fade-in">
+      <div class="stat-label">Certifications</div>
+      <div class="stat-value">6</div>
+      <div class="stat-desc">Google Professional Certificates</div>
     </div>
-    <div class="kpi-card info fade-in">
-      <div class="kpi-label">Avg Sale Value</div>
-      <div class="kpi-value" id="kpi-avg">$355</div>
-      <div class="kpi-desc">Mean transaction amount</div>
+    <div class="stat-card blue fade-in">
+      <div class="stat-label">Specialisations</div>
+      <div class="stat-value">5</div>
+      <div class="stat-desc">IT · BI · AI/ML · HCI · ITSM</div>
     </div>
-    <div class="kpi-card warn fade-in">
-      <div class="kpi-label">Avg Discount</div>
-      <div class="kpi-value" id="kpi-disc">17.4<span class="kpi-unit">%</span></div>
-      <div class="kpi-desc">Mean discount rate</div>
-    </div>
-    <div class="kpi-card warn fade-in">
-      <div class="kpi-label">Missing Data</div>
-      <div class="kpi-value">212</div>
-      <div class="kpi-desc">Handled via imputation</div>
-    </div>
-    <div class="kpi-card bad fade-in">
-      <div class="kpi-label">Max Loss</div>
-      <div class="kpi-value">$1,862</div>
-      <div class="kpi-desc">Worst single transaction</div>
+    <div class="stat-card amber fade-in">
+      <div class="stat-label">AI Model Accuracy</div>
+      <div class="stat-value">92%</div>
+      <div class="stat-desc">Face recognition on Azure ML</div>
     </div>
   </div>
 
-  <!-- Q1: Sales & Profit Trend -->
-  <div class="section-label">— Q1: Sales & Profit Trend Over Time</div>
-  <div class="chart-card fade-in" style="margin-bottom:16px;">
-    <div class="chart-card-header">
-      <div>
-        <div class="chart-title">Total Sales & Profit — Monthly Trend</div>
-        <div class="chart-subtitle">Time series analysis identifying seasonal patterns and growth cycles</div>
+  <div class="section-label">— About & Skills</div>
+  <div class="grid-2">
+    <div class="card fade-in">
+      <div class="card-header">
+        <div><div class="card-title">About Me</div><div class="card-sub">Background & focus areas</div></div>
+        <div class="card-tag">Profile</div>
       </div>
-      <div class="chart-tag">Time Series</div>
+      <div class="about-text">
+        <p>Computer Science student at Northumbria University specialising in IT Support, Business Intelligence, Artificial Intelligence, and UI/UX Design. Experienced in technical support, troubleshooting, system administration, and incident management across Windows and Linux environments.</p>
+        <p>Proficient in Python, SQL, Power BI, and DAX for data analysis, ETL processes, data modelling, and dashboard creation. Hands-on experience deploying machine learning models on Microsoft Azure, performing statistical analysis, and delivering data-driven insights that improve business performance.</p>
+        <p>Skilled in UI/UX design, user research, wireframing, and prototyping using design thinking principles. Strong communicator with cross-functional collaboration experience. Fluent in Arabic (native) and English (professional working proficiency).</p>
+      </div>
     </div>
-    <div style="height:260px;"><canvas id="trendChart"></canvas></div>
-    <div class="legend">
-      <div class="legend-item"><div class="legend-dot" style="background:#76ff7a"></div>Total Sales</div>
-      <div class="legend-item"><div class="legend-dot" style="background:#4fc3f7"></div>Total Profit</div>
+    <div class="card fade-in">
+      <div class="card-header">
+        <div><div class="card-title">Core Skills</div><div class="card-sub">Technical proficiency</div></div>
+        <div class="card-tag">Skills</div>
+      </div>
+      <div class="skill-row"><div class="skill-name">IT Support</div><div class="skill-bar"><div class="skill-fill" data-w="92"></div></div><div class="skill-pct">92%</div></div>
+      <div class="skill-row"><div class="skill-name">Business Intel.</div><div class="skill-bar"><div class="skill-fill" data-w="88"></div></div><div class="skill-pct">88%</div></div>
+      <div class="skill-row"><div class="skill-name">AI / ML</div><div class="skill-bar"><div class="skill-fill" data-w="85"></div></div><div class="skill-pct">85%</div></div>
+      <div class="skill-row"><div class="skill-name">UI/UX Design</div><div class="skill-bar"><div class="skill-fill" data-w="88"></div></div><div class="skill-pct">88%</div></div>
+      <div class="skill-row"><div class="skill-name">Python / SQL</div><div class="skill-bar"><div class="skill-fill" data-w="92"></div></div><div class="skill-pct">92%</div></div>
+      <div class="skill-row"><div class="skill-name">Power BI</div><div class="skill-bar"><div class="skill-fill" data-w="85"></div></div><div class="skill-pct">85%</div></div>
     </div>
   </div>
 
-  <!-- Q2 + Q3 side by side -->
-  <div class="section-label">— Q2: Discount vs Profit · Q3: Geographic Comparison</div>
-  <div class="grid-equal">
-    <div class="chart-card fade-in">
-      <div class="chart-card-header">
-        <div>
-          <div class="chart-title">Discount vs Profit Correlation</div>
-          <div class="chart-subtitle">Higher discounts strongly correlate with losses</div>
-        </div>
-        <div class="chart-tag">Scatter Plot</div>
-      </div>
-      <div style="height:240px;"><canvas id="scatterChart"></canvas></div>
-      <div class="legend">
-        <div class="legend-item"><div class="legend-dot" style="background:#76ff7a"></div>Profitable</div>
-        <div class="legend-item"><div class="legend-dot" style="background:#ff5f6d"></div>Loss</div>
-      </div>
+  <div class="section-label">— Projects</div>
+  <div class="grid-2">
+
+    <!-- FEATURED: NVIDIA BI -->
+    <div class="project-card featured fade-in">
+      <div class="project-type">Business Intelligence <span class="new-badge">NEW</span></div>
+      <div class="project-title">NVIDIA AI-GPU Supply Chain BI Dashboard</div>
+      <div class="project-desc">Conducted business intelligence analysis using Soft Systems Methodology (SSM) and Business Performance Management (BPM) frameworks. Designed and deployed an interactive Power BI dashboard with DAX measures tracking 8 KPIs including Forecast Accuracy (96.4%), MAPE, Total Backorders (42,274 units), and Capacity Utilisation (57%). Built star-schema data model with ETL pipeline across H100 and H200 GPU product lines in North America and EMEA regions. Delivered actionable data-driven insights to support strategic supply chain decision-making.</div>
+      <div class="tag-row"><span class="tag">Power BI</span><span class="tag">SSM / BPM</span><span class="tag">Python</span><span class="tag">DAX</span><span class="tag">Supply Chain</span></div>
+      <a href="https://nawafbalmutairi.github.io/nvidia-bi-dashboard" target="_blank" class="project-link">View live dashboard →</a>
+      <div class="project-year">2025 · KV6011 Business Intelligence</div>
     </div>
-    <div class="chart-card fade-in">
-      <div class="chart-card-header">
-        <div>
-          <div class="chart-title">Top 8 States — Sales vs Profit</div>
-          <div class="chart-subtitle">Geographic breakdown of performance</div>
-        </div>
-        <div class="chart-tag">Bar Chart</div>
-      </div>
-      <div style="height:240px;"><canvas id="stateChart"></canvas></div>
-      <div class="legend">
-        <div class="legend-item"><div class="legend-dot" style="background:#76ff7a"></div>Sales</div>
-        <div class="legend-item"><div class="legend-dot" style="background:#ffb347"></div>Profit</div>
-      </div>
+
+    <!-- ITIL / ITSM -->
+    <div class="project-card fade-in">
+      <div class="project-type">IT Service Management</div>
+      <div class="project-title">ITIL Configuration Management — Abona &amp; Tarn PLC</div>
+      <div class="project-desc">Designed a full ITIL 4 Configuration Management implementation strategy for a 87-store UK retail corporation. Proposed a CMDB architecture to resolve fragmented POS, WMS, and ERP systems. Defined KPIs including CI accuracy (&gt;95%), change success rate (&gt;98%), and incident resolution improvement (−20%). Covered integration with Change Enablement, Incident Management, Release Management, and IT Asset Management practices within the ITIL Service Value System.</div>
+      <div class="tag-row"><span class="tag">ITIL 4</span><span class="tag">CMDB</span><span class="tag">ITSM</span><span class="tag">Incident Management</span><span class="tag">IT Governance</span></div>
+      <a href="https://nawafbalmutairi.github.io/itil-dashboard" target="_blank" class="project-link">View interactive report →</a>
+      <div class="project-year">2025 · KV5024 IT Service Management</div>
     </div>
+
+    <!-- HCI Report -->
+    <div class="project-card fade-in">
+      <div class="project-type">Human-Computer Interaction</div>
+      <div class="project-title">HCI Research: Student Work-Life Balance Tool Design</div>
+      <div class="project-desc">Conducted a critical literature review and technology analysis of existing productivity and mental health applications (Google Calendar, Todoist, Trello) through an HCI lens. Identified design gaps for inclusive, accessible, and neurodivergent-friendly tools. Proposed a user-centred design framework incorporating adaptive interfaces, ethical design principles, and wellbeing features to support working students. Applied accessibility standards and inclusive design thinking throughout.</div>
+      <div class="tag-row"><span class="tag">HCI</span><span class="tag">UX Research</span><span class="tag">Inclusive Design</span><span class="tag">Accessibility</span><span class="tag">Design Thinking</span></div>
+      <a href="https://nawafbalmutairi.github.io/hci-dashboard" target="_blank" class="project-link">View interactive research →</a>
+      <div class="project-year">2025 · KV5047 Human-Computer Interaction</div>
+    </div>
+
+    <!-- Software Architecture -->
+    <div class="project-card fade-in">
+      <div class="project-type">Software Architecture</div>
+      <div class="project-title">Conference-Info Platform — Microservices Architecture</div>
+      <div class="project-desc">Designed a multi-conference management platform using the Kruchten 4+1 architectural model. Defined logical view with domain-driven design (DDD), process view with microservices and API gateway, development view with CI/CD pipelines and Git branching strategy, and physical view with cloud deployment infrastructure. Implemented role-based access control (RBAC), Single Sign-On (SSO), and per-conference database isolation for scalability and security.</div>
+      <div class="tag-row"><span class="tag">Microservices</span><span class="tag">DDD</span><span class="tag">API Gateway</span><span class="tag">CI/CD</span><span class="tag">SSO</span><span class="tag">RBAC</span></div>
+      <a href="https://nawafbalmutairi.github.io/software-arch-dashboard" target="_blank" class="project-link">View architecture dashboard →</a>
+      <div class="project-year">2025 · Software Architecture</div>
+    </div>
+
+    <!-- AI Face Recognition -->
+    <div class="project-card fade-in">
+      <div class="project-type">Machine Learning</div>
+      <div class="project-title">AI Face Recognition &amp; Gender Classification</div>
+      <div class="project-desc">Designed and deployed a supervised machine learning classification model on Microsoft Azure Machine Learning for facial recognition and gender classification. Performed data preprocessing, feature engineering, and model optimisation on 5,000+ training images sourced from Kaggle datasets. Achieved 92% model accuracy through iterative training and hyperparameter tuning.</div>
+      <div class="tag-row"><span class="tag">Python</span><span class="tag">Azure ML</span><span class="tag">Computer Vision</span></div>
+      <a href="https://nawafbalmutairi.github.io/ai-dashboard" target="_blank" class="project-link">View model dashboard →</a>
+      <div class="project-year">2024</div>
+    </div>
+
+    <!-- Vehicle Dealership -->
+    <div class="project-card fade-in">
+      <div class="project-type">Full-Stack Development</div>
+      <div class="project-title">Vehicle Dealership Management System</div>
+      <div class="project-desc">Engineered a full-stack enterprise backend system with SQL database design managing 500+ vehicle records. Implemented query optimisation, database architecture, and automated business process workflows. Reduced manual workflow by 40% through system automation. Applied Agile methodologies and version control with Git and GitHub throughout the software development lifecycle.</div>
+      <div class="tag-row"><span class="tag">SQL</span><span class="tag">Backend</span><span class="tag">Full-Stack</span><span class="tag">Agile</span></div>
+      <a href="https://nawafbalmutairi.github.io/vehicle-dashboard" target="_blank" class="project-link">View system dashboard →</a>
+      <div class="project-year">2024</div>
+    </div>
+
+    <!-- Sales Analysis -->
+    <div class="project-card fade-in">
+      <div class="project-type">Data Analytics</div>
+      <div class="project-title">Sales Data Analysis &amp; Business Intelligence</div>
+      <div class="project-desc">Performed end-to-end data analysis on 2,121 US retail sales transactions (32 columns) using Python and Pandas. Conducted descriptive statistics revealing right-skewed sales distribution (mean $355, median $184) and high profit variability (std dev $136). Executed ETL processes including mean imputation for continuous variables and mode imputation for categorical variables to address 212 missing values (10%). Produced three analytical outputs: time-series trend analysis of sales and profits, scatter plot correlation study of Discount vs Profit, and geographic state-level sales and profit comparison. Identified 15% profit improvement opportunities through data-driven insights.</div>
+      <div class="tag-row"><span class="tag">Python</span><span class="tag">Pandas</span><span class="tag">ETL</span><span class="tag">Data Visualisation</span><span class="tag">Statistical Analysis</span><span class="tag">Time Series</span></div>
+      <a href="https://nawafbalmutairi.github.io/sales-dashboard" target="_blank" class="project-link">View interactive dashboard →</a>
+      <div class="project-year">2024 · Data Analysis Module</div>
+    </div>
+
+    <!-- Astro Dash -->
+    <div class="project-card fade-in">
+      <div class="project-type">UI/UX Design</div>
+      <div class="project-title">Astro Dash — Game UI/UX Design</div>
+      <div class="project-desc">Led UI/UX design for Astro Dash game using Unity. Applied design thinking, information architecture, and user-centred design principles to create an intuitive main menu interface and responsive game UI. Collaborated cross-functionally with developers and artists, conducting usability reviews and iterating on prototypes to enhance user experience and player engagement.</div>
+      <div class="tag-row"><span class="tag">Unity</span><span class="tag">UI/UX</span><span class="tag">Prototyping</span><span class="tag">Design Thinking</span></div>
+      <a href="https://nawafbalmutairi.github.io/astro-dash" target="_blank" class="project-link">View design showcase →</a>
+      <div class="project-year">2025</div>
+    </div>
+
   </div>
 
-  <!-- Distribution -->
-  <div class="section-label">— Descriptive Statistics</div>
-  <div class="grid-equal">
-    <div class="chart-card fade-in">
-      <div class="chart-card-header">
-        <div>
-          <div class="chart-title">Sales Distribution by Category</div>
-          <div class="chart-subtitle">Proportion of total sales per product category</div>
-        </div>
-        <div class="chart-tag">Doughnut</div>
+  <div class="section-label">— Education & Certifications</div>
+  <div class="grid-2" style="margin-bottom:16px">
+    <div class="card fade-in">
+      <div class="card-header">
+        <div><div class="card-title">Northumbria University</div><div class="card-sub">BSc Computer Science · First Class Honours (Expected)</div></div>
+        <div class="card-tag">2023 — 2026</div>
       </div>
-      <div style="height:220px;"><canvas id="catChart"></canvas></div>
+      <div style="font-size:13px;color:var(--text-sub);line-height:1.7;font-weight:300;">Specialising in Data Analysis, Business Intelligence, and Artificial Intelligence. Relevant coursework: Database Systems, Data Structures &amp; Algorithms, Web Development, UI/UX Design, Software Engineering, Business Intelligence, Machine Learning, Network Systems, and Operating Systems.</div>
     </div>
-    <div class="chart-card fade-in">
-      <div class="chart-card-header">
-        <div>
-          <div class="chart-title">Profit Range Distribution</div>
-          <div class="chart-subtitle">How profit spreads — from losses to gains</div>
-        </div>
-        <div class="chart-tag">Histogram</div>
+    <div class="card fade-in">
+      <div class="card-header">
+        <div><div class="card-title">Google IT Support</div><div class="card-sub">Professional Certificate · 5 courses + AI Job Search</div></div>
+        <div class="card-tag green">Dec 2025</div>
       </div>
-      <div style="height:220px;"><canvas id="profitDistChart"></canvas></div>
+      <div style="font-size:13px;color:var(--text-sub);line-height:1.85;font-weight:300;">Technical Support · Computer Networking · Operating Systems · System Administration · IT Security · Accelerate Your Job Search with AI</div>
     </div>
   </div>
-
-  <!-- Data Cleaning Summary -->
-  <div class="section-label">— Data Cleaning Summary</div>
-  <div class="chart-card fade-in">
-    <div class="chart-card-header">
-      <div><div class="chart-title">ETL & Data Cleaning Process</div><div class="chart-subtitle">Missing value handling via mean & mode imputation</div></div>
-      <div class="chart-tag">ETL Pipeline</div>
-    </div>
-    <table>
-      <thead><tr><th>Column</th><th>Type</th><th>Missing</th><th>Method</th><th>Status</th></tr></thead>
-      <tbody>
-        <tr><td>Sales</td><td>Continuous</td><td>106</td><td>Mean imputation ($355.03)</td><td><span style="color:var(--green)">✓ Cleaned</span></td></tr>
-        <tr><td>Profit</td><td>Continuous</td><td>106</td><td>Mean imputation ($28.66)</td><td><span style="color:var(--green)">✓ Cleaned</span></td></tr>
-        <tr><td>Ship Mode</td><td>Categorical</td><td>—</td><td>Mode imputation</td><td><span style="color:var(--green)">✓ Cleaned</span></td></tr>
-        <tr><td>Segment</td><td>Categorical</td><td>—</td><td>Mode imputation</td><td><span style="color:var(--green)">✓ Cleaned</span></td></tr>
-        <tr><td style="color:var(--green);font-weight:600;">Total Missing</td><td>—</td><td style="color:var(--amber);">212 (10%)</td><td>Little & Rubin (2002) method</td><td><span style="color:var(--green)">✓ 0 remaining</span></td></tr>
-      </tbody>
-    </table>
+  <div class="grid-3">
+    <div class="cert-card fade-in"><div class="cert-issuer">Google</div><div class="cert-name">Technical Support Fundamentals</div><div class="cert-date">Dec 2025</div></div>
+    <div class="cert-card fade-in"><div class="cert-issuer">Google</div><div class="cert-name">The Bits and Bytes of Computer Networking</div><div class="cert-date">Dec 2025</div></div>
+    <div class="cert-card fade-in"><div class="cert-issuer">Google</div><div class="cert-name">Operating Systems and You: Becoming a Power User</div><div class="cert-date">Dec 2025</div></div>
+    <div class="cert-card fade-in"><div class="cert-issuer">Google</div><div class="cert-name">System Administration and IT Infrastructure Services</div><div class="cert-date">Dec 2025</div></div>
+    <div class="cert-card fade-in"><div class="cert-issuer">Google</div><div class="cert-name">IT Security: Defense Against the Digital Dark Arts</div><div class="cert-date">Dec 2025</div></div>
+    <div class="cert-card fade-in"><div class="cert-issuer">Google</div><div class="cert-name">Accelerate Your Job Search with AI</div><div class="cert-date">Dec 2025</div></div>
   </div>
 
-  <footer class="fade-in">
-    <div class="footer-left">
-      <div>Sales Data Analysis · Data Analytics Module · Northumbria University 2024</div>
-      <div>Dataset: 2,121 US Retail Transactions · Python · Pandas · Matplotlib</div>
-    </div>
-    <div>
-      <a class="footer-link" href="https://nawafbalmutairi.github.io">Portfolio</a>
+  <div class="section-label">— Contact</div>
+  <div class="grid-2">
+    <a href="https://www.linkedin.com/in/nawaf-almutairi-907766290/" target="_blank" class="contact-link fade-in"><div class="contact-icon">LinkedIn</div><div class="contact-val">linkedin.com/in/nawaf-almutairi-907766290</div></a>
+    <a href="mailto:NawafBAlmutairi@outlook.sa" class="contact-link fade-in"><div class="contact-icon">Email</div><div class="contact-val">NawafBAlmutairi@outlook.sa</div></a>
+    <a href="https://github.com/nawafbalmutairi" target="_blank" class="contact-link fade-in"><div class="contact-icon">GitHub</div><div class="contact-val">github.com/nawafbalmutairi</div></a>
+    <a href="tel:+966501649447" class="contact-link fade-in"><div class="contact-icon">Phone</div><div class="contact-val">+966 50 164 9447</div></a>
+  </div>
+
+  <footer>
+    <div class="footer-left">© 2025 Nawaf Almutairi · BSc Computer Science</div>
+    <div class="footer-links">
       <a class="footer-link" href="https://nawafbalmutairi.github.io/nvidia-bi-dashboard">BI Dashboard</a>
       <a class="footer-link" href="https://github.com/nawafbalmutairi">GitHub</a>
+      <a class="footer-link" href="https://linkedin.com/in/nawafbalmutairi">LinkedIn</a>
     </div>
   </footer>
+
 </div>
-
 <script>
-Chart.defaults.color = '#6b7280';
-const TT = {backgroundColor:'#181c22',borderColor:'rgba(255,255,255,0.1)',borderWidth:1,titleFont:{family:'DM Mono',size:11},bodyFont:{family:'DM Sans',size:12},titleColor:'#9ca3af',bodyColor:'#e8eaf0',padding:12};
-const AX = () => ({
-  x:{ticks:{color:'#6b7280',font:{family:'DM Mono',size:10}},grid:{color:'rgba(255,255,255,0.04)'},border:{color:'rgba(255,255,255,0.06)'}},
-  y:{ticks:{color:'#6b7280',font:{family:'DM Mono',size:10}},grid:{color:'rgba(255,255,255,0.04)'},border:{color:'rgba(255,255,255,0.06)'}}
-});
-
-const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-
-const DATA = {
-  all: {
-    sales:  [48200,52100,67300,43800,71200,85400,62300,55800,79100,91200,68400,82300],
-    profit: [5200, 6100, 7800, 4200, 8100, 9800, 7100, 6200, 9100,10400, 7800, 9400],
-    txn: 2121, totalSales: '$753K', avgSale: '$355', avgDisc: '17.4%'
-  },
-  Furniture: {
-    sales:  [18200,19100,25300,16800,26200,31400,23300,20800,29100,33200,25400,30300],
-    profit: [1200, 1400, 1800,  900, 1900, 2300, 1700, 1400, 2100, 2400, 1800, 2200],
-    txn: 728, totalSales: '$252K', avgSale: '$346', avgDisc: '16.8%'
-  },
-  Technology: {
-    sales:  [16200,18100,23300,15800,25200,29400,21300,19800,27100,31200,23400,28300],
-    profit: [2800, 3300, 4200, 2400, 4500, 5400, 3900, 3600, 5000, 5700, 4300, 5200],
-    txn: 612, totalSales: '$239K', avgSale: '$390', avgDisc: '14.2%'
-  },
-  'Office Supplies': {
-    sales:  [13800,14900,18700,11200,19800,24600,17700,15200,22900,26800,19600,23700],
-    profit: [1200, 1400, 1800,  900, 1700, 2100, 1500, 1200, 2000, 2300, 1700, 2000],
-    txn: 781, totalSales: '$210K', avgSale: '$269', avgDisc: '21.3%'
-  }
-};
-
-let charts = {};
-let currentCat = 'all';
-
-function buildAll(cat) {
-  const d = DATA[cat];
-  const ax = AX();
-
-  // Trend
-  if (charts.trend) charts.trend.destroy();
-  charts.trend = new Chart(document.getElementById('trendChart'), {
-    type: 'line',
-    data: { labels: months, datasets: [
-      {label:'Total Sales', data:d.sales, borderColor:'#76ff7a', backgroundColor:'rgba(118,255,122,0.07)', borderWidth:2, pointRadius:3, fill:true, tension:0.35},
-      {label:'Total Profit', data:d.profit, borderColor:'#4fc3f7', backgroundColor:'transparent', borderWidth:2, borderDash:[5,4], pointRadius:3, fill:false, tension:0.35},
-    ]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{...TT,callbacks:{label:ctx=>` ${ctx.dataset.label}: $${ctx.raw.toLocaleString()}`}}},scales:{x:ax.x,y:{...ax.y,ticks:{...ax.y.ticks,callback:v=>'$'+(v/1000).toFixed(0)+'K'}}}}
+  window.addEventListener('load', () => {
+    setTimeout(() => {
+      document.querySelectorAll('.skill-fill').forEach(el => {
+        el.style.transform = `scaleX(${el.dataset.w / 100})`;
+      });
+    }, 400);
   });
-
-  // Scatter
-  if (charts.scatter) charts.scatter.destroy();
-  const scatterData = Array.from({length:120},(_,i)=>{
-    const disc = Math.random()*0.7;
-    const profit = disc > 0.4 ? -(disc*800+Math.random()*200) : (1-disc)*400+Math.random()*300-100;
-    return {x:parseFloat((disc*100).toFixed(1)), y:parseFloat(profit.toFixed(0))};
-  });
-  charts.scatter = new Chart(document.getElementById('scatterChart'), {
-    type: 'scatter',
-    data: { datasets: [{
-      data: scatterData,
-      backgroundColor: scatterData.map(p=>p.y>0?'rgba(118,255,122,0.5)':'rgba(255,95,109,0.5)'),
-      pointRadius: 4, pointHoverRadius: 6
-    }]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{...TT,callbacks:{label:ctx=>` Discount: ${ctx.parsed.x}% | Profit: $${ctx.parsed.y}`}}},scales:{x:{...ax.x,title:{display:true,text:'Discount (%)',color:'#6b7280',font:{family:'DM Mono',size:10}}},y:{...ax.y,title:{display:true,text:'Profit ($)',color:'#6b7280',font:{family:'DM Mono',size:10}}}}}
-  });
-
-  // States
-  const states = ['California','New York','Texas','Washington','Pennsylvania','Ohio','Illinois','Florida'];
-  const stateSales  = [76400,55300,44200,38100,29800,24600,22100,19800];
-  const stateProfit = [8200,  6100, 3100, 5200, 2100, 1800, 1400, 1200];
-  if (charts.state) charts.state.destroy();
-  charts.state = new Chart(document.getElementById('stateChart'), {
-    type:'bar',
-    data:{labels:states,datasets:[
-      {label:'Sales',data:stateSales,backgroundColor:'rgba(118,255,122,0.5)',borderColor:'#76ff7a',borderWidth:1,borderRadius:2,barPercentage:0.6},
-      {label:'Profit',data:stateProfit,backgroundColor:'rgba(255,179,71,0.5)',borderColor:'#ffb347',borderWidth:1,borderRadius:2,barPercentage:0.6},
-    ]},
-    options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{display:false},tooltip:{...TT,callbacks:{label:ctx=>` ${ctx.dataset.label}: $${ctx.raw.toLocaleString()}`}}},scales:{x:{...ax.x,ticks:{...ax.x.ticks,callback:v=>'$'+(v/1000).toFixed(0)+'K'}},y:ax.y}}
-  });
-
-  // Category doughnut
-  if (charts.cat) charts.cat.destroy();
-  charts.cat = new Chart(document.getElementById('catChart'), {
-    type:'doughnut',
-    data:{labels:['Furniture','Technology','Office Supplies'],datasets:[{data:[252000,239000,210000],backgroundColor:['rgba(118,255,122,0.7)','rgba(79,195,247,0.7)','rgba(255,179,71,0.7)'],borderColor:['#76ff7a','#4fc3f7','#ffb347'],borderWidth:1}]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,position:'bottom',labels:{color:'#9ca3af',font:{family:'DM Mono',size:10},padding:12}},tooltip:{...TT,callbacks:{label:ctx=>` ${ctx.label}: $${(ctx.raw/1000).toFixed(0)}K`}}},cutout:'60%'}
-  });
-
-  // Profit distribution histogram
-  const profitBuckets = ['<-500','-500 to -200','-200 to 0','0 to 50','50 to 200','200 to 500','>500'];
-  const profitCounts  = [28, 64, 112, 698, 742, 312, 165];
-  if (charts.profitDist) charts.profitDist.destroy();
-  charts.profitDist = new Chart(document.getElementById('profitDistChart'), {
-    type:'bar',
-    data:{labels:profitBuckets,datasets:[{label:'Transactions',data:profitCounts,backgroundColor:profitCounts.map((_,i)=>i<2?'rgba(255,95,109,0.6)':i===2?'rgba(255,179,71,0.6)':'rgba(118,255,122,0.6)'),borderColor:profitCounts.map((_,i)=>i<2?'#ff5f6d':i===2?'#ffb347':'#76ff7a'),borderWidth:1,borderRadius:2}]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{...TT,callbacks:{label:ctx=>` ${ctx.raw} transactions`}}},scales:{x:{...ax.x,ticks:{...ax.x.ticks,maxRotation:30}},y:ax.y}}
-  });
-}
-
-const catBtns = document.querySelectorAll('.cat-btn');
-function setCategory(cat, el) {
-  catBtns.forEach(b=>b.classList.remove('active'));
-  el.classList.add('active');
-  currentCat = cat;
-  const d = DATA[cat];
-  document.getElementById('kpi-txn').textContent = d.txn.toLocaleString();
-  document.getElementById('kpi-sales').textContent = d.totalSales;
-  document.getElementById('kpi-avg').textContent = d.avgSale;
-  document.getElementById('kpi-disc').innerHTML = d.avgDisc;
-  buildAll(cat);
-}
-
-buildAll('all');
 </script>
-</body></html>
+</body>
+</html>
