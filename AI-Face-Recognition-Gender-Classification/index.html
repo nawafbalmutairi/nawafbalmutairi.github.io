@@ -1,1 +1,624 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Face Recognition & Gender Classification — Nawaf Almutairi</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  :root {
+    --bg:#0a0c10;--surface:#111418;--surface2:#181c22;--border:rgba(255,255,255,0.07);
+    --green:#76ff7a;--green-dim:rgba(118,255,122,0.12);
+    --amber:#ffb347;--amber-dim:rgba(255,179,71,0.12);
+    --red:#ff5f6d;--blue:#4fc3f7;--blue-dim:rgba(79,195,247,0.12);
+    --purple:#c084fc;--purple-dim:rgba(192,132,252,0.12);
+    --text:#e8eaf0;--text-muted:#6b7280;--text-sub:#9ca3af;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;}
+  body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(118,255,122,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(118,255,122,0.025) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0;}
+  .w{position:relative;z-index:1;max-width:1400px;margin:0 auto;padding:0 24px 60px;}
 
+  /* HEADER */
+  header{padding:40px 0 32px;display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:20px;border-bottom:1px solid var(--border);margin-bottom:36px;}
+  .badge{display:inline-flex;align-items:center;gap:8px;background:var(--green-dim);border:1px solid rgba(118,255,122,0.3);color:var(--green);font-family:'DM Mono',monospace;font-size:11px;letter-spacing:0.08em;padding:5px 12px;border-radius:2px;margin-bottom:16px;text-transform:uppercase;}
+  .badge::before{content:'';width:6px;height:6px;background:var(--green);border-radius:50%;animation:pulse 2s infinite;}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
+  h1{font-family:'Syne',sans-serif;font-size:clamp(26px,4vw,42px);font-weight:800;line-height:1.1;letter-spacing:-0.02em;color:#fff;}
+  h1 span{color:var(--green);}
+  .header-sub{margin-top:10px;font-size:14px;color:var(--text-sub);font-weight:300;max-width:520px;line-height:1.6;}
+  .header-right{display:flex;flex-direction:column;align-items:flex-end;gap:10px;}
+  .author-card{background:var(--surface);border:1px solid var(--border);padding:14px 20px;border-radius:4px;text-align:right;}
+  .author-name{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:#fff;}
+  .author-meta{font-size:12px;color:var(--text-muted);margin-top:3px;font-family:'DM Mono',monospace;}
+  .module-tag{font-family:'DM Mono',monospace;font-size:11px;color:var(--text-muted);letter-spacing:0.06em;}
+
+  /* SECTION */
+  .sl{font-family:'DM Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:0.14em;color:var(--text-muted);margin:40px 0 16px;display:flex;align-items:center;gap:12px;}
+  .sl::after{content:'';flex:1;height:1px;background:var(--border);}
+
+  /* CARD */
+  .card{background:var(--surface);border:1px solid var(--border);padding:24px;position:relative;}
+  .card-h{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px;gap:12px;}
+  .ct{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:#fff;letter-spacing:-0.01em;}
+  .cs{font-size:12px;color:var(--text-muted);margin-top:4px;font-weight:300;}
+  .tag{font-family:'DM Mono',monospace;font-size:10px;padding:4px 10px;background:var(--surface2);border:1px solid var(--border);color:var(--text-muted);border-radius:2px;white-space:nowrap;letter-spacing:0.05em;text-transform:uppercase;}
+  .prose{font-size:13px;color:var(--text-sub);line-height:1.8;}
+  .prose strong{color:#fff;font-weight:500;}
+  .hl{color:var(--green);font-family:'DM Mono',monospace;font-size:12px;}
+
+  /* GRIDS */
+  .g1{display:grid;grid-template-columns:1fr;gap:16px;margin-bottom:16px;}
+  .g2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;}
+  .g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:16px;}
+  .g21{display:grid;grid-template-columns:2fr 1fr;gap:16px;margin-bottom:16px;}
+  @media(max-width:900px){.g2,.g3,.g21{grid-template-columns:1fr;}}
+
+  /* LEGEND */
+  .legend{display:flex;gap:16px;flex-wrap:wrap;margin-top:14px;padding-top:14px;border-top:1px solid var(--border);}
+  .legend-item{display:flex;align-items:center;gap:7px;font-size:11px;color:var(--text-sub);}
+  .legend-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+
+  /* ═══ AIM BANNER ═══ */
+  .aim{
+    background:var(--surface);border:1px solid var(--border);
+    padding:32px 36px;margin-bottom:16px;
+    border-left:3px solid var(--green);
+  }
+  .aim-title{font-family:'Syne',sans-serif;font-size:18px;font-weight:800;color:#fff;margin-bottom:10px;letter-spacing:-0.01em;}
+  .aim p{font-size:14px;color:var(--text-sub);line-height:1.7;font-weight:300;}
+
+  /* ═══ DATASET VISUAL ═══ */
+  .ds-card{background:var(--surface);border:1px solid var(--border);padding:24px;text-align:center;}
+  .ds-icon{font-size:36px;margin-bottom:12px;opacity:0.9;line-height:1;}
+  .ds-name{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:#fff;margin-bottom:4px;}
+  .ds-source{font-family:'DM Mono',monospace;font-size:10px;color:var(--text-muted);letter-spacing:0.06em;text-transform:uppercase;margin-bottom:14px;}
+  .ds-bar{display:flex;height:8px;border-radius:4px;overflow:hidden;margin-bottom:10px;}
+  .ds-bar .male{background:var(--blue);}
+  .ds-bar .female{background:var(--purple);}
+  .ds-stats{display:flex;justify-content:center;gap:20px;}
+  .ds-stat{font-family:'DM Mono',monospace;font-size:11px;}
+  .ds-stat .val{color:var(--text);font-weight:500;}
+  .ds-stat .lbl{color:var(--text-muted);margin-left:4px;}
+
+  /* ═══ PIPELINE FLOW ═══ */
+  .flow{display:flex;flex-direction:column;gap:0;position:relative;}
+  .flow::before{content:'';position:absolute;left:23px;top:0;bottom:0;width:2px;background:linear-gradient(180deg,var(--green),var(--blue),var(--purple),var(--amber));}
+  .flow-step{display:flex;gap:20px;align-items:flex-start;position:relative;padding:16px 0;}
+  .flow-dot{width:12px;height:12px;border-radius:50%;flex-shrink:0;margin-top:4px;margin-left:18px;z-index:2;box-shadow:0 0 8px currentColor;}
+  .flow-dot.c1{background:var(--green);color:var(--green);}
+  .flow-dot.c2{background:var(--blue);color:var(--blue);}
+  .flow-dot.c3{background:var(--purple);color:var(--purple);}
+  .flow-dot.c4{background:var(--amber);color:var(--amber);}
+  .flow-body{flex:1;background:var(--surface);border:1px solid var(--border);padding:18px 22px;transition:border-color 0.2s;}
+  .flow-body:hover{border-color:rgba(118,255,122,0.2);}
+  .flow-num{font-family:'DM Mono',monospace;font-size:10px;color:var(--green);letter-spacing:0.1em;margin-bottom:4px;}
+  .flow-title{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:#fff;margin-bottom:6px;}
+  .flow-desc{font-size:12px;color:var(--text-muted);line-height:1.6;}
+  .flow-component{display:inline-block;font-family:'DM Mono',monospace;font-size:10px;padding:2px 8px;background:var(--surface2);border:1px solid var(--border);color:var(--text-sub);margin-top:8px;border-radius:2px;letter-spacing:0.04em;}
+
+  /* ═══ SPLIT VIZ ═══ */
+  .split-viz{display:flex;flex-direction:column;gap:10px;margin-top:14px;}
+  .split-row{display:flex;align-items:center;gap:10px;}
+  .split-label{font-family:'DM Mono',monospace;font-size:10px;color:var(--text-muted);width:70px;text-align:right;flex-shrink:0;letter-spacing:0.06em;text-transform:uppercase;}
+  .split-bar{flex:1;display:flex;height:24px;border-radius:3px;overflow:hidden;}
+  .split-bar .seg{display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:10px;color:#0a0c10;font-weight:700;}
+  .split-bar .train{background:var(--green);}
+  .split-bar .val{background:var(--blue);}
+  .split-bar .test{background:var(--amber);}
+
+  /* ═══ VS BATTLE ═══ */
+  .vs-row{display:grid;grid-template-columns:1fr auto 1fr;gap:0;margin-bottom:16px;align-items:stretch;}
+  @media(max-width:900px){.vs-row{grid-template-columns:1fr;}}
+  .vs-card{background:var(--surface);border:1px solid var(--border);padding:28px 24px;}
+  .vs-divider{display:flex;align-items:center;justify-content:center;padding:0 4px;position:relative;}
+  .vs-divider::before{content:'';position:absolute;top:0;bottom:0;width:1px;background:var(--border);}
+  .vs-badge{position:relative;z-index:2;font-family:'Syne',sans-serif;font-size:14px;font-weight:800;color:var(--text-muted);background:var(--bg);padding:12px 8px;letter-spacing:0.05em;}
+  .vs-model-name{font-family:'Syne',sans-serif;font-size:20px;font-weight:800;margin-bottom:6px;letter-spacing:-0.01em;}
+  .vs-model-type{font-family:'DM Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:16px;}
+
+  /* ═══ GAUGE ═══ */
+  .gauge-row{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin:12px 0;}
+  .gauge{text-align:center;width:100px;}
+  .gauge canvas{display:block;margin:0 auto 6px;}
+  .gauge-label{font-family:'DM Mono',monospace;font-size:10px;color:var(--text-muted);letter-spacing:0.06em;text-transform:uppercase;}
+  .gauge-val{font-family:'Syne',sans-serif;font-size:18px;font-weight:700;margin-top:2px;}
+
+  /* ═══ WINNER BANNER ═══ */
+  .winner{
+    background:var(--surface);border:2px solid rgba(118,255,122,0.3);
+    padding:32px;text-align:center;margin-bottom:16px;
+    position:relative;overflow:hidden;
+  }
+  .winner::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at center,rgba(118,255,122,0.06) 0%,transparent 70%);pointer-events:none;}
+  .winner-label{font-family:'DM Mono',monospace;font-size:10px;color:var(--green);letter-spacing:0.14em;text-transform:uppercase;margin-bottom:10px;}
+  .winner-model{font-family:'Syne',sans-serif;font-size:clamp(24px,4vw,36px);font-weight:800;color:var(--green);margin-bottom:6px;}
+  .winner-stat{font-family:'DM Mono',monospace;font-size:14px;color:var(--text-sub);margin-bottom:16px;}
+  .winner-desc{font-size:13px;color:var(--text-muted);max-width:600px;margin:0 auto;line-height:1.7;}
+
+  /* ═══ TABLE ═══ */
+  table{width:100%;border-collapse:collapse;font-size:13px;margin-top:16px;}
+  thead th{font-family:'DM Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);padding:0 14px 12px 0;text-align:left;border-bottom:1px solid var(--border);}
+  tbody tr{border-bottom:1px solid rgba(255,255,255,0.04);transition:background 0.1s;}
+  tbody tr:hover{background:rgba(255,255,255,0.03);}
+  tbody td{padding:12px 14px 12px 0;color:var(--text-sub);font-size:13px;}
+  tbody td:first-child{color:#fff;font-weight:500;}
+  .dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:7px;}
+  .dot-g{background:var(--green);box-shadow:0 0 6px var(--green);}
+  .dot-a{background:var(--amber);box-shadow:0 0 6px var(--amber);}
+
+  /* ═══ INSIGHT CARDS ═══ */
+  .insight-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:16px;}
+  @media(max-width:900px){.insight-grid{grid-template-columns:1fr;}}
+  .insight-card{background:var(--surface);border:1px solid var(--border);padding:22px;}
+  .insight-card .ct{margin-bottom:14px;}
+  .insight-card .item{font-size:12px;color:var(--text-sub);line-height:1.8;padding-left:14px;position:relative;}
+  .insight-card .item::before{content:'';position:absolute;left:0;top:9px;width:5px;height:5px;border-radius:50%;background:var(--text-muted);}
+
+  /* FOOTER */
+  footer{border-top:1px solid var(--border);margin-top:48px;padding-top:28px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;}
+  .footer-left{font-size:12px;color:var(--text-muted);line-height:1.7;}
+  .footer-links{display:flex;gap:16px;}
+  .footer-link{font-family:'DM Mono',monospace;font-size:11px;color:var(--text-muted);text-decoration:none;border-bottom:1px solid transparent;transition:all 0.15s;letter-spacing:0.04em;padding-bottom:1px;}
+  .footer-link:hover{color:var(--green);border-color:var(--green);}
+
+  .fade-in{opacity:0;transform:translateY(12px);animation:fadeIn 0.5s ease forwards;}
+  @keyframes fadeIn{to{opacity:1;transform:none;}}
+  canvas{display:block;}
+</style>
+</head>
+<body>
+<div class="w">
+
+  <!-- ═══════════ HEADER ═══════════ -->
+  <header class="fade-in">
+    <div>
+      <div class="badge">KV4009 Data Fundamentals · Northumbria University</div>
+      <h1>AI Face Recognition<br><span>& Gender Classification</span></h1>
+      <p class="header-sub">Building and evaluating DenseNet and ResNet convolutional neural networks on Microsoft Azure Machine Learning to classify facial images by gender — trained on Kaggle data and tested with real-time inference on a custom dataset.</p>
+    </div>
+    <div class="header-right">
+      <div class="author-card">
+        <div class="author-name">Nawaf Almutairi</div>
+        <div class="author-meta">BSc Computer Science</div>
+        <div class="author-meta" style="margin-top:4px;">Northumbria University</div>
+      </div>
+      <div class="module-tag">Platform: Microsoft Azure ML Designer</div>
+    </div>
+  </header>
+
+  <!-- ═══════════ AIM ═══════════ -->
+  <div class="aim fade-in">
+    <div class="aim-title">Aim</div>
+    <p>To build machine learning models in Azure to recognise faces of human beings and classify them into male and female genders. Two CNN architectures — <strong>DenseNet</strong> and <strong>ResNet</strong> — are trained, evaluated on a test set, and then tested via real-time inference on a separately collected custom dataset.</p>
+  </div>
+
+  <!-- ═══════════ DATASETS ═══════════ -->
+  <div class="sl">— Datasets</div>
+  <div class="g2 fade-in">
+    <div class="ds-card">
+      <div class="ds-name">Gender_images</div>
+      <div class="ds-source">Source: Kaggle (public domain)</div>
+      <div class="ds-bar">
+        <div class="male" style="width:50%"></div>
+        <div class="female" style="width:50%"></div>
+      </div>
+      <div class="ds-stats">
+        <div class="ds-stat"><span class="val">50</span><span class="lbl" style="color:var(--blue)">Male</span></div>
+        <div class="ds-stat"><span class="val">50</span><span class="lbl" style="color:var(--purple)">Female</span></div>
+        <div class="ds-stat"><span class="val">100</span><span class="lbl">Total</span></div>
+      </div>
+      <div style="font-size:11px;color:var(--text-muted);margin-top:12px;line-height:1.5">Used for training, validation and testing the DenseNet and ResNet models.</div>
+    </div>
+    <div class="ds-card">
+      <div class="ds-name">Nawaf_data_inference</div>
+      <div class="ds-source">Source: Custom collected</div>
+      <div class="ds-bar">
+        <div class="male" style="width:50%"></div>
+        <div class="female" style="width:50%"></div>
+      </div>
+      <div class="ds-stats">
+        <div class="ds-stat"><span class="val">15</span><span class="lbl" style="color:var(--blue)">Male</span></div>
+        <div class="ds-stat"><span class="val">15</span><span class="lbl" style="color:var(--purple)">Female</span></div>
+        <div class="ds-stat"><span class="val">30</span><span class="lbl">Total</span></div>
+      </div>
+      <div style="font-size:11px;color:var(--text-muted);margin-top:12px;line-height:1.5">Separately collected for running real-time inference to validate model performance on unseen data.</div>
+    </div>
+  </div>
+
+  <!-- ═══════════ DATA SPLIT ═══════════ -->
+  <div class="sl">— Data Split Strategy</div>
+  <div class="card fade-in" style="margin-bottom:16px">
+    <div class="card-h">
+      <div><div class="ct">Train / Validate / Test Split</div><div class="cs">Split Image Directory component used twice on the Gender_images dataset</div></div>
+      <div class="tag">Split Ratios</div>
+    </div>
+    <div class="prose" style="margin-bottom:16px">
+      The dataset is first split <span class="hl">70 / 30</span> into training and testing sets. The training portion is then split again <span class="hl">70 / 30</span> into final training and validation sets. This produces three non-overlapping subsets for the pipeline.
+    </div>
+    <div class="split-viz">
+      <div class="split-row">
+        <div class="split-label">Step 1</div>
+        <div class="split-bar">
+          <div class="seg train" style="width:70%">70% Train</div>
+          <div class="seg test" style="width:30%">30% Test</div>
+        </div>
+      </div>
+      <div class="split-row">
+        <div class="split-label">Step 2</div>
+        <div class="split-bar">
+          <div class="seg train" style="width:49%">49% Train</div>
+          <div class="seg val" style="width:21%">21% Val</div>
+          <div class="seg test" style="width:30%;opacity:0.4">30% Test</div>
+        </div>
+      </div>
+      <div class="split-row">
+        <div class="split-label">Result</div>
+        <div class="split-bar">
+          <div class="seg train" style="width:49%">~49 imgs</div>
+          <div class="seg val" style="width:21%">~21 imgs</div>
+          <div class="seg test" style="width:30%">~30 imgs</div>
+        </div>
+      </div>
+    </div>
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div>Training</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--blue)"></div>Validation</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--amber)"></div>Testing</div>
+    </div>
+  </div>
+
+  <!-- ═══════════ PIPELINE ═══════════ -->
+  <div class="sl">— Azure ML Designer Pipeline</div>
+  <div class="g21 fade-in">
+    <div class="card" style="padding:28px 24px">
+      <div class="card-h">
+        <div><div class="ct">End-to-End Pipeline</div><div class="cs">Each step is a drag-and-drop component in Azure ML Designer</div></div>
+        <div class="tag">Workflow</div>
+      </div>
+      <div class="flow">
+        <div class="flow-step">
+          <div class="flow-dot c1"></div>
+          <div class="flow-body">
+            <div class="flow-num">Step 01</div>
+            <div class="flow-title">Upload & Create Dataset</div>
+            <div class="flow-desc">Gender_images dataset uploaded into Azure Designer from local source. Dataset created with image files mapped to gender labels.</div>
+            <div class="flow-component">Create Data Set</div>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-dot c1"></div>
+          <div class="flow-body">
+            <div class="flow-num">Step 02</div>
+            <div class="flow-title">Convert to Image Directory</div>
+            <div class="flow-desc">Converts the raw image dataset into a standardised Image Directory format — the required data type for all image classification components in Azure.</div>
+            <div class="flow-component">Convert to Image Directory</div>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-dot c2"></div>
+          <div class="flow-body">
+            <div class="flow-num">Step 03</div>
+            <div class="flow-title">Split into Train, Validate, Test</div>
+            <div class="flow-desc">Two sequential splits: first 70/30 for train-test, then the training set is split 70/30 again for train-validate. Produces three non-overlapping subsets.</div>
+            <div class="flow-component">Split Image Directory</div><span style="margin:0 4px;color:var(--text-muted)">&times;2</span>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-dot c3"></div>
+          <div class="flow-body">
+            <div class="flow-num">Step 04</div>
+            <div class="flow-title">Image Transformation</div>
+            <div class="flow-desc">Preprocessing pipeline defined via Init Image Transformation (resize, normalise, augment), then applied consistently to all three splits with Apply Image Transformation.</div>
+            <div class="flow-component">Init Image Transformation</div> <div class="flow-component" style="margin-left:4px">Apply Image Transformation</div>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-dot c4"></div>
+          <div class="flow-body">
+            <div class="flow-num">Step 05</div>
+            <div class="flow-title">Train PyTorch Model</div>
+            <div class="flow-desc">DenseNet and ResNet architectures trained separately using the Train PyTorch Model component on GPU compute with training and validation datasets as input.</div>
+            <div class="flow-component">Train PyTorch Model</div><span style="margin-left:8px;font-family:'DM Mono',monospace;font-size:10px;color:var(--amber)">GPU Compute</span>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-dot c1"></div>
+          <div class="flow-body" style="border-color:rgba(118,255,122,0.2)">
+            <div class="flow-num">Step 06</div>
+            <div class="flow-title">Score & Evaluate Model</div>
+            <div class="flow-desc">Predictions generated on the test set via Score Image Model, then performance measured with Evaluate Model — producing Precision, Recall, and Accuracy.</div>
+            <div class="flow-component">Score Image Model</div> <div class="flow-component" style="margin-left:4px">Evaluate Model</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:16px;">
+      <div class="card">
+        <div class="card-h">
+          <div><div class="ct">Data Transformation</div><div class="cs">Applied to all 3 dataset splits</div></div>
+          <div class="tag">Preprocessing</div>
+        </div>
+        <div class="prose" style="font-size:12px">
+          The <strong>Init Image Transformation</strong> component defines the preprocessing operations: image resizing to a standard dimension, pixel normalisation, and optional data augmentation.<br><br>
+          <strong>Apply Image Transformation</strong> then executes this pipeline identically on training, validation, and test sets — ensuring consistent input across all stages.
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-h">
+          <div><div class="ct">Training Configuration</div><div class="cs">PyTorch on Azure GPU</div></div>
+          <div class="tag">Compute</div>
+        </div>
+        <div class="prose" style="font-size:12px">
+          Both models were trained using the <strong>Train PyTorch Model</strong> component, recommended to run on <strong>GPU compute</strong> for performance. Training uses the training split as input and the validation split for monitoring overfitting during training iterations.
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-h">
+          <div><div class="ct">Prediction & Evaluation</div><div class="cs">Scoring and metrics</div></div>
+          <div class="tag">Output</div>
+        </div>
+        <div class="prose" style="font-size:12px">
+          <strong>Score Image Model</strong> generates predictions on the held-out test set. <strong>Evaluate Model</strong> compares predictions against ground truth labels to produce <span class="hl">Precision</span>, <span class="hl">Recall</span>, and <span class="hl">Accuracy</span>.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════ MODEL BATTLE ═══════════ -->
+  <div class="sl">— Model Architectures: DenseNet vs ResNet</div>
+  <div class="vs-row fade-in">
+    <div class="vs-card" style="border-top:3px solid var(--green)">
+      <div class="vs-model-type" style="color:var(--green)">Architecture A</div>
+      <div class="vs-model-name" style="color:var(--green)">DenseNet</div>
+      <div class="prose" style="font-size:12px;margin-bottom:16px">
+        A convolutional neural network that uses <strong>dense connections</strong> between layers through Dense Blocks. Each layer receives inputs from all previous layers and passes its feature maps to all subsequent layers — promoting feature reuse, reducing parameters, and strengthening gradient flow.
+      </div>
+      <div style="font-size:11px;color:var(--text-muted);border-top:1px solid var(--border);padding-top:12px">Huang, G. et al. (2018) Densely Connected Convolutional Networks, arXiv.org.</div>
+    </div>
+    <div class="vs-divider"><div class="vs-badge">VS</div></div>
+    <div class="vs-card" style="border-top:3px solid var(--blue)">
+      <div class="vs-model-type" style="color:var(--blue)">Architecture B</div>
+      <div class="vs-model-name" style="color:var(--blue)">ResNet</div>
+      <div class="prose" style="font-size:12px;margin-bottom:16px">
+        A deep learning CNN that uses <strong>residual (skip) connections</strong> allowing gradients to flow directly through the network. This solves the vanishing gradient problem that prevented earlier architectures from scaling to hundreds or thousands of convolutional layers.
+      </div>
+      <div style="font-size:11px;color:var(--text-muted);border-top:1px solid var(--border);padding-top:12px">Datagen (2023) ResNet: The basics and 3 ResNet extensions.</div>
+    </div>
+  </div>
+
+  <!-- ═══════════ BASE MODEL RESULTS ═══════════ -->
+  <div class="sl">— Base Model Evaluation (Gender_images Test Set)</div>
+  <div class="g2 fade-in">
+    <div class="card" style="text-align:center;border-top:3px solid var(--green)">
+      <div class="vs-model-type" style="color:var(--green)">DenseNet — Base</div>
+      <div class="gauge-row">
+        <div class="gauge"><canvas id="g_dn_p" width="90" height="90"></canvas><div class="gauge-label">Precision</div><div class="gauge-val" style="color:var(--green)">80.0%</div></div>
+        <div class="gauge"><canvas id="g_dn_r" width="90" height="90"></canvas><div class="gauge-label">Recall</div><div class="gauge-val" style="color:var(--green)">80.0%</div></div>
+        <div class="gauge"><canvas id="g_dn_a" width="90" height="90"></canvas><div class="gauge-label">Accuracy</div><div class="gauge-val" style="color:var(--green)">80.0%</div></div>
+      </div>
+      <div class="prose" style="font-size:12px;text-align:left;margin-top:14px;padding-top:14px;border-top:1px solid var(--border)">
+        The DenseNet model achieves consistent <span class="hl">0.8</span> across all three metrics on the test set. The balanced precision and recall indicate the model classifies both male and female faces equally well without bias toward either class.
+      </div>
+    </div>
+    <div class="card" style="text-align:center;border-top:3px solid var(--blue)">
+      <div class="vs-model-type" style="color:var(--blue)">ResNet — Base</div>
+      <div class="gauge-row">
+        <div class="gauge"><canvas id="g_rn_p" width="90" height="90"></canvas><div class="gauge-label">Precision</div><div class="gauge-val" style="color:var(--blue)">73.8%</div></div>
+        <div class="gauge"><canvas id="g_rn_r" width="90" height="90"></canvas><div class="gauge-label">Recall</div><div class="gauge-val" style="color:var(--blue)">73.3%</div></div>
+        <div class="gauge"><canvas id="g_rn_a" width="90" height="90"></canvas><div class="gauge-label">Accuracy</div><div class="gauge-val" style="color:var(--blue)">73.3%</div></div>
+      </div>
+      <div class="prose" style="font-size:12px;text-align:left;margin-top:14px;padding-top:14px;border-top:1px solid var(--border)">
+        ResNet achieves <span class="hl">0.7376</span> precision, <span class="hl">0.7333</span> recall and accuracy — slightly lower than DenseNet. The small dataset (100 images) may limit ResNet's ability to leverage its deeper architecture effectively.
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════ REAL-TIME INFERENCE ═══════════ -->
+  <div class="sl">— Real-Time Inference (Nawaf_data_inference — 30 images)</div>
+  <div class="card fade-in" style="margin-bottom:16px">
+    <div class="card-h">
+      <div><div class="ct">Real-Time Inference Pipeline</div><div class="cs">Testing trained models on a completely separate, custom-collected dataset</div></div>
+      <div class="tag">Inference</div>
+    </div>
+    <div class="prose" style="margin-bottom:16px">
+      Both trained models (DenseNet and ResNet) are tested via real-time inference on the <strong>Nawaf_data_inference</strong> dataset — 30 images (15 male, 15 female) collected independently. The inference pipeline converts the new dataset to Image Directory, applies the same image transformation used during training, then scores predictions using the trained model components and evaluates the results.
+    </div>
+  </div>
+  <div class="g2 fade-in">
+    <div class="card" style="text-align:center;border-top:3px solid var(--green)">
+      <div class="vs-model-type" style="color:var(--green)">DenseNet — Real-Time Inference</div>
+      <div class="gauge-row">
+        <div class="gauge"><canvas id="g_dni_p" width="90" height="90"></canvas><div class="gauge-label">Precision</div><div class="gauge-val" style="color:var(--green)">86.7%</div></div>
+        <div class="gauge"><canvas id="g_dni_r" width="90" height="90"></canvas><div class="gauge-label">Recall</div><div class="gauge-val" style="color:var(--green)">86.7%</div></div>
+        <div class="gauge"><canvas id="g_dni_a" width="90" height="90"></canvas><div class="gauge-label">Accuracy</div><div class="gauge-val" style="color:var(--green)">86.7%</div></div>
+      </div>
+    </div>
+    <div class="card" style="text-align:center;border-top:3px solid var(--amber)">
+      <div class="vs-model-type" style="color:var(--amber)">ResNet — Real-Time Inference</div>
+      <div class="gauge-row">
+        <div class="gauge"><canvas id="g_rni_p" width="90" height="90"></canvas><div class="gauge-label">Precision</div><div class="gauge-val" style="color:var(--amber)">80.0%</div></div>
+        <div class="gauge"><canvas id="g_rni_r" width="90" height="90"></canvas><div class="gauge-label">Recall</div><div class="gauge-val" style="color:var(--amber)">80.0%</div></div>
+        <div class="gauge"><canvas id="g_rni_a" width="90" height="90"></canvas><div class="gauge-label">Accuracy</div><div class="gauge-val" style="color:var(--amber)">80.0%</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════ FULL COMPARISON ═══════════ -->
+  <div class="sl">— Full Results Comparison</div>
+  <div class="g21 fade-in">
+    <div class="card">
+      <div class="card-h">
+        <div><div class="ct">All 4 Evaluation Runs</div><div class="cs">Grouped bar: Precision, Recall, Accuracy per model</div></div>
+        <div class="tag">Comparison</div>
+      </div>
+      <div style="position:relative;height:280px"><canvas id="compChart"></canvas></div>
+      <div class="legend">
+        <div class="legend-item"><div class="legend-dot" style="background:#76ff7a"></div>Precision</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#4fc3f7"></div>Recall</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#c084fc"></div>Accuracy</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-h">
+        <div><div class="ct">Metrics Table</div><div class="cs">Evaluate Model output</div></div>
+        <div class="tag">Full Results</div>
+      </div>
+      <table style="margin-top:0">
+        <thead><tr><th>Model</th><th>Prec.</th><th>Rec.</th><th>Acc.</th></tr></thead>
+        <tbody>
+          <tr><td><span class="dot dot-g"></span>DenseNet</td><td style="font-family:'DM Mono',monospace">.800</td><td style="font-family:'DM Mono',monospace">.800</td><td style="font-family:'DM Mono',monospace;color:var(--green)">80.0%</td></tr>
+          <tr><td><span class="dot dot-a"></span>ResNet</td><td style="font-family:'DM Mono',monospace">.738</td><td style="font-family:'DM Mono',monospace">.733</td><td style="font-family:'DM Mono',monospace;color:var(--amber)">73.3%</td></tr>
+          <tr><td><span class="dot dot-g"></span>DenseNet RT</td><td style="font-family:'DM Mono',monospace">.867</td><td style="font-family:'DM Mono',monospace">.867</td><td style="font-family:'DM Mono',monospace;color:var(--green)">86.7%</td></tr>
+          <tr><td><span class="dot dot-a"></span>ResNet RT</td><td style="font-family:'DM Mono',monospace">.800</td><td style="font-family:'DM Mono',monospace">.800</td><td style="font-family:'DM Mono',monospace;color:var(--green)">80.0%</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ═══════════ WINNER ═══════════ -->
+  <div class="winner fade-in">
+    <div class="winner-label">Best Performing Model</div>
+    <div class="winner-model">DenseNet — Real-Time Inference</div>
+    <div class="winner-stat">Precision 86.7% · Recall 86.7% · Accuracy 86.7%</div>
+    <div class="winner-desc">DenseNet consistently outperforms ResNet across all evaluation runs. Its dense connectivity and feature reuse make it particularly effective for small-dataset image classification tasks, achieving the highest accuracy of 86.7% on the custom inference dataset.</div>
+  </div>
+
+  <!-- ═══════════ CONCLUSION ═══════════ -->
+  <div class="sl">— Conclusion & Key Findings</div>
+  <div class="insight-grid fade-in">
+    <div class="insight-card" style="border-top:2px solid var(--green)">
+      <div class="ct">DenseNet Performance</div>
+      <div class="item">Consistent 80% on base test set (all 3 metrics)</div>
+      <div class="item">Best overall at 86.7% on real-time inference</div>
+      <div class="item">Dense connections promote effective feature reuse</div>
+      <div class="item">Better gradient flow benefits small datasets</div>
+      <div class="item">Recommended architecture for this classification task</div>
+    </div>
+    <div class="insight-card" style="border-top:2px solid var(--blue)">
+      <div class="ct">ResNet Performance</div>
+      <div class="item">73.3% base accuracy — lower than DenseNet</div>
+      <div class="item">Improved to 80.0% on inference dataset</div>
+      <div class="item">Skip connections solve vanishing gradient effectively</div>
+      <div class="item">May require larger datasets to show full potential</div>
+      <div class="item">Performs reasonably well for only 100 training images</div>
+    </div>
+    <div class="insight-card" style="border-top:2px solid var(--amber)">
+      <div class="ct">Further Work</div>
+      <div class="item">Increase training data beyond 100 images</div>
+      <div class="item">Apply additional data augmentation techniques</div>
+      <div class="item">Experiment with learning rate and hyperparameters</div>
+      <div class="item">Test other architectures such as EfficientNet</div>
+      <div class="item">Deploy best model as a REST API endpoint on Azure</div>
+    </div>
+  </div>
+
+  <!-- ═══════════ REFERENCES ═══════════ -->
+  <div class="sl">— References</div>
+  <div class="card fade-in" style="margin-bottom:16px">
+    <div class="prose">
+      Huang, G. et al. (2018) 'Densely Connected Convolutional Networks', <em>arXiv.org</em>. Available at: https://arxiv.org/abs/1608.06993v5 (Accessed: 28 January 2024).<br><br>
+      Datagen (2023) 'ResNet: The basics and 3 ResNet extensions', <em>Datagen</em>. Available at: https://datagen.tech/guides/computer-vision/resnet/ (Accessed: 28 January 2024).
+    </div>
+  </div>
+
+  <!-- ═══════════ FOOTER ═══════════ -->
+  <footer class="fade-in">
+    <div class="footer-left">
+      <div>KV4009 Data Fundamentals · Northumbria University · 2024–2026</div>
+      <div>Dashboard built with Chart.js · Models trained on Microsoft Azure ML</div>
+    </div>
+    <div class="footer-links">
+      <a class="footer-link" href="https://nawafbalmutairi.github.io">Portfolio</a>
+      <a class="footer-link" href="https://github.com/nawafbalmutairi">GitHub</a>
+      <a class="footer-link" href="https://linkedin.com/in/nawafbalmutairi">LinkedIn</a>
+    </div>
+  </footer>
+
+</div>
+
+<!-- ═══════════════════════════════════════ -->
+<!--               SCRIPTS                   -->
+<!-- ═══════════════════════════════════════ -->
+<script>
+Chart.defaults.color='#6b7280';
+const TT={backgroundColor:'#181c22',borderColor:'rgba(255,255,255,0.1)',borderWidth:1,titleFont:{family:'DM Mono',size:11},bodyFont:{family:'DM Sans',size:12},titleColor:'#9ca3af',bodyColor:'#e8eaf0',padding:12};
+function AX(){return{x:{ticks:{color:'#6b7280',font:{family:'DM Mono',size:10}},grid:{color:'rgba(255,255,255,0.04)'},border:{color:'rgba(255,255,255,0.06)'}},y:{ticks:{color:'#6b7280',font:{family:'DM Mono',size:10}},grid:{color:'rgba(255,255,255,0.04)'},border:{color:'rgba(255,255,255,0.06)'}}};}
+
+// ═══ GAUGE CHARTS ═══
+function drawGauge(id, value, color) {
+  const canvas = document.getElementById(id);
+  const ctx = canvas.getContext('2d');
+  const size = 90;
+  const dpr = window.devicePixelRatio || 1;
+  canvas.width = size * dpr;
+  canvas.height = size * dpr;
+  canvas.style.width = size + 'px';
+  canvas.style.height = size + 'px';
+  ctx.scale(dpr, dpr);
+
+  const cx = size/2, cy = size/2, r = 36, lw = 6;
+  const startAngle = 0.75 * Math.PI;
+  const endAngle = 2.25 * Math.PI;
+  const sweep = endAngle - startAngle;
+
+  // Track
+  ctx.beginPath();
+  ctx.arc(cx, cy, r, startAngle, endAngle);
+  ctx.strokeStyle = 'rgba(255,255,255,0.06)';
+  ctx.lineWidth = lw;
+  ctx.lineCap = 'round';
+  ctx.stroke();
+
+  // Fill
+  const fillEnd = startAngle + sweep * value;
+  ctx.beginPath();
+  ctx.arc(cx, cy, r, startAngle, fillEnd);
+  ctx.strokeStyle = color;
+  ctx.lineWidth = lw;
+  ctx.lineCap = 'round';
+  ctx.stroke();
+}
+
+// Draw all gauges after load
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    // Base
+    drawGauge('g_dn_p', 0.800, '#76ff7a');
+    drawGauge('g_dn_r', 0.800, '#76ff7a');
+    drawGauge('g_dn_a', 0.800, '#76ff7a');
+    drawGauge('g_rn_p', 0.738, '#4fc3f7');
+    drawGauge('g_rn_r', 0.733, '#4fc3f7');
+    drawGauge('g_rn_a', 0.733, '#4fc3f7');
+    // Inference
+    drawGauge('g_dni_p', 0.867, '#76ff7a');
+    drawGauge('g_dni_r', 0.867, '#76ff7a');
+    drawGauge('g_dni_a', 0.867, '#76ff7a');
+    drawGauge('g_rni_p', 0.800, '#ffb347');
+    drawGauge('g_rni_r', 0.800, '#ffb347');
+    drawGauge('g_rni_a', 0.800, '#ffb347');
+  }, 300);
+});
+
+// ═══ GROUPED COMPARISON CHART ═══
+(function(){
+  const ax=AX();
+  const labels=['DenseNet\nBase','ResNet\nBase','DenseNet\nRT Inference','ResNet\nRT Inference'];
+  new Chart(document.getElementById('compChart'),{
+    type:'bar',
+    data:{labels:labels,datasets:[
+      {label:'Precision',data:[0.8,0.7376,0.8667,0.8],backgroundColor:'rgba(118,255,122,0.6)',borderColor:'#76ff7a',borderWidth:1,borderRadius:3,barPercentage:.7,categoryPercentage:.8},
+      {label:'Recall',data:[0.8,0.7333,0.8667,0.8],backgroundColor:'rgba(79,195,247,0.6)',borderColor:'#4fc3f7',borderWidth:1,borderRadius:3,barPercentage:.7,categoryPercentage:.8},
+      {label:'Accuracy',data:[0.8,0.7333,0.8667,0.8],backgroundColor:'rgba(192,132,252,0.6)',borderColor:'#c084fc',borderWidth:1,borderRadius:3,barPercentage:.7,categoryPercentage:.8},
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{...TT,callbacks:{label:ctx=>` ${ctx.dataset.label}: ${(ctx.raw*100).toFixed(1)}%`}}},
+      scales:{x:{...ax.x,ticks:{...ax.x.ticks,maxRotation:0}},y:{...ax.y,min:0.6,max:1.0,ticks:{...ax.y.ticks,callback:v=>(v*100).toFixed(0)+'%'}}}
+    }
+  });
+})();
+</script>
+</body>
+</html>
