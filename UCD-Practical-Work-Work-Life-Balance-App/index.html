@@ -1,1 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UCD Case Study: Student Work-Life Balance App — Nawaf Almutairi</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#0a0c10;--surface:#111418;--surface2:#181c22;--border:rgba(255,255,255,0.07);--green:#76ff7a;--green-dim:rgba(118,255,122,0.12);--amber:#ffb347;--amber-dim:rgba(255,179,71,0.12);--red:#ff5f6d;--red-dim:rgba(255,95,109,0.12);--blue:#4fc3f7;--blue-dim:rgba(79,195,247,0.12);--purple:#c084fc;--purple-dim:rgba(192,132,252,0.12);--text:#e8eaf0;--text-muted:#6b7280;--text-sub:#9ca3af;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;}
+  body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(118,255,122,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(118,255,122,0.025) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0;}
+  .w{position:relative;z-index:1;max-width:1400px;margin:0 auto;padding:0 24px 60px;}
+  header{padding:40px 0 32px;display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:20px;border-bottom:1px solid var(--border);margin-bottom:36px;}
+  .badge{display:inline-flex;align-items:center;gap:8px;background:var(--green-dim);border:1px solid rgba(118,255,122,0.3);color:var(--green);font-family:'DM Mono',monospace;font-size:11px;letter-spacing:0.08em;padding:5px 12px;border-radius:2px;margin-bottom:16px;text-transform:uppercase;}
+  .badge::before{content:'';width:6px;height:6px;background:var(--green);border-radius:50%;animation:pulse 2s infinite;}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
+  h1{font-family:'Syne',sans-serif;font-size:clamp(26px,4vw,42px);font-weight:800;line-height:1.1;letter-spacing:-0.02em;color:#fff;}
+  h1 span{color:var(--green);}
+  .header-sub{margin-top:10px;font-size:14px;color:var(--text-sub);font-weight:300;max-width:520px;line-height:1.6;}
+  .header-right{display:flex;flex-direction:column;align-items:flex-end;gap:10px;}
+  .author-card{background:var(--surface);border:1px solid var(--border);padding:14px 20px;border-radius:4px;text-align:right;}
+  .author-name{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:#fff;}
+  .author-meta{font-size:12px;color:var(--text-muted);margin-top:3px;font-family:'DM Mono',monospace;}
+  .module-tag{font-family:'DM Mono',monospace;font-size:11px;color:var(--text-muted);letter-spacing:0.06em;}
+  .sl{font-family:'DM Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:0.14em;color:var(--text-muted);margin:40px 0 16px;display:flex;align-items:center;gap:12px;}
+  .sl::after{content:'';flex:1;height:1px;background:var(--border);}
+  .card{background:var(--surface);border:1px solid var(--border);padding:24px;margin-bottom:16px;}
+  .card-h{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px;gap:12px;}
+  .ct{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:#fff;letter-spacing:-0.01em;}
+  .cs{font-size:12px;color:var(--text-muted);margin-top:4px;font-weight:300;line-height:1.5;}
+  .tag{font-family:'DM Mono',monospace;font-size:10px;padding:4px 10px;background:var(--surface2);border:1px solid var(--border);color:var(--text-muted);border-radius:2px;white-space:nowrap;letter-spacing:0.05em;text-transform:uppercase;flex-shrink:0;}
+  .prose{font-size:13px;color:var(--text-sub);line-height:1.8;}
+  .prose strong{color:#fff;font-weight:500;}
+  .hl{color:var(--green);font-family:'DM Mono',monospace;font-size:12px;}
+  .g2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;}
+  .g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:16px;}
+  .g4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px;}
+  .g5{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:16px;}
+  .g6{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-bottom:16px;}
+  @media(max-width:1100px){.g5,.g6{grid-template-columns:repeat(3,1fr);}}
+  @media(max-width:900px){.g2,.g3,.g4{grid-template-columns:1fr;}.g5,.g6{grid-template-columns:repeat(2,1fr);}}
 
+  /* ═══ CONCEPT BANNER ═══ */
+  .concept{background:var(--surface);border:2px solid rgba(118,255,122,0.3);padding:36px 40px;text-align:center;margin-bottom:16px;position:relative;overflow:hidden;}
+  .concept::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at center,rgba(118,255,122,0.05) 0%,transparent 70%);pointer-events:none;}
+  .concept-label{font-family:'DM Mono',monospace;font-size:10px;color:var(--green);letter-spacing:0.14em;text-transform:uppercase;margin-bottom:12px;}
+  .concept-text{font-family:'Syne',sans-serif;font-size:clamp(15px,2.2vw,20px);font-weight:700;color:#fff;line-height:1.4;max-width:700px;margin:0 auto 12px;}
+  .concept-target{font-size:13px;color:var(--text-muted);font-weight:300;}
+
+  /* ═══ UCD PROCESS STEPS ═══ */
+  .process-bar{display:flex;gap:0;margin-bottom:16px;overflow-x:auto;}
+  .process-step{flex:1;min-width:120px;background:var(--surface);border:1px solid var(--border);padding:16px 14px;text-align:center;position:relative;transition:border-color 0.2s;}
+  .process-step.active{border-color:rgba(118,255,122,0.3);background:var(--green-dim);}
+  .process-step:not(:last-child)::after{content:'';position:absolute;right:-8px;top:50%;transform:translateY(-50%);width:0;height:0;border-top:8px solid transparent;border-bottom:8px solid transparent;border-left:7px solid var(--green);z-index:2;}
+  .ps-num{font-family:'DM Mono',monospace;font-size:10px;color:var(--green);letter-spacing:0.1em;margin-bottom:4px;}
+  .ps-name{font-family:'Syne',sans-serif;font-size:11px;font-weight:700;color:#fff;}
+
+  /* ═══ PERSONA CARDS ═══ */
+  .persona{background:var(--surface);border:1px solid var(--border);padding:0;overflow:hidden;transition:border-color 0.2s,transform 0.2s;}
+  .persona:hover{border-color:rgba(118,255,122,0.2);transform:translateY(-2px);}
+  .persona-header{padding:20px 22px 16px;border-bottom:1px solid var(--border);}
+  .persona-name{font-family:'Syne',sans-serif;font-size:16px;font-weight:800;color:#fff;margin-bottom:2px;}
+  .persona-bio{font-size:11px;color:var(--text-muted);line-height:1.5;margin-top:6px;}
+  .persona-body{padding:16px 22px 20px;display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  .persona-section-title{font-family:'DM Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px;}
+  .persona-item{font-size:11px;color:var(--text-sub);line-height:1.6;padding-left:12px;position:relative;}
+  .persona-item::before{content:'';position:absolute;left:0;top:7px;width:4px;height:4px;border-radius:50%;background:var(--text-muted);}
+  .persona-quote{padding:14px 22px;background:var(--surface2);font-size:12px;color:var(--text-sub);font-style:italic;line-height:1.6;border-top:1px solid var(--border);}
+
+  /* ═══ MOSCOW TABLE ═══ */
+  .moscow-row{display:grid;grid-template-columns:140px 1fr 80px 80px;gap:0;border-bottom:1px solid rgba(255,255,255,0.04);align-items:center;}
+  .moscow-row.mh{border-bottom:1px solid var(--border);}
+  .moscow-row.mh>div{font-family:'DM Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);padding:0 0 12px;}
+  .moscow-cell{padding:11px 10px 11px 0;font-size:12px;color:var(--text-sub);line-height:1.5;}
+  .moscow-cell:first-child{color:#fff;font-weight:500;font-size:12px;}
+  .moscow-badge{font-family:'DM Mono',monospace;font-size:10px;padding:3px 8px;border-radius:2px;text-align:center;display:inline-block;font-weight:500;}
+  .moscow-badge.must{background:var(--green-dim);color:var(--green);}
+  .moscow-badge.should{background:var(--blue-dim);color:var(--blue);}
+  .moscow-badge.could{background:var(--amber-dim);color:var(--amber);}
+
+  /* ═══ SCREEN CARDS ═══ */
+  .screen{background:var(--surface);border:1px solid var(--border);padding:20px;text-align:center;transition:border-color 0.2s,transform 0.2s;}
+  .screen:hover{border-color:rgba(118,255,122,0.2);transform:translateY(-2px);}
+  .screen-mockup{background:var(--surface2);border:1px solid var(--border);border-radius:16px;padding:16px 14px;margin:0 auto 14px;max-width:200px;min-height:280px;display:flex;flex-direction:column;justify-content:center;position:relative;}
+  .screen-mockup::before{content:'';position:absolute;top:8px;left:50%;transform:translateX(-50%);width:40px;height:4px;background:rgba(255,255,255,0.1);border-radius:4px;}
+  .screen-title{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:#fff;margin-bottom:4px;}
+  .screen-desc{font-size:11px;color:var(--text-muted);line-height:1.5;}
+  .screen-el{background:var(--bg);border:1px solid var(--border);border-radius:4px;padding:6px 8px;margin:4px 0;font-size:10px;color:var(--text-sub);text-align:left;}
+  .screen-el.header-el{background:rgba(79,195,247,0.15);border-color:rgba(79,195,247,0.3);color:var(--blue);text-align:center;font-weight:500;border-radius:6px 6px 0 0;}
+  .screen-el.btn-el{background:rgba(118,255,122,0.15);border-color:rgba(118,255,122,0.3);color:var(--green);text-align:center;font-weight:500;border-radius:6px;}
+  .screen-el.stat-row-el{display:flex;justify-content:space-around;gap:4px;}
+  .screen-el .mini-stat{text-align:center;font-family:'DM Mono',monospace;font-size:10px;}
+  .screen-el .mini-stat .mv{color:var(--green);font-weight:700;font-size:13px;display:block;}
+  .screen-nav{display:flex;justify-content:space-around;margin-top:8px;padding-top:8px;border-top:1px solid var(--border);}
+  .screen-nav span{font-size:9px;color:var(--text-muted);font-family:'DM Mono',monospace;}
+
+  /* ═══ WIREFLOW ═══ */
+  .wireflow{display:flex;align-items:center;gap:0;overflow-x:auto;padding:16px 0;margin-bottom:16px;}
+  .wf-node{background:var(--surface);border:1px solid var(--border);padding:14px 16px;min-width:130px;text-align:center;flex-shrink:0;}
+  .wf-node.start{border-color:rgba(118,255,122,0.4);background:var(--green-dim);}
+  .wf-arrow{color:var(--green);font-size:18px;padding:0 6px;flex-shrink:0;font-family:'DM Mono',monospace;}
+  .wf-name{font-family:'Syne',sans-serif;font-size:11px;font-weight:700;color:#fff;margin-bottom:2px;}
+  .wf-action{font-size:10px;color:var(--text-muted);line-height:1.3;}
+
+  /* ═══ COGNITIVE WALKTHROUGH ═══ */
+  .cw-grid{display:grid;grid-template-columns:40px 140px 1fr 1fr 1fr 1fr;gap:0;font-size:11px;}
+  @media(max-width:900px){.cw-grid{overflow-x:auto;display:flex;flex-wrap:nowrap;}.cw-cell{min-width:120px;}}
+  .cw-cell{padding:10px 8px;border-bottom:1px solid rgba(255,255,255,0.04);color:var(--text-sub);line-height:1.4;}
+  .cw-cell.ch{font-family:'DM Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-muted);padding:8px 8px 10px;border-bottom:1px solid var(--border);}
+  .cw-cell:first-child{color:var(--text-muted);font-family:'DM Mono',monospace;font-weight:500;}
+  .cw-cell:nth-child(2){color:#fff;font-weight:500;}
+  .cw-pass{color:var(--green);font-weight:600;}
+  .cw-fail{color:var(--red);font-weight:600;}
+
+  /* ═══ EVAL METHOD CARDS ═══ */
+  .eval-method{background:var(--surface);border:1px solid var(--border);padding:20px;border-top:2px solid transparent;}
+  .eval-method .em-title{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:#fff;margin-bottom:8px;}
+  .eval-method .em-desc{font-size:12px;color:var(--text-sub);line-height:1.7;}
+
+  /* ═══ LINK CARD ═══ */
+  .link-card{background:var(--surface);border:1px solid var(--border);padding:20px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px;transition:border-color 0.2s;}
+  .link-card:hover{border-color:rgba(118,255,122,0.3);}
+  .link-card a{font-family:'DM Mono',monospace;font-size:12px;color:var(--green);text-decoration:none;letter-spacing:0.04em;transition:gap 0.2s;display:inline-flex;align-items:center;gap:6px;}
+  .link-card a:hover{gap:10px;}
+
+  footer{border-top:1px solid var(--border);margin-top:48px;padding-top:28px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;}
+  .footer-left{font-size:12px;color:var(--text-muted);line-height:1.7;}
+  .footer-links{display:flex;gap:16px;}
+  .footer-link{font-family:'DM Mono',monospace;font-size:11px;color:var(--text-muted);text-decoration:none;border-bottom:1px solid transparent;transition:all 0.15s;letter-spacing:0.04em;padding-bottom:1px;}
+  .footer-link:hover{color:var(--green);border-color:var(--green);}
+  .fade-in{opacity:0;transform:translateY(12px);animation:fadeIn 0.5s ease forwards;}
+  @keyframes fadeIn{to{opacity:1;transform:none;}}
+</style>
+</head>
+<body>
+<div class="w">
+
+  <!-- ═══════════ HEADER ═══════════ -->
+  <header class="fade-in">
+    <div>
+      <div class="badge">KV5047 Human Computer Interaction · Northumbria University</div>
+      <h1>UCD Practical Work<br><span>Work-Life Balance App</span></h1>
+      <p class="header-sub">User-Centred Design case study: personas, MoSCoW requirements, interface sketches, wireflow diagrams, interactive prototype, and cognitive walkthrough evaluation for a student productivity app.</p>
+    </div>
+    <div class="header-right">
+      <div class="author-card">
+        <div class="author-name">Nawaf Almutairi</div>
+        <div class="author-meta">BSc Computer Science</div>
+        <div class="author-meta" style="margin-top:4px;">Northumbria University</div>
+      </div>
+      <div class="module-tag">Tools: Figma · Canva</div>
+    </div>
+  </header>
+
+  <!-- ═══════════ APP CONCEPT ═══════════ -->
+  <div class="concept fade-in">
+    <div class="concept-label">App Concept</div>
+    <div class="concept-text">A simple, easy-to-use app that helps working students manage their tasks, deadlines, and schedules in one place. It provides personalized reminders, progress tracking, and a calendar view to stay organized and reduce stress.</div>
+    <div class="concept-target">Target Users: Working students aged 18-25 who need a simple tool to manage busy schedules</div>
+  </div>
+
+  <!-- ═══════════ UCD PROCESS ═══════════ -->
+  <div class="sl">— UCD Process Followed</div>
+  <div class="process-bar fade-in">
+    <div class="process-step active"><div class="ps-num">01</div><div class="ps-name">Personas</div></div>
+    <div class="process-step active"><div class="ps-num">02</div><div class="ps-name">Requirements</div></div>
+    <div class="process-step active"><div class="ps-num">03</div><div class="ps-name">Sketches</div></div>
+    <div class="process-step active"><div class="ps-num">04</div><div class="ps-name">Wireflow</div></div>
+    <div class="process-step active"><div class="ps-num">05</div><div class="ps-name">Prototype</div></div>
+    <div class="process-step active"><div class="ps-num">06</div><div class="ps-name">Evaluation</div></div>
+  </div>
+
+  <!-- ═══════════ PERSONAS ═══════════ -->
+  <div class="sl">— 1. Personas & Scenarios</div>
+  <div class="g3 fade-in">
+    <div class="persona" style="border-top:3px solid var(--blue)">
+      <div class="persona-header">
+        <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--blue);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:6px">Persona 1</div>
+        <div class="persona-name">Sarah Jane</div>
+        <div class="persona-bio">22-year-old business student working part-time at a retail store. Lives in a shared apartment, relies on smartphone and basic laptop. Struggles with overlapping schedules and late-night fatigue.</div>
+      </div>
+      <div class="persona-body">
+        <div>
+          <div class="persona-section-title" style="color:var(--green)">Goals</div>
+          <div class="persona-item">Graduate with good grades</div>
+          <div class="persona-item">Maintain financial independence</div>
+          <div class="persona-item">Improve time management skills</div>
+        </div>
+        <div>
+          <div class="persona-section-title" style="color:var(--red)">Frustrations</div>
+          <div class="persona-item">Scheduling conflicts between work and classes</div>
+          <div class="persona-item">Late-night fatigue affecting study quality</div>
+          <div class="persona-item">Difficulty finding focused study time</div>
+        </div>
+      </div>
+      <div class="persona-quote">"Finally, I don't have to stress about what to study or when to study. This app makes it easy to plan my day without feeling overwhelmed!"</div>
+    </div>
+
+    <div class="persona" style="border-top:3px solid var(--purple)">
+      <div class="persona-header">
+        <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--purple);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:6px">Persona 2</div>
+        <div class="persona-name">James Carter</div>
+        <div class="persona-bio">22-year-old undergraduate working part-time as a barista. Uses mid-range laptop and smartphone. Main problem is juggling overlapping deadlines and unpredictable work hours.</div>
+      </div>
+      <div class="persona-body">
+        <div>
+          <div class="persona-section-title" style="color:var(--green)">Goals</div>
+          <div class="persona-item">Complete degree while building portfolio</div>
+          <div class="persona-item">Manage overlapping deadlines efficiently</div>
+          <div class="persona-item">Reduce stress during high workload</div>
+        </div>
+        <div>
+          <div class="persona-section-title" style="color:var(--red)">Frustrations</div>
+          <div class="persona-item">Difficulty setting boundaries between work and study</div>
+          <div class="persona-item">Overlapping deadlines causing stress</div>
+          <div class="persona-item">Lack of structured plan for commitments</div>
+        </div>
+      </div>
+      <div class="persona-quote">"This app helps me stay on top of things. Now I can see all my deadlines in one place and prioritize my work without the usual panic."</div>
+    </div>
+
+    <div class="persona" style="border-top:3px solid var(--amber)">
+      <div class="persona-header">
+        <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--amber);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:6px">Persona 3</div>
+        <div class="persona-name">Alex Morgan</div>
+        <div class="persona-bio">24-year-old final-year law student working part-time as a legal intern. Lives with parents, commutes daily. Prefers reliable, straightforward tools. Cautious about adopting new technology.</div>
+      </div>
+      <div class="persona-body">
+        <div>
+          <div class="persona-section-title" style="color:var(--green)">Goals</div>
+          <div class="persona-item">Gain practical experience while maintaining grades</div>
+          <div class="persona-item">Develop time-blocking strategies for study</div>
+          <div class="persona-item">Minimize last-minute cramming before exams</div>
+        </div>
+        <div>
+          <div class="persona-section-title" style="color:var(--red)">Frustrations</div>
+          <div class="persona-item">Limited study time due to long internship hours</div>
+          <div class="persona-item">High stress during exams and deadlines</div>
+          <div class="persona-item">Difficulty balancing academic and work life</div>
+        </div>
+      </div>
+      <div class="persona-quote">"With this app, I can finally block time for study and focus without distractions. No more last-minute cramming!"</div>
+    </div>
+  </div>
+
+  <!-- ═══════════ MOSCOW ═══════════ -->
+  <div class="sl">— 2. MoSCoW Requirements</div>
+  <div class="g2 fade-in">
+    <div class="card" style="padding-bottom:8px">
+      <div class="card-h"><div><div class="ct">Functional Requirements</div><div class="cs">Features prioritised using MoSCoW method</div></div><div class="tag">Functional</div></div>
+      <div class="moscow-row mh"><div>Feature</div><div>Description</div><div>Priority</div><div>Personas</div></div>
+      <div class="moscow-row"><div class="moscow-cell">Task Scheduling</div><div class="moscow-cell">Create tasks, set priorities, organise by urgency and deadlines</div><div class="moscow-cell"><span class="moscow-badge must">Must</span></div><div class="moscow-cell">1 & 2</div></div>
+      <div class="moscow-row"><div class="moscow-cell">Personalised Recs</div><div class="moscow-cell">Tailored study/work plans based on available time and energy</div><div class="moscow-cell"><span class="moscow-badge must">Must</span></div><div class="moscow-cell">1 & 3</div></div>
+      <div class="moscow-row"><div class="moscow-cell">Calendar View</div><div class="moscow-cell">Unified view showing work shifts, classes, and deadlines</div><div class="moscow-cell"><span class="moscow-badge must">Must</span></div><div class="moscow-cell">2 & 3</div></div>
+      <div class="moscow-row"><div class="moscow-cell">Reminders</div><div class="moscow-cell">Timely notifications for tasks, deadlines, and blocked slots</div><div class="moscow-cell"><span class="moscow-badge must">Must</span></div><div class="moscow-cell">All</div></div>
+      <div class="moscow-row"><div class="moscow-cell">Progress Tracking</div><div class="moscow-cell">Insights into task completion and productivity trends</div><div class="moscow-cell"><span class="moscow-badge should">Should</span></div><div class="moscow-cell">2 & 3</div></div>
+      <div class="moscow-row"><div class="moscow-cell">Time-Blocking</div><div class="moscow-cell">Block dedicated time slots for focused work or study</div><div class="moscow-cell"><span class="moscow-badge should">Should</span></div><div class="moscow-cell">3</div></div>
+      <div class="moscow-row"><div class="moscow-cell">Offline Mode</div><div class="moscow-cell">View and update tasks without internet connectivity</div><div class="moscow-cell"><span class="moscow-badge should">Should</span></div><div class="moscow-cell">1 & 2</div></div>
+      <div class="moscow-row"><div class="moscow-cell">Collaboration</div><div class="moscow-cell">Task sharing and collaboration for group projects</div><div class="moscow-cell"><span class="moscow-badge could">Could</span></div><div class="moscow-cell">2</div></div>
+      <div class="moscow-row"><div class="moscow-cell">Gamification</div><div class="moscow-cell">Badges or rewards to boost engagement and motivation</div><div class="moscow-cell"><span class="moscow-badge could">Could</span></div><div class="moscow-cell">1</div></div>
+    </div>
+    <div class="card" style="padding-bottom:8px">
+      <div class="card-h"><div><div class="ct">Non-Functional Requirements</div><div class="cs">Quality attributes for the app experience</div></div><div class="tag">Non-Functional</div></div>
+      <div class="moscow-row mh"><div>Feature</div><div>Description</div><div>Priority</div><div>Personas</div></div>
+      <div class="moscow-row"><div class="moscow-cell">Usability</div><div class="moscow-cell">Intuitive interface minimising learning time</div><div class="moscow-cell"><span class="moscow-badge must">Must</span></div><div class="moscow-cell">All</div></div>
+      <div class="moscow-row"><div class="moscow-cell">Reliability</div><div class="moscow-cell">Consistent performance, no crashes during critical moments</div><div class="moscow-cell"><span class="moscow-badge must">Must</span></div><div class="moscow-cell">All</div></div>
+      <div class="moscow-row"><div class="moscow-cell">Performance</div><div class="moscow-cell">Fast loading and smooth interactions</div><div class="moscow-cell"><span class="moscow-badge should">Should</span></div><div class="moscow-cell">All</div></div>
+      <div class="moscow-row"><div class="moscow-cell">Security</div><div class="moscow-cell">Protect user data from unauthorised access</div><div class="moscow-cell"><span class="moscow-badge should">Should</span></div><div class="moscow-cell">All</div></div>
+      <div class="moscow-row"><div class="moscow-cell">Custom Themes</div><div class="moscow-cell">Personalise appearance with different colour schemes</div><div class="moscow-cell"><span class="moscow-badge could">Could</span></div><div class="moscow-cell">All</div></div>
+      <div class="moscow-row"><div class="moscow-cell">Accessibility</div><div class="moscow-cell">Voice commands and screen reader compatibility</div><div class="moscow-cell"><span class="moscow-badge could">Could</span></div><div class="moscow-cell">3</div></div>
+    </div>
+  </div>
+
+  <!-- ═══════════ INTERFACE SKETCHES ═══════════ -->
+  <div class="sl">— 3. Interface Sketches</div>
+  <div class="g6 fade-in">
+    <div class="screen">
+      <div class="screen-mockup">
+        <div class="screen-el header-el">My Dashboard</div>
+        <div class="screen-el stat-row-el"><div class="mini-stat"><span class="mv">8</span>Tasks</div><div class="mini-stat"><span class="mv">3</span>Done</div><div class="mini-stat"><span class="mv">2</span>Meet</div></div>
+        <div class="screen-el">Team Meeting 10:00</div>
+        <div class="screen-el">Project Deadline 2:00</div>
+        <div class="screen-el">Gym Session 6:00</div>
+        <div style="font-size:9px;color:var(--text-muted);margin-top:6px;text-align:left">Reminders</div>
+        <div class="screen-el" style="font-size:9px">Submit weekly report</div>
+        <div class="screen-nav"><span>Home</span><span>Cal</span><span>Tasks</span><span>Profile</span></div>
+      </div>
+      <div class="screen-title">Dashboard</div>
+      <div class="screen-desc">Daily overview with task summary, today's tasks, and reminders</div>
+    </div>
+    <div class="screen">
+      <div class="screen-mockup">
+        <div class="screen-el header-el">Calendar</div>
+        <div style="display:flex;justify-content:center;gap:8px;margin:6px 0;font-size:10px;color:var(--text-muted)"><span style="border-bottom:1px solid var(--blue)">Monthly</span><span>Weekly</span><span>Daily</span></div>
+        <div style="font-size:11px;color:#fff;text-align:center;margin:8px 0;font-weight:500">September 2023</div>
+        <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px;font-size:9px;color:var(--text-muted);text-align:center">
+          <span>S</span><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span>
+          <span>27</span><span>28</span><span>29</span><span>30</span><span>31</span><span>1</span><span>2</span>
+          <span style="color:var(--red)">3</span><span>4</span><span style="color:var(--blue)">5</span><span>6</span><span>7</span><span style="color:var(--amber)">8</span><span>9</span>
+        </div>
+        <div style="margin-top:10px;font-size:9px;color:var(--text-muted);text-align:left">
+          <div style="display:flex;align-items:center;gap:4px;margin:3px 0"><span style="width:6px;height:6px;border-radius:50%;background:var(--red);display:inline-block"></span> High</div>
+          <div style="display:flex;align-items:center;gap:4px;margin:3px 0"><span style="width:6px;height:6px;border-radius:50%;background:var(--amber);display:inline-block"></span> Medium</div>
+          <div style="display:flex;align-items:center;gap:4px;margin:3px 0"><span style="width:6px;height:6px;border-radius:50%;background:var(--blue);display:inline-block"></span> Low</div>
+        </div>
+        <div class="screen-nav"><span>Home</span><span>Tasks</span><span>Projects</span><span>Profile</span></div>
+      </div>
+      <div class="screen-title">Calendar View</div>
+      <div class="screen-desc">Monthly/weekly/daily toggle with colour-coded priority tasks</div>
+    </div>
+    <div class="screen">
+      <div class="screen-mockup">
+        <div class="screen-el header-el">Progress Tracking</div>
+        <div style="text-align:center;font-size:10px;color:var(--text-muted);margin:8px 0">Task Completion Chart</div>
+        <div class="screen-el stat-row-el"><div class="mini-stat"><span class="mv" style="color:var(--green)">12</span>Done</div><div class="mini-stat"><span class="mv" style="color:var(--blue)">5</span>In Prog</div><div class="mini-stat"><span class="mv" style="color:var(--red)">3</span>Overdue</div></div>
+        <div style="font-size:9px;color:var(--text-muted);margin-top:8px;text-align:left">Productivity Insights</div>
+        <div class="screen-el" style="font-size:9px">Peak Time: 9–11 AM</div>
+        <div class="screen-el" style="font-size:9px">Completion Rate: 85%</div>
+        <div style="font-size:9px;color:var(--text-muted);margin-top:6px;text-align:left">Tips</div>
+        <div class="screen-el" style="font-size:9px">Schedule breaks regularly</div>
+        <div class="screen-nav"><span>Home</span><span>Tasks</span><span>Progress</span><span>Profile</span></div>
+      </div>
+      <div class="screen-title">Progress Tracking</div>
+      <div class="screen-desc">Completion stats, productivity insights, and tips</div>
+    </div>
+    <div class="screen">
+      <div class="screen-mockup">
+        <div style="text-align:center;font-size:14px;font-weight:600;color:#fff;margin:16px 0">Welcome to solution</div>
+        <div class="screen-el">Email</div>
+        <div class="screen-el">Password</div>
+        <div style="display:flex;justify-content:space-between;font-size:9px;color:var(--text-muted);margin:6px 0"><span>Remember me</span><span style="color:var(--blue)">Forgot password?</span></div>
+        <div class="screen-el btn-el">Login</div>
+      </div>
+      <div class="screen-title">Login</div>
+      <div class="screen-desc">Email/password authentication with remember me and recovery</div>
+    </div>
+    <div class="screen">
+      <div class="screen-mockup">
+        <div style="text-align:center;margin:12px 0">
+          <div style="width:40px;height:40px;border-radius:50%;background:var(--surface2);border:1px solid var(--border);margin:0 auto 6px"></div>
+          <div style="font-size:12px;color:#fff;font-weight:500">John Doe</div>
+          <div style="font-size:9px;color:var(--text-muted)">john.doe@example.com</div>
+        </div>
+        <div class="screen-el stat-row-el"><div class="mini-stat"><span class="mv" style="color:var(--green)">12</span>Done</div><div class="mini-stat"><span class="mv" style="color:var(--amber)">5</span>Pending</div></div>
+        <div class="screen-el btn-el" style="margin-top:8px">Edit Profile</div>
+        <div class="screen-el" style="text-align:center">Account Settings</div>
+        <div class="screen-el" style="text-align:center;color:var(--red);border-color:rgba(255,95,109,0.3)">Logout</div>
+      </div>
+      <div class="screen-title">Profile</div>
+      <div class="screen-desc">User info, progress summary, settings, and logout</div>
+    </div>
+    <div class="screen">
+      <div class="screen-mockup">
+        <div class="screen-el header-el">Create New Task</div>
+        <div class="screen-el">Task Name</div>
+        <div class="screen-el">Description</div>
+        <div class="screen-el">Priority</div>
+        <div class="screen-el">Due Date</div>
+        <div class="screen-el">Set Reminder</div>
+        <div class="screen-el">Additional Notes</div>
+        <div class="screen-el btn-el" style="margin-top:6px">Create Task</div>
+        <div class="screen-nav"><span>Home</span><span>Tasks</span><span>Progress</span><span>Profile</span></div>
+      </div>
+      <div class="screen-title">Create Task</div>
+      <div class="screen-desc">Form with name, priority, due date, reminder, and notes</div>
+    </div>
+  </div>
+
+  <!-- ═══════════ WIREFLOW ═══════════ -->
+  <div class="sl">— 4. Wireflow Diagram</div>
+  <div class="card fade-in" style="overflow-x:auto">
+    <div class="card-h"><div><div class="ct">User Flow: Login to Core Features</div><div class="cs">How users navigate between the 6 screens</div></div><div class="tag">Wireflow</div></div>
+    <div class="wireflow">
+      <div class="wf-node start"><div class="wf-name">Login</div><div class="wf-action">Enter credentials</div></div>
+      <div class="wf-arrow">--></div>
+      <div class="wf-node"><div class="wf-name">Dashboard</div><div class="wf-action">View today's tasks</div></div>
+      <div class="wf-arrow">--></div>
+      <div class="wf-node"><div class="wf-name">Calendar</div><div class="wf-action">Monthly/weekly/daily</div></div>
+      <div class="wf-arrow">--></div>
+      <div class="wf-node"><div class="wf-name">Progress</div><div class="wf-action">Track completion</div></div>
+      <div class="wf-arrow">--></div>
+      <div class="wf-node"><div class="wf-name">Create Task</div><div class="wf-action">Add new task</div></div>
+    </div>
+    <div style="display:flex;gap:16px;margin-top:12px;padding-top:12px;border-top:1px solid var(--border);flex-wrap:wrap">
+      <div class="link-card" style="flex:1;min-width:260px;padding:14px 18px">
+        <div><div class="ct" style="font-size:12px">Wireflow Diagram (Figma Board)</div><div style="font-size:11px;color:var(--text-muted);margin-top:2px">Full wireflow with screen connections</div></div>
+        <a href="https://www.figma.com/board/ra1KlnydilPLqqmtmyxKxe/Untitled?node-id=0-1&t=NZP0bnKpvSHXeyKL-1" target="_blank">Open in Figma --></a>
+      </div>
+      <div class="link-card" style="flex:1;min-width:260px;padding:14px 18px">
+        <div><div class="ct" style="font-size:12px">Interactive Hi-Fi Prototype</div><div style="font-size:11px;color:var(--text-muted);margin-top:2px">Clickable prototype with all screens</div></div>
+        <a href="https://www.figma.com/proto/jCkMAZ0TYt0iZO9USkDLQR/Untitled?node-id=37-1125&t=MjQESX282wbF2rzV-1" target="_blank">Open Prototype --></a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════ EVALUATION ═══════════ -->
+  <div class="sl">— 5. Evaluation Plan</div>
+  <div class="g4 fade-in">
+    <div class="eval-method" style="border-top-color:var(--green)"><div class="em-title">Cognitive Walkthrough</div><div class="em-desc">Evaluators simulate a new user's experience step-by-step, asking: Will the user know what to do? Will they see how to do it?</div></div>
+    <div class="eval-method" style="border-top-color:var(--blue)"><div class="em-title">Observation</div><div class="em-desc">Evaluators observe users during the walkthrough, noting where they encounter problems or hesitation.</div></div>
+    <div class="eval-method" style="border-top-color:var(--purple)"><div class="em-title">Think-Aloud Protocol</div><div class="em-desc">Users explain their thoughts while completing tasks, helping evaluators understand their reasoning and difficulties.</div></div>
+    <div class="eval-method" style="border-top-color:var(--amber)"><div class="em-title">Post-Test Questionnaire</div><div class="em-desc">Users provide feedback on their experience after the walkthrough, offering subjective insights into usability.</div></div>
+  </div>
+
+  <!-- ═══════════ COGNITIVE WALKTHROUGH ═══════════ -->
+  <div class="sl">— 6. Cognitive Walkthrough Results</div>
+  <div class="card fade-in" style="padding:16px;overflow-x:auto">
+    <div class="card-h" style="padding:0 8px"><div><div class="ct">Completed Cognitive Walkthrough</div><div class="cs">4 questions per task: Know what to do? See how? Understand next step? Get feedback?</div></div><div class="tag">Results</div></div>
+    <div class="cw-grid">
+      <div class="cw-cell ch">ID</div><div class="cw-cell ch">Task</div><div class="cw-cell ch">Know what to do?</div><div class="cw-cell ch">See how?</div><div class="cw-cell ch">Understand next?</div><div class="cw-cell ch">Get feedback?</div>
+      <div class="cw-cell">T1</div><div class="cw-cell">Log in</div><div class="cw-cell cw-pass">Yes</div><div class="cw-cell cw-pass">Yes</div><div class="cw-cell cw-pass">Yes</div><div class="cw-cell cw-pass">Yes</div>
+      <div class="cw-cell">T2</div><div class="cw-cell">Add new task</div><div class="cw-cell cw-pass">Yes</div><div class="cw-cell cw-pass">Yes</div><div class="cw-cell cw-pass">Yes</div><div class="cw-cell cw-pass">Yes</div>
+      <div class="cw-cell">T3</div><div class="cw-cell">Set priority & date</div><div class="cw-cell cw-pass">Yes</div><div class="cw-cell cw-pass">Yes</div><div class="cw-cell cw-pass">Yes</div><div class="cw-cell cw-fail">No</div>
+      <div class="cw-cell">T4</div><div class="cw-cell">Set reminder</div><div class="cw-cell cw-pass">Yes</div><div class="cw-cell cw-pass">Yes</div><div class="cw-cell cw-pass">Yes</div><div class="cw-cell cw-pass">Yes</div>
+      <div class="cw-cell">T5</div><div class="cw-cell">Calendar view</div><div class="cw-cell cw-pass">Yes</div><div class="cw-cell cw-pass">Yes</div><div class="cw-cell cw-pass">Yes</div><div class="cw-cell cw-pass">Yes</div>
+      <div class="cw-cell">T6</div><div class="cw-cell">Edit existing task</div><div class="cw-cell cw-fail">No</div><div class="cw-cell cw-fail">No</div><div class="cw-cell cw-fail">No</div><div class="cw-cell cw-pass">Yes</div>
+      <div class="cw-cell">T7</div><div class="cw-cell">Track progress</div><div class="cw-cell cw-pass">Yes</div><div class="cw-cell cw-pass">Yes</div><div class="cw-cell cw-pass">Yes</div><div class="cw-cell cw-fail">No</div>
+      <div class="cw-cell">T8</div><div class="cw-cell">Edit profile</div><div class="cw-cell cw-pass">Yes</div><div class="cw-cell cw-pass">Yes</div><div class="cw-cell cw-pass">Yes</div><div class="cw-cell cw-fail">No</div>
+      <div class="cw-cell">T9</div><div class="cw-cell">Log out</div><div class="cw-cell cw-pass">Yes</div><div class="cw-cell cw-pass">Yes</div><div class="cw-cell cw-pass">Yes</div><div class="cw-cell cw-pass">Yes</div>
+    </div>
+  </div>
+
+  <div class="g3 fade-in">
+    <div class="card" style="border-left:3px solid var(--green)">
+      <div class="ct" style="margin-bottom:10px">Passed Well</div>
+      <div class="prose" style="font-size:12px">Login (T1), Add Task (T2), Set Reminder (T4), Calendar View (T5), and Logout (T9) all passed all four cognitive walkthrough questions — users found these flows clear, visible, and with appropriate feedback.</div>
+    </div>
+    <div class="card" style="border-left:3px solid var(--red)">
+      <div class="ct" style="margin-bottom:10px">Critical Issue: Edit Task (T6)</div>
+      <div class="prose" style="font-size:12px">Users could not find the Edit option beside each task, the edit form was unclear, and there was no visible save/edit button. This is the most significant usability issue discovered — <strong>3 out of 4 questions failed</strong>.</div>
+    </div>
+    <div class="card" style="border-left:3px solid var(--amber)">
+      <div class="ct" style="margin-bottom:10px">Feedback Gaps</div>
+      <div class="prose" style="font-size:12px">Tasks T3 (priority setting), T7 (progress tracking), and T8 (profile editing) lacked clear feedback after user actions. Users completed the tasks but were unsure if their changes were saved or applied.</div>
+    </div>
+  </div>
+
+  <!-- ═══════════ FOOTER ═══════════ -->
+  <footer class="fade-in">
+    <div class="footer-left">
+      <div>KV5047 Human Computer Interaction · Northumbria University · 2024-2026</div>
+      <div>UCD case study built with HTML/CSS · Prototype on Figma</div>
+    </div>
+    <div class="footer-links">
+      <a class="footer-link" href="https://nawafbalmutairi.github.io">Portfolio</a>
+      <a class="footer-link" href="https://github.com/nawafbalmutairi">GitHub</a>
+      <a class="footer-link" href="https://linkedin.com/in/nawafbalmutairi">LinkedIn</a>
+    </div>
+  </footer>
+
+</div>
+</body>
+</html>
