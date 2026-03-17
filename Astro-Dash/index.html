@@ -1,1 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Astro Dash — Game UI/UX Design Showcase</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#0a0c10;--surface:#111418;--surface2:#181c22;--border:rgba(255,255,255,0.07);--green:#76ff7a;--green-dim:rgba(118,255,122,0.12);--amber:#ffb347;--amber-dim:rgba(255,179,71,0.12);--red:#ff5f6d;--blue:#4fc3f7;--blue-dim:rgba(79,195,247,0.12);--purple:#c084fc;--purple-dim:rgba(192,132,252,0.12);--text:#e8eaf0;--text-muted:#6b7280;--text-sub:#9ca3af;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;}
+  body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(118,255,122,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(118,255,122,0.025) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0;}
+  .w{position:relative;z-index:1;max-width:1400px;margin:0 auto;padding:0 24px 60px;}
+  header{padding:40px 0 32px;display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:20px;border-bottom:1px solid var(--border);margin-bottom:36px;}
+  .badge{display:inline-flex;align-items:center;gap:8px;background:var(--green-dim);border:1px solid rgba(118,255,122,0.3);color:var(--green);font-family:'DM Mono',monospace;font-size:11px;letter-spacing:0.08em;padding:5px 12px;border-radius:2px;margin-bottom:16px;text-transform:uppercase;}
+  .badge::before{content:'';width:6px;height:6px;background:var(--green);border-radius:50%;animation:pulse 2s infinite;}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
+  h1{font-family:'Syne',sans-serif;font-size:clamp(26px,4vw,42px);font-weight:800;line-height:1.1;letter-spacing:-0.02em;color:#fff;}h1 span{color:var(--green);}
+  .header-sub{margin-top:10px;font-size:14px;color:var(--text-sub);font-weight:300;max-width:520px;line-height:1.6;}
+  .header-right{display:flex;flex-direction:column;align-items:flex-end;gap:10px;}
+  .author-card{background:var(--surface);border:1px solid var(--border);padding:14px 20px;border-radius:4px;text-align:right;}
+  .author-name{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:#fff;}
+  .author-meta{font-size:12px;color:var(--text-muted);margin-top:3px;font-family:'DM Mono',monospace;}
+  .module-tag{font-family:'DM Mono',monospace;font-size:11px;color:var(--text-muted);letter-spacing:0.06em;}
+  .sl{font-family:'DM Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:0.14em;color:var(--text-muted);margin:40px 0 16px;display:flex;align-items:center;gap:12px;}
+  .sl::after{content:'';flex:1;height:1px;background:var(--border);}
+  .card{background:var(--surface);border:1px solid var(--border);padding:24px;margin-bottom:16px;}
+  .card-h{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px;gap:12px;}
+  .ct{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:#fff;letter-spacing:-0.01em;}
+  .cs{font-size:12px;color:var(--text-muted);margin-top:4px;font-weight:300;line-height:1.5;}
+  .tag{font-family:'DM Mono',monospace;font-size:10px;padding:4px 10px;background:var(--surface2);border:1px solid var(--border);color:var(--text-muted);border-radius:2px;white-space:nowrap;letter-spacing:0.05em;text-transform:uppercase;flex-shrink:0;}
+  .prose{font-size:13px;color:var(--text-sub);line-height:1.8;}.prose strong{color:#fff;font-weight:500;}
+  .hl{color:var(--green);font-family:'DM Mono',monospace;font-size:12px;}
+  .g2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;}
+  .g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:16px;}
+  .g4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px;}
+  .g5{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:16px;}
+  @media(max-width:1100px){.g4,.g5{grid-template-columns:repeat(3,1fr);}}
+  @media(max-width:900px){.g2,.g3{grid-template-columns:1fr;}.g4,.g5{grid-template-columns:repeat(2,1fr);}}
 
+  /* STAT */
+  .stat{background:var(--surface);border:1px solid var(--border);padding:20px 18px 16px;position:relative;overflow:hidden;transition:border-color 0.2s;}
+  .stat:hover{border-color:rgba(118,255,122,0.2);}
+  .stat::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
+  .stat.g::after{background:var(--green);}.stat.b::after{background:var(--blue);}.stat.a::after{background:var(--amber);}.stat.p::after{background:var(--purple);}.stat.r::after{background:var(--red);}
+  .stat-label{font-family:'DM Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);margin-bottom:10px;}
+  .stat-val{font-family:'Syne',sans-serif;font-size:22px;font-weight:700;line-height:1.1;}
+  .stat.g .stat-val{color:var(--green);}.stat.b .stat-val{color:var(--blue);}.stat.a .stat-val{color:var(--amber);}.stat.p .stat-val{color:var(--purple);}.stat.r .stat-val{color:var(--red);}
+  .stat-desc{font-size:11px;color:var(--text-muted);margin-top:8px;line-height:1.4;}
+
+  /* SCREENSHOT GALLERY */
+  .gallery{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:16px;}
+  @media(max-width:900px){.gallery{grid-template-columns:repeat(2,1fr);}}
+  @media(max-width:600px){.gallery{grid-template-columns:1fr;}}
+  .ss{background:var(--surface);border:1px solid var(--border);overflow:hidden;transition:border-color 0.2s,transform 0.2s;}
+  .ss:hover{border-color:rgba(118,255,122,0.25);transform:translateY(-3px);}
+  .ss img{width:100%;height:auto;display:block;border-bottom:1px solid var(--border);}
+  .ss-body{padding:16px 18px;}
+  .ss-title{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:#fff;margin-bottom:4px;}
+  .ss-desc{font-size:11px;color:var(--text-muted);line-height:1.5;}
+  .ss-tag{display:inline-block;font-family:'DM Mono',monospace;font-size:9px;padding:2px 7px;background:var(--green-dim);border:1px solid rgba(118,255,122,0.3);color:var(--green);margin-top:8px;letter-spacing:0.04em;text-transform:uppercase;}
+
+  /* USER STORY */
+  .story{background:var(--surface);border:1px solid var(--border);padding:18px 20px;border-left:3px solid var(--green);transition:border-color 0.2s;}
+  .story:hover{border-color:rgba(118,255,122,0.3);}
+  .story-id{font-family:'DM Mono',monospace;font-size:10px;color:var(--green);letter-spacing:0.08em;margin-bottom:4px;}
+  .story-text{font-size:12px;color:var(--text-sub);line-height:1.6;font-style:italic;}
+  .story-splits{margin-top:10px;padding-top:10px;border-top:1px solid var(--border);}
+  .story-split{font-size:11px;color:var(--text-muted);line-height:1.6;padding-left:12px;position:relative;}
+  .story-split::before{content:'';position:absolute;left:0;top:7px;width:4px;height:4px;border-radius:50%;background:var(--text-muted);}
+
+  /* FEATURE PILLS */
+  .pills{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;}
+  .pill{font-family:'DM Mono',monospace;font-size:10px;padding:5px 12px;border:1px solid var(--border);color:var(--text-sub);letter-spacing:0.04em;transition:border-color 0.2s,color 0.2s;}
+  .pill:hover{border-color:rgba(118,255,122,0.3);color:var(--green);}
+
+  /* LAYER */
+  .layer{display:flex;align-items:stretch;gap:0;border-bottom:1px solid rgba(255,255,255,0.04);}
+  .layer:last-child{border-bottom:none;}
+  .layer-label{width:160px;flex-shrink:0;padding:14px 16px;font-family:'DM Mono',monospace;font-size:11px;color:var(--text-sub);display:flex;align-items:center;gap:10px;border-right:1px solid var(--border);}
+  .layer-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+  .layer-content{flex:1;padding:14px 20px;font-size:12px;color:var(--text-muted);line-height:1.7;}
+  .layer-content strong{color:#fff;}
+
+  /* INSIGHT */
+  .insight{background:var(--surface);border:1px solid var(--border);padding:22px;}
+  .insight .ct{margin-bottom:14px;}
+  .insight .item{font-size:12px;color:var(--text-sub);line-height:1.8;padding-left:14px;position:relative;}
+  .insight .item::before{content:'';position:absolute;left:0;top:9px;width:5px;height:5px;border-radius:50%;background:var(--text-muted);}
+
+  footer{border-top:1px solid var(--border);margin-top:48px;padding-top:28px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;}
+  .footer-left{font-size:12px;color:var(--text-muted);line-height:1.7;}
+  .footer-links{display:flex;gap:16px;}
+  .footer-link{font-family:'DM Mono',monospace;font-size:11px;color:var(--text-muted);text-decoration:none;border-bottom:1px solid transparent;transition:all 0.15s;letter-spacing:0.04em;padding-bottom:1px;}
+  .footer-link:hover{color:var(--green);border-color:var(--green);}
+  .fade-in{opacity:0;transform:translateY(12px);animation:fadeIn 0.5s ease forwards;}
+  @keyframes fadeIn{to{opacity:1;transform:none;}}
+</style>
+</head>
+<body>
+<div class="w">
+
+  <header class="fade-in">
+    <div>
+      <div class="badge">KV6014 Computing Project · Northumbria University</div>
+      <h1>Astro Dash<br><span>Game UI/UX Design</span></h1>
+      <p class="header-sub">Led the UI/UX design for a 2D pixel-art arcade game built in Unity. Designed the main menu system, shop, leaderboard, social features, and all in-game interface elements using user-centred design principles.</p>
+    </div>
+    <div class="header-right">
+      <div class="author-card">
+        <div class="author-name">Nawaf Almutairi</div>
+        <div class="author-meta">Design Team Lead</div>
+        <div class="author-meta" style="margin-top:4px;">Northumbria University</div>
+      </div>
+      <div class="module-tag">Engine: Unity 6.2 · Style: Pixel Art</div>
+    </div>
+  </header>
+
+  <!-- ═══ OVERVIEW ═══ -->
+  <div class="sl">— Project Overview</div>
+  <div class="g5 fade-in">
+    <div class="stat g"><div class="stat-label">Role</div><div class="stat-val">UI Lead</div><div class="stat-desc">Design team lead for all UI/UX</div></div>
+    <div class="stat b"><div class="stat-label">Screens Designed</div><div class="stat-val">6</div><div class="stat-desc">Menu, Shop, Leaderboard, Social, Friends, Profile</div></div>
+    <div class="stat p"><div class="stat-label">User Stories</div><div class="stat-val">8</div><div class="stat-desc">Covering gameplay, social, and customisation</div></div>
+    <div class="stat a"><div class="stat-label">Engine</div><div class="stat-val">Unity</div><div class="stat-desc">Unity 6.2 with Canvas UI system</div></div>
+    <div class="stat g"><div class="stat-label">Art Style</div><div class="stat-val">Pixel</div><div class="stat-desc">Retro 8-bit pixel art aesthetic</div></div>
+  </div>
+
+  <div class="card fade-in" style="border-left:3px solid var(--green)">
+    <div class="card-h"><div><div class="ct">Game Concept</div><div class="cs">Astro Dash — a 2D side-scrolling arcade game</div></div><div class="tag">Epic</div></div>
+    <div class="prose">
+      <strong>For</strong> gamers <strong>who</strong> want a simple, engaging game, <strong>our</strong> game <strong>is a</strong> simple 2D arcade game with only one input <strong>that</strong> is relaxing and enjoyable and creates competition to achieve the highest score possible.<br><br>
+      The player is an astronaut in space trying to reach the moon. Tapping the screen activates the jetpack to fly upward. The world scrolls infinitely, spawning aliens, lasers, coins, and powerups at random intervals. Difficulty increases with distance. Score is tracked by survival time and coins collected. Players can buy character skins, compete on leaderboards, and add friends.
+    </div>
+    <div class="pills">
+      <div class="pill">2D Side-Scroller</div>
+      <div class="pill">Infinite Runner</div>
+      <div class="pill">Pixel Art</div>
+      <div class="pill">Single Input</div>
+      <div class="pill">Coin Economy</div>
+      <div class="pill">Leaderboard</div>
+      <div class="pill">Character Skins</div>
+      <div class="pill">Powerups</div>
+      <div class="pill">Social Features</div>
+      <div class="pill">Offline Play</div>
+    </div>
+  </div>
+
+  <!-- ═══ SCREENS ═══ -->
+  <div class="sl">— UI Screens Designed</div>
+  <div class="gallery fade-in">
+    <div class="ss">
+      <img src="Main_menu.png" alt="Main Menu" loading="lazy">
+      <div class="ss-body">
+        <div class="ss-title">Main Menu</div>
+        <div class="ss-desc">Central hub with Play, Social, Leaderboard, and Shop buttons. Pixel-art banner with game title. Clean navigation hierarchy.</div>
+        <div class="ss-tag">Primary Navigation</div>
+      </div>
+    </div>
+    <div class="ss">
+      <img src="Shop.png" alt="Shop" loading="lazy">
+      <div class="ss-body">
+        <div class="ss-title">Character Shop</div>
+        <div class="ss-desc">4 character skins displayed with coin prices and Buy buttons. Currency balance shown top-right. Visual card layout for each skin.</div>
+        <div class="ss-tag">In-App Economy</div>
+      </div>
+    </div>
+    <div class="ss">
+      <img src="Leaderboard.png" alt="Leaderboard" loading="lazy">
+      <div class="ss-body">
+        <div class="ss-title">Leaderboard</div>
+        <div class="ss-desc">Ranked table showing Rank, Username, and Score. Top 3 highlighted with distinct colours. Clean data hierarchy for competition.</div>
+        <div class="ss-tag">Competitive Feature</div>
+      </div>
+    </div>
+    <div class="ss">
+      <img src="Social.png" alt="Social" loading="lazy">
+      <div class="ss-body">
+        <div class="ss-title">Social / Friends List</div>
+        <div class="ss-desc">Friends list with online/offline status indicators. Add Friend button at bottom. Avatar placeholders for player identity.</div>
+        <div class="ss-tag">Social Features</div>
+      </div>
+    </div>
+    <div class="ss">
+      <img src="Add_friend.png" alt="Add Friend" loading="lazy">
+      <div class="ss-body">
+        <div class="ss-title">Add Friend</div>
+        <div class="ss-desc">Search bar with player results list. Add button per player. Change Username option at bottom for profile management.</div>
+        <div class="ss-tag">Social Features</div>
+      </div>
+    </div>
+    <div class="ss">
+      <img src="Change_username.png" alt="Change Username" loading="lazy">
+      <div class="ss-body">
+        <div class="ss-title">Change Username</div>
+        <div class="ss-desc">Simple input field with placeholder text and Change button. Minimal, focused interface for a single-purpose task.</div>
+        <div class="ss-tag">Profile Management</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ DESIGN SYSTEM ═══ -->
+  <div class="sl">— Design System & Decisions</div>
+  <div class="card fade-in" style="padding:0;overflow:hidden">
+    <div style="padding:20px 24px 0"><div class="card-h" style="margin-bottom:4px"><div><div class="ct">UI Design Language</div><div class="cs">Consistent visual system across all 6 screens</div></div><div class="tag">Design System</div></div></div>
+    <div class="layer"><div class="layer-label"><div class="layer-dot" style="background:var(--blue)"></div>Art Style</div><div class="layer-content"><strong>Pixel art (8-bit)</strong> — retro aesthetic inspired by classic arcade games. All sprites, backgrounds, and UI panels use a consistent pixel grid. Nytrock Global Font for the blocky, game-appropriate typography.</div></div>
+    <div class="layer"><div class="layer-label"><div class="layer-dot" style="background:var(--green)"></div>Layout</div><div class="layer-content"><strong>Unity Canvas system</strong> with anchored UI elements. Centred panels with semi-transparent red overlay on pixel-art background. Consistent Back button top-left. Bottom navigation bar on relevant screens.</div></div>
+    <div class="layer"><div class="layer-label"><div class="layer-dot" style="background:var(--purple)"></div>Navigation</div><div class="layer-content"><strong>Hub-and-spoke model:</strong> Main Menu is the hub. Each feature (Shop, Leaderboard, Social) is a spoke with a Back button returning to the menu. Add Friend and Change Username are sub-screens of Social.</div></div>
+    <div class="layer"><div class="layer-label"><div class="layer-dot" style="background:var(--amber)"></div>Colour System</div><div class="layer-content"><strong>Sky blue background</strong> with green pixel landscape. Red/pink semi-transparent panels for content areas. White input fields and buttons for contrast. Gold coins for currency. Green/red for online/offline status.</div></div>
+    <div class="layer"><div class="layer-label"><div class="layer-dot" style="background:var(--red)"></div>Interaction</div><div class="layer-content"><strong>Single-tap input model:</strong> Large, clearly labelled buttons. Minimal text input (username only). Optimised for mobile touch — all tap targets are generously sized for the target age group (18-25).</div></div>
+  </div>
+
+  <!-- ═══ USER STORIES ═══ -->
+  <div class="sl">— User Stories & Features</div>
+  <div class="g2 fade-in">
+    <div class="story"><div class="story-id">Story 1</div><div class="story-text">"As a gamer, I want a simple input scheme to make the experience easy to get started with"</div><div class="story-splits"><div class="story-split">Implement single-input detection</div><div class="story-split">Create gameplay action triggered by single input</div><div class="story-split">Add visual feedback for input</div></div></div>
+    <div class="story"><div class="story-id">Story 2</div><div class="story-text">"As a competitive player, I want to compare my score to others on a leaderboard"</div><div class="story-splits"><div class="story-split">Implement local score storage</div><div class="story-split">Create UI to view top scores</div><div class="story-split">Submit score to leaderboard when run ends</div></div></div>
+    <div class="story"><div class="story-id">Story 3</div><div class="story-text">"As an inexperienced gamer, I want low difficulty that increases as I learn"</div><div class="story-splits"><div class="story-split">Difficulty scaling based on time survived</div><div class="story-split">Increase speed over time</div><div class="story-split">Safety period for first 10 seconds</div></div></div>
+    <div class="story"><div class="story-id">Story 4</div><div class="story-text">"As a creative player, I want to customise my profile to compare with friends"</div><div class="story-splits"><div class="story-split">Change username in friend tab</div><div class="story-split">Customise character styles from menu</div></div></div>
+    <div class="story"><div class="story-id">Story 5</div><div class="story-text">"As a collector, I want to collect and unlock new character styles"</div><div class="story-splits"><div class="story-split">Create skin definitions</div><div class="story-split">Implement skin selection menu (Shop)</div></div></div>
+    <div class="story"><div class="story-id">Story 6</div><div class="story-text">"As a young gamer, I want to be the best by unlocking powerups"</div><div class="story-splits"><div class="story-split">Include powerup spawning</div><div class="story-split">Add powerup types (slow time, double score)</div><div class="story-split">Pickup detection and temporary effects</div></div></div>
+    <div class="story"><div class="story-id">Story 7</div><div class="story-text">"As a player, I want a unique challenge each time so I don't get bored"</div><div class="story-splits"><div class="story-split">Random obstacle spawning</div><div class="story-split">Random coin placement</div><div class="story-split">Random powerup intervals</div></div></div>
+    <div class="story"><div class="story-id">Story 8</div><div class="story-text">"As a player, I want to track multiple score types to encourage trying new techniques"</div><div class="story-splits"><div class="story-split">Create score categories (distance, coins, time)</div><div class="story-split">Display multiple scores in-game</div><div class="story-split">End-of-run summary with all score types</div></div></div>
+  </div>
+
+  <!-- ═══ TOOLS & PROCESS ═══ -->
+  <div class="sl">— Tools & Development Process</div>
+  <div class="g3 fade-in">
+    <div class="card">
+      <div class="card-h"><div><div class="ct">Design Tools</div><div class="cs">Used for prototyping and visuals</div></div><div class="tag">Tools</div></div>
+      <div class="prose" style="font-size:12px">
+        <strong>Figma:</strong> Rapid prototyping of game layouts and menus<br>
+        <strong>Canva:</strong> Creating visual assets and presentation materials<br>
+        <strong>Unity Canvas:</strong> Final UI implementation with anchored elements<br>
+        <strong>Nytrock Font:</strong> Custom pixel-art typography (Global Nytrock Font via TMP)
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-h"><div><div class="ct">Development Stack</div><div class="cs">Team collaboration tools</div></div><div class="tag">Stack</div></div>
+      <div class="prose" style="font-size:12px">
+        <strong>Engine:</strong> Unity 6.2 (2D, DX11)<br>
+        <strong>Scripting:</strong> Visual Scripting + C#<br>
+        <strong>Version Control:</strong> Plastic SCM (Unity native)<br>
+        <strong>Project Management:</strong> Trello with assigned tasks<br>
+        <strong>Communication:</strong> Discord + WhatsApp
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-h"><div><div class="ct">Testing Approach</div><div class="cs">UX evaluation methodology</div></div><div class="tag">Testing</div></div>
+      <div class="prose" style="font-size:12px">
+        <strong>Cognitive Walkthrough:</strong> Simulating new user experience step-by-step<br>
+        <strong>Internal Testing:</strong> Developer-side feature verification<br>
+        <strong>Observation:</strong> Noting where users encounter problems<br>
+        <strong>Security Testing:</strong> Save file tampering, username filtering, input validation
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ MY CONTRIBUTION ═══ -->
+  <div class="sl">— My Contribution as Design Lead</div>
+  <div class="g3 fade-in">
+    <div class="insight" style="border-top:2px solid var(--green)">
+      <div class="ct">UI Design & Implementation</div>
+      <div class="item">Designed all 6 menu screens in the Unity Canvas system</div>
+      <div class="item">Created consistent pixel-art visual language across all screens</div>
+      <div class="item">Built the navigation flow (hub-and-spoke from Main Menu)</div>
+      <div class="item">Implemented responsive anchored layouts for mobile</div>
+      <div class="item">Selected and integrated Nytrock pixel font via TextMesh Pro</div>
+    </div>
+    <div class="insight" style="border-top:2px solid var(--blue)">
+      <div class="ct">UX Design & Research</div>
+      <div class="item">Led user story creation and story mapping for 8 stories</div>
+      <div class="item">Applied user-centred design principles for the target audience</div>
+      <div class="item">Designed cognitive walkthrough evaluation plan</div>
+      <div class="item">Ensured single-input simplicity for mobile accessibility</div>
+      <div class="item">Created wireframes in Figma before Unity implementation</div>
+    </div>
+    <div class="insight" style="border-top:2px solid var(--amber)">
+      <div class="ct">Cross-Functional Collaboration</div>
+      <div class="item">Led the design team within a group project</div>
+      <div class="item">Coordinated with developers on UI implementation</div>
+      <div class="item">Managed design tasks and priorities on Trello</div>
+      <div class="item">Presented design decisions and iterated based on feedback</div>
+      <div class="item">Contributed to project planning, risk assessment, and testing</div>
+    </div>
+  </div>
+
+  <footer class="fade-in">
+    <div class="footer-left">
+      <div>KV6014 Computing Project · Northumbria University · 2025</div>
+      <div>Game UI/UX designed in Unity · Prototyped in Figma</div>
+    </div>
+    <div class="footer-links">
+      <a class="footer-link" href="https://nawafbalmutairi.github.io">Portfolio</a>
+      <a class="footer-link" href="https://github.com/nawafbalmutairi">GitHub</a>
+      <a class="footer-link" href="https://linkedin.com/in/nawafbalmutairi">LinkedIn</a>
+    </div>
+  </footer>
+
+</div>
+</body>
+</html>
