@@ -1,1 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Conference-Info Platform — Software Architecture</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#0a0c10;--surface:#111418;--surface2:#181c22;--border:rgba(255,255,255,0.07);--green:#76ff7a;--green-dim:rgba(118,255,122,0.12);--amber:#ffb347;--amber-dim:rgba(255,179,71,0.12);--red:#ff5f6d;--red-dim:rgba(255,95,109,0.12);--blue:#4fc3f7;--blue-dim:rgba(79,195,247,0.12);--purple:#c084fc;--purple-dim:rgba(192,132,252,0.12);--text:#e8eaf0;--text-muted:#6b7280;--text-sub:#9ca3af;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;}
+  body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(118,255,122,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(118,255,122,0.025) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0;}
+  .w{position:relative;z-index:1;max-width:1400px;margin:0 auto;padding:0 24px 60px;}
+  header{padding:40px 0 32px;display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:20px;border-bottom:1px solid var(--border);margin-bottom:36px;}
+  .badge{display:inline-flex;align-items:center;gap:8px;background:var(--green-dim);border:1px solid rgba(118,255,122,0.3);color:var(--green);font-family:'DM Mono',monospace;font-size:11px;letter-spacing:0.08em;padding:5px 12px;border-radius:2px;margin-bottom:16px;text-transform:uppercase;}
+  .badge::before{content:'';width:6px;height:6px;background:var(--green);border-radius:50%;animation:pulse 2s infinite;}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
+  h1{font-family:'Syne',sans-serif;font-size:clamp(26px,4vw,42px);font-weight:800;line-height:1.1;letter-spacing:-0.02em;color:#fff;}
+  h1 span{color:var(--green);}
+  .header-sub{margin-top:10px;font-size:14px;color:var(--text-sub);font-weight:300;max-width:520px;line-height:1.6;}
+  .header-right{display:flex;flex-direction:column;align-items:flex-end;gap:10px;}
+  .author-card{background:var(--surface);border:1px solid var(--border);padding:14px 20px;border-radius:4px;text-align:right;}
+  .author-name{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:#fff;}
+  .author-meta{font-size:12px;color:var(--text-muted);margin-top:3px;font-family:'DM Mono',monospace;}
+  .module-tag{font-family:'DM Mono',monospace;font-size:11px;color:var(--text-muted);letter-spacing:0.06em;}
+  .sl{font-family:'DM Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:0.14em;color:var(--text-muted);margin:40px 0 16px;display:flex;align-items:center;gap:12px;}
+  .sl::after{content:'';flex:1;height:1px;background:var(--border);}
+  .card{background:var(--surface);border:1px solid var(--border);padding:24px;margin-bottom:16px;}
+  .card-h{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px;gap:12px;}
+  .ct{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:#fff;letter-spacing:-0.01em;}
+  .cs{font-size:12px;color:var(--text-muted);margin-top:4px;font-weight:300;line-height:1.5;}
+  .tag{font-family:'DM Mono',monospace;font-size:10px;padding:4px 10px;background:var(--surface2);border:1px solid var(--border);color:var(--text-muted);border-radius:2px;white-space:nowrap;letter-spacing:0.05em;text-transform:uppercase;flex-shrink:0;}
+  .prose{font-size:13px;color:var(--text-sub);line-height:1.8;}.prose strong{color:#fff;font-weight:500;}
+  .hl{color:var(--green);font-family:'DM Mono',monospace;font-size:12px;}
+  .g2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;}
+  .g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:16px;}
+  .g4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px;}
+  .g5{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:16px;}
+  .g21{display:grid;grid-template-columns:2fr 1fr;gap:16px;margin-bottom:16px;}
+  .g12{display:grid;grid-template-columns:1fr 2fr;gap:16px;margin-bottom:16px;}
+  @media(max-width:1100px){.g4,.g5{grid-template-columns:repeat(3,1fr);}}
+  @media(max-width:900px){.g2,.g3,.g21,.g12{grid-template-columns:1fr;}.g4,.g5{grid-template-columns:repeat(2,1fr);}}
 
+  /* STAT */
+  .stat{background:var(--surface);border:1px solid var(--border);padding:20px 18px 16px;position:relative;overflow:hidden;transition:border-color 0.2s;}
+  .stat:hover{border-color:rgba(118,255,122,0.2);}
+  .stat::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
+  .stat.g::after{background:var(--green);}.stat.b::after{background:var(--blue);}.stat.a::after{background:var(--amber);}.stat.p::after{background:var(--purple);}
+  .stat-label{font-family:'DM Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);margin-bottom:10px;}
+  .stat-val{font-family:'Syne',sans-serif;font-size:22px;font-weight:700;line-height:1.1;}
+  .stat.g .stat-val{color:var(--green);}.stat.b .stat-val{color:var(--blue);}.stat.a .stat-val{color:var(--amber);}.stat.p .stat-val{color:var(--purple);}
+  .stat-unit{font-size:13px;font-weight:400;opacity:0.7;margin-left:2px;}
+  .stat-desc{font-size:11px;color:var(--text-muted);margin-top:8px;line-height:1.4;}
+
+  /* ENDPOINT CARD */
+  .ep{background:var(--surface);border:1px solid var(--border);padding:0;overflow:hidden;margin-bottom:12px;transition:border-color 0.2s;}
+  .ep:hover{border-color:rgba(118,255,122,0.15);}
+  .ep-header{display:flex;align-items:center;gap:12px;padding:16px 20px;border-bottom:1px solid var(--border);cursor:pointer;}
+  .ep-method{font-family:'DM Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:2px;letter-spacing:0.04em;flex-shrink:0;}
+  .ep-method.get{background:var(--green-dim);color:var(--green);}
+  .ep-method.post{background:var(--blue-dim);color:var(--blue);}
+  .ep-method.patch{background:var(--amber-dim);color:var(--amber);}
+  .ep-method.delete{background:var(--red-dim);color:var(--red);}
+  .ep-path{font-family:'DM Mono',monospace;font-size:13px;color:#fff;font-weight:500;}
+  .ep-desc{font-size:12px;color:var(--text-muted);margin-left:auto;}
+  .ep-body{padding:16px 20px;display:none;}
+  .ep.open .ep-body{display:block;}
+  .ep-section{margin-bottom:14px;}
+  .ep-section:last-child{margin-bottom:0;}
+  .ep-section-title{font-family:'DM Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-muted);margin-bottom:8px;}
+  .ep-param{display:flex;gap:10px;padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.03);font-size:12px;}
+  .ep-param:last-child{border-bottom:none;}
+  .ep-param-name{font-family:'DM Mono',monospace;color:var(--green);width:100px;flex-shrink:0;}
+  .ep-param-type{font-family:'DM Mono',monospace;color:var(--text-muted);width:60px;flex-shrink:0;}
+  .ep-param-desc{color:var(--text-sub);}
+  .ep-json{background:var(--bg);border:1px solid var(--border);padding:12px 16px;font-family:'DM Mono',monospace;font-size:11px;color:var(--text-sub);line-height:1.6;border-radius:2px;overflow-x:auto;white-space:pre;}
+
+  /* FILE TREE */
+  .tree{font-family:'DM Mono',monospace;font-size:12px;line-height:2;color:var(--text-sub);}
+  .tree .dir{color:var(--blue);font-weight:500;}
+  .tree .file{color:var(--text-sub);}
+  .tree .hl-file{color:var(--green);}
+  .tree-indent{padding-left:20px;}
+  .tree-indent2{padding-left:40px;}
+  .tree-indent3{padding-left:60px;}
+
+  /* ARCHITECTURE VIEW */
+  .arch-card{background:var(--surface);border:1px solid var(--border);padding:22px;transition:border-color 0.2s;}
+  .arch-card:hover{border-color:rgba(118,255,122,0.2);}
+  .arch-num{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.1em;margin-bottom:6px;}
+  .arch-title{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:#fff;margin-bottom:8px;line-height:1.3;}
+  .arch-desc{font-size:12px;color:var(--text-sub);line-height:1.7;}
+  .arch-item{font-size:11px;color:var(--text-sub);line-height:1.7;padding-left:14px;position:relative;margin-top:4px;}
+  .arch-item::before{content:'';position:absolute;left:0;top:8px;width:4px;height:4px;border-radius:50%;background:var(--text-muted);}
+
+  /* SCORE BAR */
+  .score-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.04);}
+  .score-row:last-child{border-bottom:none;}
+  .score-label{font-family:'DM Mono',monospace;font-size:11px;color:var(--text-sub);width:160px;flex-shrink:0;}
+  .score-bar-track{flex:1;height:18px;background:var(--surface2);border-radius:2px;overflow:hidden;position:relative;}
+  .score-bar-fill{height:100%;border-radius:2px;display:flex;align-items:center;justify-content:flex-end;padding-right:8px;font-family:'DM Mono',monospace;font-size:10px;color:#0a0c10;font-weight:700;}
+  .score-total{font-family:'DM Mono',monospace;font-size:11px;color:var(--text-muted);width:70px;text-align:right;flex-shrink:0;}
+
+  /* ARCH LAYER */
+  .layer{display:flex;align-items:stretch;gap:0;border-bottom:1px solid rgba(255,255,255,0.04);}
+  .layer:last-child{border-bottom:none;}
+  .layer-label{width:180px;flex-shrink:0;padding:16px;font-family:'DM Mono',monospace;font-size:11px;color:var(--text-sub);display:flex;align-items:center;gap:10px;border-right:1px solid var(--border);}
+  .layer-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+  .layer-content{flex:1;padding:16px 20px;font-size:12px;color:var(--text-muted);line-height:1.7;}
+  .layer-content strong{color:#fff;}
+
+  footer{border-top:1px solid var(--border);margin-top:48px;padding-top:28px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;}
+  .footer-left{font-size:12px;color:var(--text-muted);line-height:1.7;}
+  .footer-links{display:flex;gap:16px;}
+  .footer-link{font-family:'DM Mono',monospace;font-size:11px;color:var(--text-muted);text-decoration:none;border-bottom:1px solid transparent;transition:all 0.15s;letter-spacing:0.04em;padding-bottom:1px;}
+  .footer-link:hover{color:var(--green);border-color:var(--green);}
+  .fade-in{opacity:0;transform:translateY(12px);animation:fadeIn 0.5s ease forwards;}
+  @keyframes fadeIn{to{opacity:1;transform:none;}}
+</style>
+</head>
+<body>
+<div class="w">
+
+  <header class="fade-in">
+    <div>
+      <div class="badge">KV5035 Software Architecture · Northumbria University</div>
+      <h1>Conference-Info <span>Platform</span></h1>
+      <p class="header-sub">A REST API backend and microservices architecture for academic conference management — built with PHP, SQLite, and designed using the Kruchten 4+1 architectural model.</p>
+    </div>
+    <div class="header-right">
+      <div class="author-card">
+        <div class="author-name">Nawaf Almutairi</div>
+        <div class="author-meta">BSc Computer Science</div>
+        <div class="author-meta" style="margin-top:4px;">Northumbria University</div>
+      </div>
+      <div class="module-tag">Score: 43/50 (86%)</div>
+    </div>
+  </header>
+
+  <!-- ═══ OVERVIEW ═══ -->
+  <div class="sl">— Project Overview</div>
+  <div class="g5 fade-in">
+    <div class="stat g"><div class="stat-label">Score</div><div class="stat-val">43<span class="stat-unit">/50</span></div><div class="stat-desc">86% — "Excellent work"</div></div>
+    <div class="stat b"><div class="stat-label">Endpoints</div><div class="stat-val">5</div><div class="stat-desc">developer, author, content, award, awardassignment</div></div>
+    <div class="stat p"><div class="stat-label">HTTP Methods</div><div class="stat-val">5</div><div class="stat-desc">GET, POST, PATCH, DELETE, OPTIONS</div></div>
+    <div class="stat a"><div class="stat-label">Database</div><div class="stat-val">CHI 2023</div><div class="stat-desc">SQLite with 8 tables</div></div>
+    <div class="stat g"><div class="stat-label">Architecture</div><div class="stat-val">4+1</div><div class="stat-desc">Kruchten view model</div></div>
+  </div>
+
+  <div class="card fade-in" style="border-left:3px solid var(--green)">
+    <div class="card-h"><div><div class="ct">Scenario: Northumbrisoft</div><div class="cs">Building a backend for academic conference applications</div></div><div class="tag">Context</div></div>
+    <div class="prose">
+      As a software architect at Northumbrisoft, the task was to build a <strong>REST API backend</strong> that serves conference data to multiple frontend applications: web, mobile, AR headsets, and digital displays. The API provides structured access to the CHI 2023 conference dataset — including research papers, authors, affiliations, content types, and awards. Part 2 extended this into a full <strong>microservices architecture</strong> using the Kruchten 4+1 model for a multi-conference platform.
+    </div>
+  </div>
+
+  <!-- ═══ PART 1: REST API ═══ -->
+  <div class="sl">— Part 1: REST API Implementation</div>
+
+  <div class="g12 fade-in">
+    <div class="card" style="padding-bottom:8px">
+      <div class="card-h"><div><div class="ct">Project Structure</div><div class="cs">Object-oriented PHP with MVC pattern</div></div><div class="tag">File Tree</div></div>
+      <div class="tree">
+        <div class="dir">coursework/</div>
+        <div class="tree-indent hl-file">.htaccess</div>
+        <div class="tree-indent hl-file">index.php <span style="color:var(--text-muted)">— front controller</span></div>
+        <div class="tree-indent file">autoloader.php</div>
+        <div class="tree-indent file">exception_handler.php</div>
+        <div class="tree-indent file">chi2023.sqlite</div>
+        <div class="tree-indent dir">classes/</div>
+        <div class="tree-indent2 dir">Controller/</div>
+        <div class="tree-indent3 file">BaseController.php</div>
+        <div class="tree-indent3 file">DeveloperController.php</div>
+        <div class="tree-indent3 file">AuthorController.php</div>
+        <div class="tree-indent3 file">ContentController.php</div>
+        <div class="tree-indent3 file">AwardController.php</div>
+        <div class="tree-indent3 file">AwardAssignmentController.php</div>
+        <div class="tree-indent2 dir">Models/</div>
+        <div class="tree-indent3 file">Database.php <span style="color:var(--text-muted)">— singleton PDO</span></div>
+        <div class="tree-indent3 file">AuthorModel.php</div>
+        <div class="tree-indent3 file">ContentModel.php</div>
+        <div class="tree-indent3 file">AwardModel.php</div>
+      </div>
+    </div>
+    <div>
+      <div class="card" style="margin-bottom:16px">
+        <div class="card-h"><div><div class="ct">Tech Stack & Patterns</div><div class="cs">Quality requirements met</div></div><div class="tag">Stack</div></div>
+        <div class="prose" style="font-size:12px">
+          <strong>Language:</strong> PHP (Object-Oriented) on Nuwebspace<br>
+          <strong>Database:</strong> SQLite (chi2023.sqlite) via PDO<br>
+          <strong>Pattern:</strong> Front Controller (.htaccess rewrite to index.php)<br>
+          <strong>Architecture:</strong> Model-Controller separation with BaseController inheritance<br>
+          <strong>Autoloading:</strong> PSR-4 style spl_autoload_register<br>
+          <strong>Error Handling:</strong> Global exception handler returning JSON<br>
+          <strong>Security:</strong> API key via Authorization header, input sanitisation<br>
+          <strong>Standards:</strong> PSR-1, PSR-12 coding style, PSR-5 PHPDoc comments<br>
+          <strong>Response:</strong> JSON with appropriate HTTP status codes
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-h"><div><div class="ct">System Architecture</div><div class="cs">Request flow through the system</div></div><div class="tag">Flow</div></div>
+        <div style="display:flex;flex-direction:column;gap:0">
+          <div class="layer"><div class="layer-label"><div class="layer-dot" style="background:var(--blue)"></div>Client</div><div class="layer-content"><strong>Postman / Frontend Apps</strong> send HTTP requests with Authorization header</div></div>
+          <div class="layer"><div class="layer-label"><div class="layer-dot" style="background:var(--green)"></div>.htaccess</div><div class="layer-content"><strong>URL Rewriting</strong> — all requests routed to index.php (clean URLs, no .php extensions)</div></div>
+          <div class="layer"><div class="layer-label"><div class="layer-dot" style="background:var(--purple)"></div>index.php</div><div class="layer-content"><strong>Front Controller</strong> — validates API key, parses endpoint from URI, routes to correct Controller</div></div>
+          <div class="layer"><div class="layer-label"><div class="layer-dot" style="background:var(--amber)"></div>Controller</div><div class="layer-content"><strong>Endpoint Logic</strong> — validates HTTP method, extracts parameters, calls Model, returns JSON via BaseController</div></div>
+          <div class="layer"><div class="layer-label"><div class="layer-dot" style="background:var(--green)"></div>Model</div><div class="layer-content"><strong>Database Access</strong> — builds SQL queries with parameterised statements, returns data arrays</div></div>
+          <div class="layer"><div class="layer-label"><div class="layer-dot" style="background:var(--blue)"></div>Database</div><div class="layer-content"><strong>chi2023.sqlite</strong> — 8 tables: content, author, type, award, affiliation, content_has_author, content_has_award, conference</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ API ENDPOINTS ═══ -->
+  <div class="sl">— API Endpoint Reference</div>
+  <div class="fade-in">
+    <div class="ep open">
+      <div class="ep-header" onclick="this.parentElement.classList.toggle('open')"><span class="ep-method get">GET</span><span class="ep-path">/developer</span><span class="ep-desc">Task 1 — 2/2 marks</span></div>
+      <div class="ep-body">
+        <div class="ep-section"><div class="ep-section-title">Response</div><div class="ep-json">{ "student_id": "w22055798", "name": "Nawaf" }</div></div>
+      </div>
+    </div>
+    <div class="ep">
+      <div class="ep-header" onclick="this.parentElement.classList.toggle('open')"><span class="ep-method get">GET</span><span class="ep-path">/author</span><span class="ep-desc">Task 2 — 5/6 marks</span></div>
+      <div class="ep-body">
+        <div class="ep-section"><div class="ep-section-title">Parameters</div>
+          <div class="ep-param"><span class="ep-param-name">author_id</span><span class="ep-param-type">int</span><span class="ep-param-desc">Optional. Filter by specific author ID</span></div>
+          <div class="ep-param"><span class="ep-param-name">content_id</span><span class="ep-param-type">int</span><span class="ep-param-desc">Optional. Return authors of specified content</span></div>
+          <div class="ep-param"><span class="ep-param-name">search</span><span class="ep-param-type">string</span><span class="ep-param-desc">Optional. Case-insensitive name search</span></div>
+          <div class="ep-param"><span class="ep-param-name">page</span><span class="ep-param-type">int</span><span class="ep-param-desc">Optional. Pagination (10 results per page)</span></div>
+        </div>
+        <div class="ep-section"><div class="ep-section-title">Response</div><div class="ep-json">[{ "author_id": 1, "name": "John Smith" }, ...]</div></div>
+      </div>
+    </div>
+    <div class="ep">
+      <div class="ep-header" onclick="this.parentElement.classList.toggle('open')"><span class="ep-method get">GET</span><span class="ep-path">/content</span><span class="ep-desc">Task 3 — 5/6 marks</span></div>
+      <div class="ep-body">
+        <div class="ep-section"><div class="ep-section-title">Parameters</div>
+          <div class="ep-param"><span class="ep-param-name">content_id</span><span class="ep-param-type">int</span><span class="ep-param-desc">Optional. Filter by content ID</span></div>
+          <div class="ep-param"><span class="ep-param-name">author_id</span><span class="ep-param-type">int</span><span class="ep-param-desc">Optional. Return content by specified author</span></div>
+          <div class="ep-param"><span class="ep-param-name">search</span><span class="ep-param-type">string</span><span class="ep-param-desc">Optional. Search titles and abstracts</span></div>
+          <div class="ep-param"><span class="ep-param-name">page</span><span class="ep-param-type">int</span><span class="ep-param-desc">Optional. Pagination (10 results per page)</span></div>
+        </div>
+        <div class="ep-section"><div class="ep-section-title">Response</div><div class="ep-json">[{
+  "content_id": 1,
+  "title": "Paper Title",
+  "abstract": "...",
+  "doi_link": "https://...",
+  "preview_video": "https://...",
+  "type": "Paper",
+  "award": "Best Paper" | null
+}, ...]</div></div>
+      </div>
+    </div>
+    <div class="ep">
+      <div class="ep-header" onclick="this.parentElement.classList.toggle('open')"><span class="ep-method get">GET</span> <span class="ep-method post">POST</span> <span class="ep-method patch">PATCH</span> <span class="ep-method delete">DELETE</span><span class="ep-path">/award</span><span class="ep-desc">Task 5 — 8/8 marks</span></div>
+      <div class="ep-body">
+        <div class="ep-section"><div class="ep-section-title">GET — List all awards</div><div class="ep-json">[{ "award_id": 1, "name": "Best Paper Award" }, ...]</div></div>
+        <div class="ep-section"><div class="ep-section-title">POST — Create award (body)</div><div class="ep-json">{ "name": "New Award Name" }
+// Response: 201 Created</div></div>
+        <div class="ep-section"><div class="ep-section-title">PATCH — Update award (body)</div><div class="ep-json">{ "award_id": 1, "name": "Updated Name" }</div></div>
+        <div class="ep-section"><div class="ep-section-title">DELETE — Remove award (body)</div><div class="ep-json">{ "award_id": 1 }</div></div>
+      </div>
+    </div>
+    <div class="ep">
+      <div class="ep-header" onclick="this.parentElement.classList.toggle('open')"><span class="ep-method patch">PATCH</span> <span class="ep-method delete">DELETE</span><span class="ep-path">/awardassignment</span><span class="ep-desc">Task 6 — 5/6 marks</span></div>
+      <div class="ep-body">
+        <div class="ep-section"><div class="ep-section-title">PATCH — Assign award to content</div><div class="ep-json">{ "content_id": 123, "award_id": 4 }</div></div>
+        <div class="ep-section"><div class="ep-section-title">DELETE — Remove award from content</div><div class="ep-json">{ "content_id": 123 }</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ SCORES ═══ -->
+  <div class="sl">— Assessment Scores</div>
+  <div class="card fade-in">
+    <div class="card-h"><div><div class="ct">Detailed Marking Breakdown</div><div class="cs">Tutor feedback: "Excellent work. Well thought-out structure with clear model/controller separation."</div></div><div class="tag">43/50</div></div>
+    <div class="score-row"><div class="score-label">Quality Code</div><div class="score-bar-track"><div class="score-bar-fill" style="width:92.8%;background:var(--green)">6.5/7</div></div><div class="score-total">6.5 / 7</div></div>
+    <div class="score-row"><div class="score-label">Security</div><div class="score-bar-track"><div class="score-bar-fill" style="width:100%;background:var(--green)">2/2</div></div><div class="score-total">2 / 2</div></div>
+    <div class="score-row"><div class="score-label">Interface</div><div class="score-bar-track"><div class="score-bar-fill" style="width:50%;background:var(--amber)">3/6</div></div><div class="score-total">3 / 6</div></div>
+    <div class="score-row"><div class="score-label">Robustness</div><div class="score-bar-track"><div class="score-bar-fill" style="width:100%;background:var(--green)">2/2</div></div><div class="score-total">2 / 2</div></div>
+    <div class="score-row"><div class="score-label">Documentation</div><div class="score-bar-track"><div class="score-bar-fill" style="width:50%;background:var(--amber)">0.5/1</div></div><div class="score-total">0.5 / 1</div></div>
+    <div class="score-row"><div class="score-label">T1: Developer</div><div class="score-bar-track"><div class="score-bar-fill" style="width:100%;background:var(--green)">2/2</div></div><div class="score-total">2 / 2</div></div>
+    <div class="score-row"><div class="score-label">T2: Author</div><div class="score-bar-track"><div class="score-bar-fill" style="width:83%;background:var(--green)">5/6</div></div><div class="score-total">5 / 6</div></div>
+    <div class="score-row"><div class="score-label">T3: Content</div><div class="score-bar-track"><div class="score-bar-fill" style="width:83%;background:var(--green)">5/6</div></div><div class="score-total">5 / 6</div></div>
+    <div class="score-row"><div class="score-label">T4: Search & Page</div><div class="score-bar-track"><div class="score-bar-fill" style="width:100%;background:var(--green)">4/4</div></div><div class="score-total">4 / 4</div></div>
+    <div class="score-row"><div class="score-label">T5: Award CRUD</div><div class="score-bar-track"><div class="score-bar-fill" style="width:100%;background:var(--green)">8/8</div></div><div class="score-total">8 / 8</div></div>
+    <div class="score-row"><div class="score-label">T6: Award Assignment</div><div class="score-bar-track"><div class="score-bar-fill" style="width:83%;background:var(--green)">5/6</div></div><div class="score-total">5 / 6</div></div>
+  </div>
+
+  <!-- ═══ PART 2: ARCHITECTURE ═══ -->
+  <div class="sl">— Part 2: Kruchten 4+1 Architecture (Multi-Conference Platform)</div>
+
+  <div class="card fade-in" style="border-left:3px solid var(--purple);margin-bottom:16px">
+    <div class="prose">
+      Part 2 extended the Conference-Info concept into a <strong>multi-conference management platform</strong> using microservices architecture. The design was documented using the <strong>Kruchten 4+1 View Model</strong> — Logical, Process, Development, Physical, and Scenarios — with diagrams created in Eraser.io.
+    </div>
+  </div>
+
+  <div class="g2 fade-in">
+    <div class="arch-card" style="border-top:2px solid var(--green)">
+      <div class="arch-num" style="color:var(--green)">View 1</div>
+      <div class="arch-title">Logical View</div>
+      <div class="arch-desc">Domain-driven design defining core entities and their relationships.</div>
+      <div class="arch-item"><strong style="color:#fff">Conference:</strong> Aggregate root managing title, description, date, location</div>
+      <div class="arch-item"><strong style="color:#fff">Session:</strong> Dependent entity with speaker, start/end times</div>
+      <div class="arch-item"><strong style="color:#fff">User:</strong> Authentication, authorisation, RBAC profile management</div>
+      <div class="arch-item"><strong style="color:#fff">Note:</strong> User- and session-agnostic content management</div>
+      <div class="arch-item"><strong style="color:#fff">AnalyticsEvent:</strong> Persistent event logging for auditing</div>
+    </div>
+    <div class="arch-card" style="border-top:2px solid var(--blue)">
+      <div class="arch-num" style="color:var(--blue)">View 2</div>
+      <div class="arch-title">Process View</div>
+      <div class="arch-desc">Runtime interactions and communication between microservices.</div>
+      <div class="arch-item"><strong style="color:#fff">API Gateway:</strong> Token validation, traffic routing, rate limiting</div>
+      <div class="arch-item"><strong style="color:#fff">Auth Service:</strong> OAuth2, OpenID Connect, JWT tokens</div>
+      <div class="arch-item"><strong style="color:#fff">Conference / User / Note Services:</strong> RESTful CRUD APIs</div>
+      <div class="arch-item"><strong style="color:#fff">Analytics Pipeline:</strong> Kafka event streaming, Spark aggregation</div>
+      <div class="arch-item"><strong style="color:#fff">Communication:</strong> gRPC (sync) + Kafka (async) + Istio service mesh with mTLS</div>
+    </div>
+    <div class="arch-card" style="border-top:2px solid var(--purple)">
+      <div class="arch-num" style="color:var(--purple)">View 3</div>
+      <div class="arch-title">Development View</div>
+      <div class="arch-desc">Modularity, CI/CD, testing, and code quality standards.</div>
+      <div class="arch-item"><strong style="color:#fff">Repos:</strong> Separate repositories per microservice + shared-libs</div>
+      <div class="arch-item"><strong style="color:#fff">CI/CD:</strong> GitHub Actions — lint, test, SonarQube, Pact contract testing</div>
+      <div class="arch-item"><strong style="color:#fff">CD:</strong> Canary deployments with manual production approvals</div>
+      <div class="arch-item"><strong style="color:#fff">Quality:</strong> 80%+ unit test coverage, ESLint, Checkstyle</div>
+      <div class="arch-item"><strong style="color:#fff">Integration:</strong> Testcontainers for realistic environment emulation</div>
+    </div>
+    <div class="arch-card" style="border-top:2px solid var(--amber)">
+      <div class="arch-num" style="color:var(--amber)">View 4</div>
+      <div class="arch-title">Physical View</div>
+      <div class="arch-desc">Cloud-native deployment infrastructure on AWS.</div>
+      <div class="arch-item"><strong style="color:#fff">Compute:</strong> AWS EKS with horizontal pod auto-scaling</div>
+      <div class="arch-item"><strong style="color:#fff">Database:</strong> AWS RDS PostgreSQL — isolated DB per conference + read replicas</div>
+      <div class="arch-item"><strong style="color:#fff">Load Balancer:</strong> AWS ALB for traffic distribution</div>
+      <div class="arch-item"><strong style="color:#fff">CDN:</strong> CloudFront for global static asset delivery</div>
+      <div class="arch-item"><strong style="color:#fff">Observability:</strong> Prometheus + Grafana, ELK stack, Jaeger tracing</div>
+    </div>
+  </div>
+
+  <div class="card fade-in" style="margin-bottom:16px">
+    <div class="card-h"><div><div class="ct">+1: Scenarios (Use-Case View)</div><div class="cs">The scenarios tie all four views together by demonstrating how they support real user workflows</div></div><div class="tag">+1 View</div></div>
+    <div class="prose" style="font-size:12px">
+      The use-case scenarios validate the architecture by tracing user journeys across all four views — from a conference attendee logging in (Auth Service in Process View), browsing sessions (Conference Service querying the Logical View entities), taking notes (Note Service persisting to the isolated Physical View database), through to the entire request flowing through the API Gateway, Kubernetes pods, and monitoring stack. Each scenario proves that the architectural decisions in one view are supported by the infrastructure and design in the others.
+    </div>
+  </div>
+
+  <!-- ═══ REFERENCES ═══ -->
+  <div class="sl">— References</div>
+  <div class="card fade-in">
+    <div class="prose" style="font-size:11px;line-height:2;color:var(--text-muted)">
+      Bass, L., Clements, P. & Kazman, R. (2012) <em>Software Architecture in Practice</em>. 3rd ed. Addison-Wesley.<br>
+      Burns, B., Beda, J. & Hightower, K. (2019) <em>Kubernetes: Up and Running</em>. 2nd ed. O'Reilly Media.<br>
+      Evans, E. (2004) <em>Domain-Driven Design</em>. Addison-Wesley.<br>
+      Humble, J. & Farley, D. (2010) <em>Continuous Delivery</em>. Addison-Wesley.<br>
+      Kruchten, P. (1995) 'Architectural Blueprints — The 4+1 View Model', <em>IEEE Software</em>, 12(6).<br>
+      Newman, S. (2015) <em>Building Microservices</em>. O'Reilly Media.<br>
+      Rozanski, N. & Woods, E. (2011) <em>Software Systems Architecture</em>. 2nd ed. Addison-Wesley.
+    </div>
+  </div>
+
+  <footer class="fade-in">
+    <div class="footer-left">
+      <div>KV5035 Software Architecture · Northumbria University · 2024-2026</div>
+      <div>REST API built with PHP · Architecture documented with Eraser.io</div>
+    </div>
+    <div class="footer-links">
+      <a class="footer-link" href="https://nawafbalmutairi.github.io">Portfolio</a>
+      <a class="footer-link" href="https://github.com/nawafbalmutairi">GitHub</a>
+      <a class="footer-link" href="https://linkedin.com/in/nawafbalmutairi">LinkedIn</a>
+    </div>
+  </footer>
+
+</div>
+</body>
+</html>
