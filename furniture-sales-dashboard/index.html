@@ -1,1 +1,1192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>US Furniture Sales BI Dashboard — Nawaf Almutairi</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  :root {
+    --bg: #0a0c10;
+    --surface: #111418;
+    --surface2: #181c22;
+    --border: rgba(255,255,255,0.07);
+    --green: #76ff7a;
+    --green-dim: rgba(118,255,122,0.12);
+    --amber: #ffb347;
+    --amber-dim: rgba(255,179,71,0.12);
+    --red: #ff5f6d;
+    --red-dim: rgba(255,95,109,0.12);
+    --blue: #4fc3f7;
+    --blue-dim: rgba(79,195,247,0.12);
+    --purple: #c084fc;
+    --purple-dim: rgba(192,132,252,0.12);
+    --text: #e8eaf0;
+    --text-muted: #6b7280;
+    --text-sub: #9ca3af;
+    --accent: #76ff7a;
+  }
 
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(118,255,122,0.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(118,255,122,0.025) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .wrapper {
+    position: relative;
+    z-index: 1;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 24px 60px;
+  }
+
+  /* HEADER */
+  header {
+    padding: 40px 0 32px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 20px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 36px;
+  }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--green-dim);
+    border: 1px solid rgba(118,255,122,0.3);
+    color: var(--green);
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    padding: 5px 12px;
+    border-radius: 2px;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+  }
+
+  .badge::before {
+    content: '';
+    width: 6px; height: 6px;
+    background: var(--green);
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(26px, 4vw, 42px);
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    color: #fff;
+  }
+
+  h1 span { color: var(--green); }
+
+  .header-sub {
+    margin-top: 10px;
+    font-size: 14px;
+    color: var(--text-sub);
+    font-weight: 300;
+    max-width: 520px;
+    line-height: 1.6;
+  }
+
+  .header-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 10px;
+  }
+
+  .author-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 14px 20px;
+    border-radius: 4px;
+    text-align: right;
+  }
+
+  .author-name {
+    font-family: 'Syne', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    color: #fff;
+  }
+
+  .author-meta {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 3px;
+    font-family: 'DM Mono', monospace;
+  }
+
+  .module-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--text-muted);
+    letter-spacing: 0.06em;
+  }
+
+  /* FILTER BAR */
+  .filter-bar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 28px;
+    flex-wrap: wrap;
+  }
+
+  .filter-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-right: 4px;
+  }
+
+  .filter-btn {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    padding: 7px 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text-sub);
+    cursor: pointer;
+    border-radius: 2px;
+    transition: all 0.15s;
+    letter-spacing: 0.04em;
+  }
+
+  .filter-btn:hover, .filter-btn.active {
+    background: var(--green-dim);
+    border-color: rgba(118,255,122,0.4);
+    color: var(--green);
+  }
+
+  /* SECTION DIVIDER */
+  .section-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--text-muted);
+    margin: 36px 0 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* KPI TILES */
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .kpi-grid-4 {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  @media (max-width: 1100px) { .kpi-grid { grid-template-columns: repeat(3, 1fr); } .kpi-grid-4 { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 640px) { .kpi-grid, .kpi-grid-4 { grid-template-columns: repeat(2, 1fr); } }
+
+  .kpi-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 20px 18px 16px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+
+  .kpi-card:hover { border-color: rgba(118,255,122,0.2); }
+
+  .kpi-card::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+  }
+
+  .kpi-card.good::after { background: var(--green); }
+  .kpi-card.warn::after { background: var(--amber); }
+  .kpi-card.bad::after { background: var(--red); }
+  .kpi-card.info::after { background: var(--blue); }
+  .kpi-card.purple-t::after { background: var(--purple); }
+
+  .kpi-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+    margin-bottom: 10px;
+  }
+
+  .kpi-value {
+    font-family: 'Syne', sans-serif;
+    font-size: 22px;
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+    white-space: nowrap;
+  }
+
+  .kpi-card.good .kpi-value { color: var(--green); }
+  .kpi-card.warn .kpi-value { color: var(--amber); }
+  .kpi-card.bad .kpi-value { color: var(--red); }
+  .kpi-card.info .kpi-value { color: var(--blue); }
+  .kpi-card.purple-t .kpi-value { color: var(--purple); }
+
+  .kpi-unit { font-size: 13px; font-weight: 400; opacity: 0.7; margin-left: 2px; }
+
+  .kpi-desc {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 8px;
+    line-height: 1.4;
+  }
+
+  .kpi-trend {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    margin-top: 6px;
+  }
+
+  /* CHART LAYOUTS */
+  .chart-grid    { display: grid; grid-template-columns: 2fr 1fr; gap: 16px; margin-bottom: 16px; }
+  .chart-grid-2  { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+  .chart-grid-3  { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+  .chart-grid-1  { display: grid; grid-template-columns: 1fr; gap: 16px; margin-bottom: 16px; }
+
+  @media (max-width: 900px) {
+    .chart-grid, .chart-grid-2, .chart-grid-3 { grid-template-columns: 1fr; }
+  }
+
+  .chart-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 24px;
+    position: relative;
+  }
+
+  .chart-card-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    gap: 12px;
+  }
+
+  .chart-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: -0.01em;
+  }
+
+  .chart-subtitle {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 4px;
+    font-weight: 300;
+  }
+
+  .chart-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    padding: 4px 10px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    border-radius: 2px;
+    white-space: nowrap;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .chart-container { position: relative; width: 100%; }
+
+  .legend {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px solid var(--border);
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 11px;
+    color: var(--text-sub);
+  }
+
+  .legend-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  /* PROSE BLOCK */
+  .prose {
+    font-size: 13px;
+    color: var(--text-sub);
+    line-height: 1.8;
+  }
+  .prose strong { color: #fff; font-weight: 500; }
+  .prose .highlight { color: var(--green); font-family: 'DM Mono', monospace; font-size: 12px; }
+
+  /* TABLE */
+  .table-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 24px;
+    margin-bottom: 16px;
+  }
+
+  table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 16px; }
+
+  thead th {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+    padding: 0 14px 12px 0;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+
+  tbody tr { border-bottom: 1px solid rgba(255,255,255,0.04); transition: background 0.1s; }
+  tbody tr:hover { background: rgba(255,255,255,0.03); }
+  tbody td { padding: 11px 14px 11px 0; color: var(--text-sub); font-size: 13px; }
+  tbody td:first-child { color: #fff; font-weight: 500; }
+
+  .status-dot { display: inline-flex; align-items: center; gap: 7px; }
+  .dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+  .dot.green { background: var(--green); box-shadow: 0 0 6px var(--green); }
+  .dot.amber { background: var(--amber); box-shadow: 0 0 6px var(--amber); }
+  .dot.red { background: var(--red); box-shadow: 0 0 6px var(--red); }
+
+  /* STAT BAR (for missing data viz) */
+  .stat-bar-wrap { margin-top: 14px; }
+  .stat-row { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+  .stat-row-label { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--text-sub); min-width: 80px; }
+  .stat-bar-track { flex: 1; height: 18px; background: var(--surface2); border-radius: 2px; position: relative; overflow: hidden; }
+  .stat-bar-fill { height: 100%; border-radius: 2px; transition: width 0.8s ease; }
+  .stat-bar-val { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--text-muted); min-width: 60px; text-align: right; }
+
+  /* INSIGHT CARDS */
+  .insight-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+  @media (max-width: 900px) { .insight-grid { grid-template-columns: 1fr; } }
+
+  .insight-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 22px;
+  }
+  .insight-card .chart-title { margin-bottom: 14px; }
+  .insight-card .item {
+    font-size: 12px;
+    color: var(--text-sub);
+    line-height: 1.8;
+    padding-left: 14px;
+    position: relative;
+  }
+  .insight-card .item::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 9px;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--text-muted);
+  }
+
+  /* FOOTER */
+  footer {
+    border-top: 1px solid var(--border);
+    margin-top: 48px;
+    padding-top: 28px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+
+  .footer-left { font-size: 12px; color: var(--text-muted); line-height: 1.7; }
+  .footer-links { display: flex; gap: 16px; }
+
+  .footer-link {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--text-muted);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: all 0.15s;
+    letter-spacing: 0.04em;
+    padding-bottom: 1px;
+  }
+
+  .footer-link:hover { color: var(--green); border-color: var(--green); }
+
+  .fade-in {
+    opacity: 0;
+    transform: translateY(12px);
+    animation: fadeIn 0.5s ease forwards;
+  }
+
+  @keyframes fadeIn { to { opacity: 1; transform: none; } }
+
+  .kpi-card:nth-child(1) { animation-delay: 0.05s; }
+  .kpi-card:nth-child(2) { animation-delay: 0.1s; }
+  .kpi-card:nth-child(3) { animation-delay: 0.15s; }
+  .kpi-card:nth-child(4) { animation-delay: 0.2s; }
+  .kpi-card:nth-child(5) { animation-delay: 0.25s; }
+  .kpi-card:nth-child(6) { animation-delay: 0.3s; }
+
+  canvas { display: block; }
+</style>
+</head>
+<body>
+<div class="wrapper">
+
+  <!-- ═══════ HEADER ═══════ -->
+  <header class="fade-in">
+    <div class="header-left">
+      <div class="badge">KV4009 Data Fundamentals · Northumbria University</div>
+      <h1>US Furniture <span>Sales Analysis</span><br>Dashboard</h1>
+      <p class="header-sub">Data fundamentals assessment covering data collection, descriptive statistics, data cleaning with imputation methods, and three analytical questions: sales trend analysis, discount–profit relationships, and state-level performance comparison.</p>
+    </div>
+    <div class="header-right">
+      <div class="author-card">
+        <div class="author-name">Nawaf Almutairi</div>
+        <div class="author-meta">BSc Computer Science</div>
+        <div class="author-meta" style="margin-top:4px;">Northumbria University</div>
+      </div>
+      <div class="module-tag">Data range: Jan 2014 – Dec 2017</div>
+    </div>
+  </header>
+
+
+  <!-- ════════════════════════════════════════════════ -->
+  <!-- SECTION 1: DATA COLLECTION & OVERVIEW           -->
+  <!-- ════════════════════════════════════════════════ -->
+  <div class="section-label">— Data Collection & Overview</div>
+
+  <div class="kpi-grid fade-in">
+    <div class="kpi-card good">
+      <div class="kpi-label">Total Records</div>
+      <div class="kpi-value">2,121</div>
+      <div class="kpi-desc">Sales transactions</div>
+      <div class="kpi-trend" style="color:var(--green)">Furniture category only</div>
+    </div>
+    <div class="kpi-card info">
+      <div class="kpi-label">Variables</div>
+      <div class="kpi-value">21</div>
+      <div class="kpi-desc">Columns in dataset</div>
+      <div class="kpi-trend" style="color:var(--blue)">4 numeric, 17 categorical</div>
+    </div>
+    <div class="kpi-card purple-t">
+      <div class="kpi-label">Time Span</div>
+      <div class="kpi-value">4<span class="kpi-unit">yrs</span></div>
+      <div class="kpi-desc">Jan 2014 – Dec 2017</div>
+      <div class="kpi-trend" style="color:var(--purple)">48 months of data</div>
+    </div>
+    <div class="kpi-card good">
+      <div class="kpi-label">US States</div>
+      <div class="kpi-value">47</div>
+      <div class="kpi-desc">Geographic coverage</div>
+      <div class="kpi-trend" style="color:var(--green)">4 regions: W, E, C, S</div>
+    </div>
+    <div class="kpi-card warn">
+      <div class="kpi-label">Segments</div>
+      <div class="kpi-value">3</div>
+      <div class="kpi-desc">Customer types</div>
+      <div class="kpi-trend" style="color:var(--amber)">Consumer, Corp, Home</div>
+    </div>
+    <div class="kpi-card info">
+      <div class="kpi-label">Sub-Categories</div>
+      <div class="kpi-value">4</div>
+      <div class="kpi-desc">Furniture product types</div>
+      <div class="kpi-trend" style="color:var(--blue)">Chairs, Tables, Books, Furn</div>
+    </div>
+  </div>
+
+  <div class="chart-card fade-in" style="margin-bottom:16px">
+    <div class="chart-card-header">
+      <div>
+        <div class="chart-title">Dataset Structure</div>
+        <div class="chart-subtitle">Variable types and sample descriptions from the dataset</div>
+      </div>
+      <div class="chart-tag">Schema</div>
+    </div>
+    <div class="prose">
+      <strong>Identifiers & Timeframe:</strong> Row ID, Order ID, Order Date, Ship Date — each transaction is uniquely identified with associated timestamps.<br>
+      <strong>Shipping & Customer:</strong> Ship Mode (4 types), Customer ID, Customer Name, Segment (Consumer / Corporate / Home Office).<br>
+      <strong>Geography:</strong> Country (United States), City, State, Postal Code, Region (West, East, Central, South).<br>
+      <strong>Product:</strong> Product ID, Category (Furniture), Sub-Category (Chairs, Tables, Bookcases, Furnishings), Product Name.<br>
+      <strong>Transaction Metrics:</strong> Sales <span class="highlight">($1.89 – $4,416)</span>, Quantity <span class="highlight">(1 – 14)</span>, Discount <span class="highlight">(0% – 70%)</span>, Profit <span class="highlight">(-$1,862 – $1,013)</span>.
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════ -->
+  <!-- SECTION 2: DESCRIPTIVE STATISTICS                -->
+  <!-- ════════════════════════════════════════════════ -->
+  <div class="section-label">— Descriptive Statistics</div>
+
+  <div class="kpi-grid-4 fade-in">
+    <div class="kpi-card good">
+      <div class="kpi-label">Sales — Mean</div>
+      <div class="kpi-value">$355.03</div>
+      <div class="kpi-desc">Std Dev: $508.76</div>
+      <div class="kpi-trend" style="color:var(--green)">Median $183.97 — right-skewed</div>
+    </div>
+    <div class="kpi-card warn">
+      <div class="kpi-label">Profit — Mean</div>
+      <div class="kpi-value">$8.70</div>
+      <div class="kpi-desc">Std Dev: $136.05</div>
+      <div class="kpi-trend" style="color:var(--amber)">Range: -$1,862 to +$1,013</div>
+    </div>
+    <div class="kpi-card info">
+      <div class="kpi-label">Quantity — Mean</div>
+      <div class="kpi-value">3.79</div>
+      <div class="kpi-desc">Std Dev: 2.25</div>
+      <div class="kpi-trend" style="color:var(--blue)">Range: 1 to 14 items</div>
+    </div>
+    <div class="kpi-card bad">
+      <div class="kpi-label">Discount — Mean</div>
+      <div class="kpi-value">17.4<span class="kpi-unit">%</span></div>
+      <div class="kpi-desc">Std Dev: 18.1%</div>
+      <div class="kpi-trend" style="color:var(--red)">Range: 0% to 70%</div>
+    </div>
+  </div>
+
+  <div class="chart-grid-2 fade-in">
+    <div class="chart-card">
+      <div class="chart-card-header">
+        <div>
+          <div class="chart-title">Sales Distribution</div>
+          <div class="chart-subtitle">Frequency of transaction amounts — right-skewed with high-value outliers</div>
+        </div>
+        <div class="chart-tag">Histogram</div>
+      </div>
+      <div class="chart-container" style="height:220px"><canvas id="salesHistChart"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-card-header">
+        <div>
+          <div class="chart-title">Profit Distribution</div>
+          <div class="chart-subtitle">Most transactions marginally profitable, with significant loss outliers</div>
+        </div>
+        <div class="chart-tag">Histogram</div>
+      </div>
+      <div class="chart-container" style="height:220px"><canvas id="profitHistChart"></canvas></div>
+    </div>
+  </div>
+
+  <div class="chart-card fade-in" style="margin-bottom:16px">
+    <div class="prose">
+      The right skew in Sales suggests most transactions are modest ($0–$500), while a few high-value transactions significantly affect the mean. Profit is concentrated around $0–$100, but includes substantial losses up to -$1,862, indicating that certain product and discount combinations are severely unprofitable. The high standard deviation in both Sales ($508.76) and Profit ($136.05) relative to their means confirms considerable variability across the dataset.
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════ -->
+  <!-- SECTION 3: DATA CLEANING                         -->
+  <!-- ════════════════════════════════════════════════ -->
+  <div class="section-label">— Data Cleaning</div>
+
+  <div class="chart-grid fade-in">
+    <div class="chart-card">
+      <div class="chart-card-header">
+        <div>
+          <div class="chart-title">Missing Data Report</div>
+          <div class="chart-subtitle">212 missing values identified across 2 columns before cleaning</div>
+        </div>
+        <div class="chart-tag">Before Cleaning</div>
+      </div>
+      <div class="stat-bar-wrap">
+        <div class="stat-row">
+          <span class="stat-row-label">Sales</span>
+          <div class="stat-bar-track">
+            <div class="stat-bar-fill" style="width:5%;background:var(--red)"></div>
+          </div>
+          <span class="stat-bar-val" style="color:var(--red)">106 (5.0%)</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-row-label">Discount</span>
+          <div class="stat-bar-track">
+            <div class="stat-bar-fill" style="width:5%;background:var(--red)"></div>
+          </div>
+          <span class="stat-bar-val" style="color:var(--red)">106 (5.0%)</span>
+        </div>
+        <div class="stat-row" style="margin-top:8px; padding-top:8px; border-top:1px solid var(--border)">
+          <span class="stat-row-label" style="color:var(--text-muted)">Other 19 cols</span>
+          <div class="stat-bar-track">
+            <div class="stat-bar-fill" style="width:100%;background:var(--green);opacity:0.4"></div>
+          </div>
+          <span class="stat-bar-val" style="color:var(--green)">0 missing</span>
+        </div>
+      </div>
+      <div class="legend">
+        <div class="legend-item"><div class="legend-dot" style="background:var(--red)"></div>Missing values</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div>Complete</div>
+      </div>
+    </div>
+
+    <div class="chart-card">
+      <div class="chart-card-header">
+        <div>
+          <div class="chart-title">Cleaning Result</div>
+          <div class="chart-subtitle">All missing values resolved — dataset ready for analysis</div>
+        </div>
+        <div class="chart-tag">After Cleaning</div>
+      </div>
+      <div class="chart-container" style="height:200px"><canvas id="cleanChart"></canvas></div>
+      <div class="legend">
+        <div class="legend-item"><div class="legend-dot" style="background:var(--red)"></div>Before: 212 missing</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div>After: 0 missing</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="chart-card fade-in" style="margin-bottom:16px">
+    <div class="chart-card-header">
+      <div>
+        <div class="chart-title">Imputation Approach & Justification</div>
+        <div class="chart-subtitle">Method selection supported by Little & Rubin (2002)</div>
+      </div>
+      <div class="chart-tag">Methodology</div>
+    </div>
+    <div class="prose">
+      <strong>Method:</strong> Mean imputation for continuous variables (Sales, Discount) and mode imputation for categorical variables. As Little & Rubin (2002) suggest, imputation is viable when missing data is below 5% — the 212 missing values represent exactly 5.0% of total cells across the two affected columns.<br><br>
+      <strong>Mean imputation</strong> preserves the overall distribution by substituting missing values with the mean of available cases. <strong>Mode imputation</strong> maintains the distribution shape for categorical variables by replacing missing data with the most frequent category.<br><br>
+      <strong>Result:</strong> After cleaning, the dataset contains <span class="highlight">0 missing values</span> across all 21 columns and 2,121 rows — confirmed suitable for analysis without risk of biased conclusions (Bennett, 2001).
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════ -->
+  <!-- SECTION 4: Q1 — Trend Analysis                   -->
+  <!-- ════════════════════════════════════════════════ -->
+  <div class="section-label">— Q1: Analyse the Trend of Total Sales and Profits Over Time</div>
+
+  <div class="chart-grid-1 fade-in">
+    <div class="chart-card">
+      <div class="chart-card-header">
+        <div>
+          <div class="chart-title">Monthly Sales vs Profit</div>
+          <div class="chart-subtitle">Line plot showing revenue and profit trends across 48 months (Jan 2014 – Dec 2017)</div>
+        </div>
+        <div class="chart-tag">Time Series</div>
+      </div>
+      <div class="chart-container" style="height:280px"><canvas id="trendChart"></canvas></div>
+      <div class="legend">
+        <div class="legend-item"><div class="legend-dot" style="background:#76ff7a"></div>Sales Revenue</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#ff5f6d"></div>Profit / Loss</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="chart-grid-2 fade-in">
+    <div class="chart-card">
+      <div class="chart-card-header">
+        <div>
+          <div class="chart-title">Quarterly Sales & Profit</div>
+          <div class="chart-subtitle">Aggregated view showing Q4 seasonal peaks each year</div>
+        </div>
+        <div class="chart-tag">Quarterly</div>
+      </div>
+      <div class="chart-container" style="height:220px"><canvas id="quarterChart"></canvas></div>
+      <div class="legend">
+        <div class="legend-item"><div class="legend-dot" style="background:#4fc3f7"></div>Sales</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#76ff7a"></div>Profit (+)</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#ff5f6d"></div>Profit (-)</div>
+      </div>
+    </div>
+    <div class="chart-card">
+      <div class="prose" style="margin-top:4px">
+        <strong>Interpretation:</strong> Sales and profits show clear seasonal patterns — Q4 (November–December) consistently delivers the highest revenue across all four years, driven by holiday demand. However, high sales do not always translate to high profits; several months show positive revenue but negative profit, indicating that discounting and operational costs erode margins.<br><br>
+        <strong>Implications:</strong> Businesses should time inventory build-up and marketing campaigns for the Q3–Q4 period to capitalise on this predictable seasonal pattern. Resource allocation and pricing strategies should be reviewed to ensure the seasonal sales spike also translates into actual profitability, not just top-line revenue growth.
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════ -->
+  <!-- SECTION 5: Q2 — Discount vs Profit               -->
+  <!-- ════════════════════════════════════════════════ -->
+  <div class="section-label">— Q2: Investigate the Relationship Between Discount and Profit</div>
+
+  <div class="chart-grid fade-in">
+    <div class="chart-card">
+      <div class="chart-card-header">
+        <div>
+          <div class="chart-title">Discount vs Profit — Scatter Plot</div>
+          <div class="chart-subtitle">150 sampled transactions showing the non-linear relationship</div>
+        </div>
+        <div class="chart-tag">Scatter Plot</div>
+      </div>
+      <div class="chart-container" style="height:280px"><canvas id="scatterChart"></canvas></div>
+      <div class="legend">
+        <div class="legend-item"><div class="legend-dot" style="background:#76ff7a"></div>Profitable transaction</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#ff5f6d"></div>Loss-making transaction</div>
+      </div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-card-header">
+        <div>
+          <div class="chart-title">Profit by Discount Band</div>
+          <div class="chart-subtitle">Aggregated profit at each discount range</div>
+        </div>
+        <div class="chart-tag">Risk Signal</div>
+      </div>
+      <div class="chart-container" style="height:280px"><canvas id="bandChart"></canvas></div>
+      <div class="legend">
+        <div class="legend-item"><div class="legend-dot" style="background:#76ff7a"></div>Net profit</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#ff5f6d"></div>Net loss</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="chart-card fade-in" style="margin-bottom:16px">
+    <div class="prose">
+      <strong>Interpretation:</strong> The scatter plot reveals no distinct linear pattern between discount and profit. Transactions at 0% discount cluster in the positive-profit zone, while discounts above 40% almost universally produce losses. The discount band analysis confirms this: 0% discounts generate <span class="highlight">$55.5K profit</span> from 787 orders, while the 41–70% band loses <span class="highlight">-$23.6K</span> from just 207 orders.<br><br>
+      <strong>Implications:</strong> Simply modifying discounts is inadequate for reliably impacting profitability. Businesses should adopt segment-based targeted discounting rather than blanket promotions. Additional factors — product margins, customer buying patterns, competitive strategy — must be considered alongside discount rates when making pricing decisions.
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════ -->
+  <!-- SECTION 6: Q3 — State Comparison                  -->
+  <!-- ════════════════════════════════════════════════ -->
+  <div class="section-label">— Q3: Compare the Sales and Profits of Different States</div>
+
+  <div class="chart-grid fade-in">
+    <div class="chart-card">
+      <div class="chart-card-header">
+        <div>
+          <div class="chart-title">Top 10 States — Sales vs Profit</div>
+          <div class="chart-subtitle">Horizontal bar chart comparing revenue and profitability by state</div>
+        </div>
+        <div class="chart-tag">Bar Chart</div>
+      </div>
+      <div class="chart-container" style="height:300px"><canvas id="stateChart"></canvas></div>
+      <div class="legend">
+        <div class="legend-item"><div class="legend-dot" style="background:#4fc3f7"></div>Sales</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#76ff7a"></div>Profit</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#ff5f6d"></div>Loss</div>
+      </div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-card-header">
+        <div>
+          <div class="chart-title">Regional Performance</div>
+          <div class="chart-subtitle">Sales & profit aggregated by US region</div>
+        </div>
+        <div class="chart-tag">Comparison</div>
+      </div>
+      <div class="chart-container" style="height:300px"><canvas id="regionChart"></canvas></div>
+      <div class="legend">
+        <div class="legend-item"><div class="legend-dot" style="background:#c084fc"></div>Sales</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#76ff7a"></div>Profit</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="chart-grid-1 fade-in">
+    <div class="chart-card">
+      <div class="chart-card-header">
+        <div>
+          <div class="chart-title">Sub-Category Performance</div>
+          <div class="chart-subtitle">Chairs are the only strong profit driver — Tables lose money despite high revenue</div>
+        </div>
+        <div class="chart-tag">Gap Analysis</div>
+      </div>
+      <div class="chart-container" style="height:220px"><canvas id="subcatChart"></canvas></div>
+      <div class="legend">
+        <div class="legend-item"><div class="legend-dot" style="background:#4fc3f7"></div>Sales</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#76ff7a"></div>Profit</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#ff5f6d"></div>Loss</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STATE TABLE -->
+  <div class="table-card fade-in">
+    <div class="chart-card-header">
+      <div>
+        <div class="chart-title">State-Level Drill-Down</div>
+        <div class="chart-subtitle">Top 10 states by sales with profit margin and status classification</div>
+      </div>
+      <div class="chart-tag">Drill-down View</div>
+    </div>
+    <table>
+      <thead>
+        <tr><th>State</th><th>Sales</th><th>Profit</th><th>Margin</th><th>Orders</th><th>Status</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>California</td><td>$150,185</td><td style="color:var(--green)">+$8,593</td><td>5.7%</td><td>418</td><td><span class="status-dot"><span class="dot green"></span>Healthy</span></td></tr>
+        <tr><td>New York</td><td>$92,433</td><td style="color:var(--green)">+$5,946</td><td>6.4%</td><td>229</td><td><span class="status-dot"><span class="dot green"></span>Healthy</span></td></tr>
+        <tr><td>Texas</td><td>$58,081</td><td style="color:var(--red)">-$9,706</td><td>-16.7%</td><td>190</td><td><span class="status-dot"><span class="dot red"></span>Critical</span></td></tr>
+        <tr><td>Washington</td><td>$47,767</td><td style="color:var(--green)">+$7,155</td><td>15.0%</td><td>110</td><td><span class="status-dot"><span class="dot green"></span>Strong</span></td></tr>
+        <tr><td>Pennsylvania</td><td>$38,815</td><td style="color:var(--red)">-$7,139</td><td>-18.4%</td><td>120</td><td><span class="status-dot"><span class="dot red"></span>Critical</span></td></tr>
+        <tr><td>Illinois</td><td>$26,984</td><td style="color:var(--red)">-$8,590</td><td>-31.8%</td><td>118</td><td><span class="status-dot"><span class="dot red"></span>Critical</span></td></tr>
+        <tr><td>Virginia</td><td>$24,867</td><td style="color:var(--green)">+$5,104</td><td>20.5%</td><td>51</td><td><span class="status-dot"><span class="dot green"></span>Strong</span></td></tr>
+        <tr><td>Ohio</td><td>$23,390</td><td style="color:var(--red)">-$4,005</td><td>-17.1%</td><td>88</td><td><span class="status-dot"><span class="dot amber"></span>At Risk</span></td></tr>
+        <tr><td>Michigan</td><td>$21,873</td><td style="color:var(--green)">+$4,577</td><td>20.9%</td><td>49</td><td><span class="status-dot"><span class="dot green"></span>Strong</span></td></tr>
+        <tr><td>Florida</td><td>$21,561</td><td style="color:var(--red)">-$1,825</td><td>-8.5%</td><td>81</td><td><span class="status-dot"><span class="dot amber"></span>At Risk</span></td></tr>
+        <tr style="font-weight:600;border-top:1px solid rgba(255,255,255,0.12)">
+          <td style="color:var(--green)">Top 10 Total</td><td style="color:#fff">$505,956</td><td style="color:var(--amber)">+$110</td><td style="color:#fff">0.02%</td><td style="color:#fff">1,454</td><td>—</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="chart-card fade-in" style="margin-bottom:16px">
+    <div class="prose">
+      <strong>Interpretation:</strong> High sales do not always mean high profits. Texas ($58K sales, -$9.7K profit), Illinois ($27K sales, -$8.6K profit), and Pennsylvania ($39K sales, -$7.1K profit) are among the largest revenue generators yet all operate at a significant net loss. Conversely, Washington and Virginia show strong margins above 15% despite more modest revenue.<br><br>
+      <strong>Implications:</strong> Resource optimisation is critical — businesses should renegotiate supplier terms, reduce operational costs, or adjust pricing in loss-making states. States with high profit margins on moderate sales (WA, VA, MI) represent expansion opportunities where marketing investment can drive both top-line and bottom-line growth simultaneously.
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════ -->
+  <!-- INSIGHTS                                          -->
+  <!-- ════════════════════════════════════════════════ -->
+  <div class="section-label">— Key Findings & Recommendations</div>
+
+  <div class="insight-grid fade-in">
+    <div class="insight-card" style="border-top: 2px solid var(--green)">
+      <div class="chart-title" style="margin-bottom:14px">Q1 — Trend Findings</div>
+      <div class="item">Q4 consistently peaks across all four years</div>
+      <div class="item">Sales grew from $152K (2014) to $210K (2017)</div>
+      <div class="item">Profit volatile — negative months persist yearly</div>
+      <div class="item">September and November are strongest months</div>
+      <div class="item">Time inventory and campaigns for Q3–Q4 ramp</div>
+    </div>
+    <div class="insight-card" style="border-top: 2px solid var(--blue)">
+      <div class="chart-title" style="margin-bottom:14px">Q2 — Discount Findings</div>
+      <div class="item">No linear relationship between discount and profit</div>
+      <div class="item">0% discount = $55.5K profit (787 orders)</div>
+      <div class="item">41–70% discount = -$23.6K loss (207 orders)</div>
+      <div class="item">Blanket discounting destroys profitability</div>
+      <div class="item">Adopt segment-based targeted discounting</div>
+    </div>
+    <div class="insight-card" style="border-top: 2px solid var(--amber)">
+      <div class="chart-title" style="margin-bottom:14px">Q3 — State Findings</div>
+      <div class="item">5 of top 10 states by sales are loss-making</div>
+      <div class="item">Texas: highest loss at -$9.7K on $58K sales</div>
+      <div class="item">Tables: -$17K loss despite $199K revenue</div>
+      <div class="item">Central region is only net-negative region</div>
+      <div class="item">Expand high-margin states: WA, VA, MI</div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════ -->
+  <!-- REFERENCES                                        -->
+  <!-- ════════════════════════════════════════════════ -->
+  <div class="section-label">— References</div>
+  <div class="chart-card fade-in" style="margin-bottom:16px">
+    <div class="prose">
+      Bennett, D.A. (2001) 'How can I deal with missing data in my study?', <em>Australian and New Zealand Journal of Public Health</em>, 25(5), pp. 464–469.<br><br>
+      Little, R.J.A. and Rubin, D.B. (2002) <em>Statistical Analysis with Missing Data</em>, 2nd edn. New York: John Wiley & Sons.
+    </div>
+  </div>
+
+  <!-- ═══════ FOOTER ═══════ -->
+  <footer class="fade-in">
+    <div class="footer-left">
+      <div>KV4009 Data Fundamentals · Northumbria University · 2024–2026</div>
+      <div>Dashboard built with Chart.js · Data from academic assignment</div>
+    </div>
+    <div class="footer-links">
+      <a class="footer-link" href="https://nawafbalmutairi.github.io">Portfolio</a>
+      <a class="footer-link" href="https://github.com/nawafbalmutairi">GitHub</a>
+      <a class="footer-link" href="https://linkedin.com/in/nawafbalmutairi">LinkedIn</a>
+    </div>
+  </footer>
+
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- CHART SCRIPTS                                       -->
+<!-- ═══════════════════════════════════════════════════ -->
+<script>
+const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const TT = { backgroundColor:'#181c22', borderColor:'rgba(255,255,255,0.1)', borderWidth:1, titleFont:{family:'DM Mono',size:11}, bodyFont:{family:'DM Sans',size:12}, titleColor:'#9ca3af', bodyColor:'#e8eaf0', padding:12 };
+function AX(){ return { x:{ticks:{color:'#6b7280',font:{family:'DM Mono',size:10}},grid:{color:'rgba(255,255,255,0.04)'},border:{color:'rgba(255,255,255,0.06)'}}, y:{ticks:{color:'#6b7280',font:{family:'DM Mono',size:10}},grid:{color:'rgba(255,255,255,0.04)'},border:{color:'rgba(255,255,255,0.06)'}} }; }
+Chart.defaults.color = '#6b7280';
+let charts = {};
+
+// ═══ DATA ═══
+const YEARLY = {
+  '2014': { sales:[5870.93,1839.66,14368.29,7944.84,6900.61,13206.13,10821.05,7309.67,21549.78,11428.64,21029.13,29384.63], profit:[810.54,120.69,-1116.56,554.38,-353.78,596.32,374.25,659.41,2072.23,195.21,-307.99,1913.54] },
+  '2015': { sales:[11235.68,3093.59,12172.02,10264.33,6780.31,6989.61,13653.08,9638.59,26039.46,11828.95,30880.83,22747.73], profit:[-3125.53,425.48,1363.28,383.94,117.37,-447.88,-333.93,-487.47,1351.77,-406.41,2992.02,499.41] },
+  '2016': { sales:[7309.02,3348.98,12684.31,12278.55,13379.24,11807.31,11700.8,10119.27,26778.59,11824.62,31581.45,35931.15], profit:[403.31,362.9,-602.79,259.81,1492.53,-91.38,1253.14,-535.12,611.91,-158.45,815.09,2737.75] },
+  '2017': { sales:[5888.61,6858.65,10602.17,8351.25,15755.36,18232.51,11001.64,15399.93,27937.57,21744.54,36865.99,31018.39], profit:[-68.1,-195.39,966.57,181.5,358.34,856.51,362.76,335.92,1542.54,-2523.76,339.72,1100.5] },
+};
+YEARLY.all = {
+  sales: YEARLY['2014'].sales.map((_,i) => YEARLY['2014'].sales[i]+YEARLY['2015'].sales[i]+YEARLY['2016'].sales[i]+YEARLY['2017'].sales[i]),
+  profit: YEARLY['2014'].profit.map((_,i) => YEARLY['2014'].profit[i]+YEARLY['2015'].profit[i]+YEARLY['2016'].profit[i]+YEARLY['2017'].profit[i]),
+};
+
+const QTR = {"2014-Q1":{"s":22079,"p":-185},"2014-Q2":{"s":28052,"p":797},"2014-Q3":{"s":39680,"p":3106},"2014-Q4":{"s":61842,"p":1801},"2015-Q1":{"s":26501,"p":-1337},"2015-Q2":{"s":24034,"p":53},"2015-Q3":{"s":49331,"p":530},"2015-Q4":{"s":65458,"p":3085},"2016-Q1":{"s":23342,"p":163},"2016-Q2":{"s":37465,"p":1661},"2016-Q3":{"s":48599,"p":1330},"2016-Q4":{"s":79337,"p":3394},"2017-Q1":{"s":23349,"p":703},"2017-Q2":{"s":42339,"p":1396},"2017-Q3":{"s":54339,"p":2241},"2017-Q4":{"s":89629,"p":-1084}};
+
+const SCATTER = [{"x":0,"y":30.58},{"x":0,"y":53.2},{"x":0.6,"y":-4.68},{"x":0.5,"y":-216.98},{"x":0.2,"y":100.2},{"x":0,"y":30.78},{"x":0.15,"y":200.95},{"x":0.1,"y":72.53},{"x":0,"y":2.96},{"x":0,"y":8.66},{"x":0.2,"y":1.2},{"x":0.2,"y":68},{"x":0,"y":34.99},{"x":0.6,"y":-50.67},{"x":0,"y":10.05},{"x":0.6,"y":-11.32},{"x":0.3,"y":-14.87},{"x":0.2,"y":3.59},{"x":0.2,"y":20.16},{"x":0.32,"y":-11.6},{"x":0,"y":297.69},{"x":0.5,"y":-99.27},{"x":0,"y":11.65},{"x":0.2,"y":25.25},{"x":0,"y":580.54},{"x":0,"y":104.75},{"x":0.2,"y":1.74},{"x":0,"y":9.26},{"x":0,"y":12.23},{"x":0,"y":18.46},{"x":0,"y":25.54},{"x":0.2,"y":35.1},{"x":0,"y":11.16},{"x":0.2,"y":7.7},{"x":0.2,"y":76.01},{"x":0.6,"y":-17.78},{"x":0,"y":107.04},{"x":0,"y":17.1},{"x":0.2,"y":14.69},{"x":0.6,"y":-0.99},{"x":0,"y":17.38},{"x":0,"y":7.23},{"x":0,"y":63.68},{"x":0.2,"y":-195.48},{"x":0.3,"y":-2.06},{"x":0,"y":95.76},{"x":0.2,"y":-1.78},{"x":0.6,"y":-10.17},{"x":0.6,"y":-8.5},{"x":0.4,"y":-619.6},{"x":0,"y":13.43},{"x":0.2,"y":131.28},{"x":0,"y":81.17},{"x":0.6,"y":-5.94},{"x":0.3,"y":-117.88},{"x":0.3,"y":-14.58},{"x":0.2,"y":5.73},{"x":0,"y":76.98},{"x":0.1,"y":2.31},{"x":0.3,"y":-77.33},{"x":0.2,"y":-37.94},{"x":0.2,"y":-11.07},{"x":0.2,"y":3.67},{"x":0.2,"y":34.97},{"x":0.2,"y":33.16},{"x":0.5,"y":-448.9},{"x":0.2,"y":34.89},{"x":0,"y":225.26},{"x":0.5,"y":-170.8},{"x":0,"y":17.41},{"x":0,"y":23.9},{"x":0.2,"y":12.78},{"x":0.1,"y":1.31},{"x":0.2,"y":3.03},{"x":0,"y":24.2},{"x":0,"y":6.55},{"x":0,"y":84.24},{"x":0.3,"y":-35.51},{"x":0.2,"y":-13.87},{"x":0.2,"y":-24.29},{"x":0,"y":2.79},{"x":0.32,"y":-225.1},{"x":0.2,"y":3.34},{"x":0,"y":7.58},{"x":0.2,"y":17.75},{"x":0.2,"y":-18.24},{"x":0.2,"y":13.32},{"x":0,"y":316.88},{"x":0.2,"y":1.5},{"x":0,"y":23.79},{"x":0.6,"y":-67.14},{"x":0.2,"y":-72.04},{"x":0.4,"y":-227.49},{"x":0,"y":36.18},{"x":0,"y":6.83},{"x":0,"y":74.81},{"x":0,"y":27.56},{"x":0.6,"y":-23.98},{"x":0,"y":26.54},{"x":0.15,"y":84.29},{"x":0.15,"y":15.7},{"x":0.5,"y":-185.72},{"x":0,"y":22},{"x":0.2,"y":43.46},{"x":0,"y":75.69},{"x":0,"y":673.88},{"x":0.2,"y":-15.25},{"x":0.2,"y":14.45},{"x":0.2,"y":6.29},{"x":0.6,"y":-4.04},{"x":0.2,"y":-42.9},{"x":0,"y":36.4},{"x":0.2,"y":15.39},{"x":0,"y":3.87},{"x":0.2,"y":7.27},{"x":0,"y":15.53},{"x":0,"y":106.48},{"x":0.2,"y":52.34},{"x":0,"y":10.39},{"x":0,"y":8.7},{"x":0.2,"y":-11.52},{"x":0.15,"y":-12.1},{"x":0.2,"y":6.04},{"x":0,"y":60.36},{"x":0.4,"y":-112.04},{"x":0.4,"y":-480.2},{"x":0,"y":39.07},{"x":0.4,"y":-14.16},{"x":0,"y":17.38},{"x":0.6,"y":-14.39},{"x":0.2,"y":9.5},{"x":0.6,"y":-5.69},{"x":0.6,"y":-9.88},{"x":0.2,"y":100.2},{"x":0.4,"y":-249.32},{"x":0.4,"y":-192.05},{"x":0,"y":11.17},{"x":0.4,"y":-115.71},{"x":0.2,"y":56.27},{"x":0,"y":28.14},{"x":0,"y":57.36},{"x":0,"y":9.72},{"x":0.2,"y":59.48},{"x":0.15,"y":14.1},{"x":0.5,"y":-209.77},{"x":0.3,"y":-31.37},{"x":0.15,"y":-13.8},{"x":0.5,"y":-300.74},{"x":0,"y":112.79},{"x":0.2,"y":-13.68}];
+
+const STATES = [['California',150185,8593,418],['New York',92433,5946,229],['Texas',58081,-9706,190],['Washington',47767,7155,110],['Pennsylvania',38815,-7139,120],['Illinois',26984,-8590,118],['Virginia',24867,5104,51],['Ohio',23390,-4005,88],['Michigan',21873,4577,49],['Florida',21561,-1825,81]];
+
+// ═══ CHART: Sales Histogram ═══
+(function(){
+  const ax = AX();
+  new Chart(document.getElementById('salesHistChart'), {
+    type:'bar',
+    data:{ labels:['$0-50','$50-100','$100-200','$200-500','$500-1K','$1K-2K','$2K+'], datasets:[{
+      data:[516,240,309,497,288,126,39],
+      backgroundColor:'rgba(118,255,122,0.5)', borderColor:'#76ff7a', borderWidth:1, borderRadius:3, barPercentage:0.8
+    }]},
+    options:{ responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{display:false}, tooltip:{...TT, callbacks:{label:ctx=>' '+ctx.raw+' transactions'}} },
+      scales:{ x:ax.x, y:{...ax.y, ticks:{...ax.y.ticks}} }
+    }
+  });
+})();
+
+// ═══ CHART: Profit Histogram ═══
+(function(){
+  const ax = AX();
+  const pLabels = ['-$2K to -$500','-$500 to -$100','-$100 to $0','$0 to $100','$100 to $500','$500+'];
+  const pData   = [14,157,543,1198,196,13];
+  const pColors = pData.map((_,i)=> i<3 ? 'rgba(255,95,109,0.5)' : 'rgba(118,255,122,0.5)');
+  const pBorders= pData.map((_,i)=> i<3 ? '#ff5f6d' : '#76ff7a');
+  new Chart(document.getElementById('profitHistChart'), {
+    type:'bar',
+    data:{ labels:pLabels, datasets:[{ data:pData, backgroundColor:pColors, borderColor:pBorders, borderWidth:1, borderRadius:3, barPercentage:0.8 }]},
+    options:{ responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{display:false}, tooltip:{...TT, callbacks:{label:ctx=>' '+ctx.raw+' transactions'}} },
+      scales:{ x:{...AX().x, ticks:{...AX().x.ticks, maxRotation:25}}, y:AX().y }
+    }
+  });
+})();
+
+// ═══ CHART: Data Cleaning Before/After ═══
+(function(){
+  const ax = AX();
+  new Chart(document.getElementById('cleanChart'), {
+    type:'bar',
+    data:{ labels:['Sales','Discount','Other 19 cols'], datasets:[
+      { label:'Before', data:[106,106,0], backgroundColor:'rgba(255,95,109,0.6)', borderColor:'#ff5f6d', borderWidth:1, borderRadius:3, barPercentage:0.6, categoryPercentage:0.7 },
+      { label:'After', data:[0,0,0], backgroundColor:'rgba(118,255,122,0.6)', borderColor:'#76ff7a', borderWidth:1, borderRadius:3, barPercentage:0.6, categoryPercentage:0.7 },
+    ]},
+    options:{ responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{display:false}, tooltip:{...TT, callbacks:{label:ctx=>` ${ctx.dataset.label}: ${ctx.raw} missing`}} },
+      scales:{ x:ax.x, y:{...ax.y, title:{display:true,text:'Missing Values',color:'#6b7280',font:{family:'DM Mono',size:10}}} }
+    }
+  });
+})();
+
+// ═══ CHART: Q1 — Full 48-month Trend ═══
+(function(){
+  const ax = AX();
+  const allLabels = [];
+  const allSales = [];
+  const allProfit = [];
+  ['2014','2015','2016','2017'].forEach(yr => {
+    months.forEach((m,i) => {
+      allLabels.push(m + ' ' + yr.slice(2));
+      allSales.push(YEARLY[yr].sales[i]);
+      allProfit.push(YEARLY[yr].profit[i]);
+    });
+  });
+  new Chart(document.getElementById('trendChart'), {
+    type:'line',
+    data:{ labels:allLabels, datasets:[
+      { label:'Sales', data:allSales, borderColor:'#76ff7a', backgroundColor:'rgba(118,255,122,0.07)', borderWidth:2, pointRadius:2, pointHoverRadius:5, pointBackgroundColor:'#76ff7a', fill:true, tension:0.35 },
+      { label:'Profit', data:allProfit, borderColor:'#ff5f6d', backgroundColor:'rgba(255,95,109,0.08)', borderWidth:1.5, pointRadius:2, pointHoverRadius:5, pointBackgroundColor:'#ff5f6d', fill:true, tension:0.35 },
+    ]},
+    options:{ responsive:true, maintainAspectRatio:false,
+      interaction:{ mode:'index', intersect:false },
+      plugins:{ legend:{display:false}, tooltip:{...TT, callbacks:{label:ctx=>` ${ctx.dataset.label}: $${ctx.raw.toLocaleString(undefined,{maximumFractionDigits:0})}`}} },
+      scales:{ x:{...ax.x, ticks:{...ax.x.ticks, maxRotation:45, autoSkip:true, maxTicksLimit:16}}, y:{...ax.y, ticks:{...ax.y.ticks, callback:v=>'$'+(v/1000).toFixed(0)+'K'}} }
+    }
+  });
+})();
+
+// ═══ CHART: Quarterly ═══
+(function(){
+  const ax = AX();
+  const qKeys = Object.keys(QTR);
+  new Chart(document.getElementById('quarterChart'), {
+    type:'bar',
+    data:{ labels:qKeys, datasets:[
+      { label:'Sales', data:qKeys.map(k=>QTR[k].s), backgroundColor:'rgba(79,195,247,0.5)', borderColor:'#4fc3f7', borderWidth:1, borderRadius:2, barPercentage:0.75, categoryPercentage:0.8 },
+      { label:'Profit', data:qKeys.map(k=>QTR[k].p), backgroundColor:qKeys.map(k=>QTR[k].p>=0?'rgba(118,255,122,0.55)':'rgba(255,95,109,0.55)'), borderColor:qKeys.map(k=>QTR[k].p>=0?'#76ff7a':'#ff5f6d'), borderWidth:1, borderRadius:2, barPercentage:0.75, categoryPercentage:0.8 },
+    ]},
+    options:{ responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{display:false}, tooltip:{...TT, callbacks:{label:ctx=>` ${ctx.dataset.label}: $${(ctx.raw/1000).toFixed(1)}K`}} },
+      scales:{ x:{...ax.x, ticks:{...ax.x.ticks, maxRotation:45}}, y:{...ax.y, ticks:{...ax.y.ticks, callback:v=>'$'+(v/1000).toFixed(0)+'K'}} }
+    }
+  });
+})();
+
+// ═══ CHART: Q2 — Scatter ═══
+(function(){
+  const ax = AX();
+  new Chart(document.getElementById('scatterChart'), {
+    type:'scatter',
+    data:{ datasets:[{ data:SCATTER, backgroundColor:ctx=>ctx.raw?.y>=0?'rgba(118,255,122,0.5)':'rgba(255,95,109,0.5)', pointRadius:3.5, pointHoverRadius:6 }] },
+    options:{ responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{display:false}, tooltip:{...TT, callbacks:{label:ctx=>` Discount: ${(ctx.raw.x*100).toFixed(0)}% | Profit: $${ctx.raw.y.toFixed(2)}`}} },
+      scales:{
+        x:{...ax.x, title:{display:true,text:'Discount Rate',color:'#6b7280',font:{family:'DM Mono',size:10}}, ticks:{...ax.x.ticks, callback:v=>(v*100)+'%'}},
+        y:{...ax.y, title:{display:true,text:'Profit ($)',color:'#6b7280',font:{family:'DM Mono',size:10}}, ticks:{...ax.y.ticks, callback:v=>'$'+v}}
+      }
+    }
+  });
+})();
+
+// ═══ CHART: Discount Bands ═══
+(function(){
+  const ax = AX();
+  const bLabels = ['0%','1–20%','21–40%','41–70%'];
+  const bData = [55500,14403,-28611,-23636];
+  const bOrders = [787,713,308,207];
+  new Chart(document.getElementById('bandChart'), {
+    type:'bar',
+    data:{ labels:bLabels, datasets:[{
+      data:bData,
+      backgroundColor:bData.map(v=>v>=0?'rgba(118,255,122,0.6)':'rgba(255,95,109,0.6)'),
+      borderColor:bData.map(v=>v>=0?'#76ff7a':'#ff5f6d'),
+      borderWidth:1, borderRadius:3, barPercentage:0.65
+    }]},
+    options:{ responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{display:false}, tooltip:{...TT, callbacks:{label:ctx=>` Profit: $${(ctx.raw/1000).toFixed(1)}K (${bOrders[ctx.dataIndex]} orders)`}} },
+      scales:{ x:ax.x, y:{...ax.y, ticks:{...ax.y.ticks, callback:v=>'$'+(v/1000).toFixed(0)+'K'}} }
+    }
+  });
+})();
+
+// ═══ CHART: Q3 — State Bar ═══
+(function(){
+  const ax = AX();
+  new Chart(document.getElementById('stateChart'), {
+    type:'bar',
+    data:{
+      labels:STATES.map(s=>s[0]),
+      datasets:[
+        { label:'Sales', data:STATES.map(s=>s[1]), backgroundColor:'rgba(79,195,247,0.5)', borderColor:'#4fc3f7', borderWidth:1, borderRadius:2, barPercentage:.6 },
+        { label:'Profit', data:STATES.map(s=>s[2]), backgroundColor:STATES.map(s=>s[2]>=0?'rgba(118,255,122,0.5)':'rgba(255,95,109,0.5)'), borderColor:STATES.map(s=>s[2]>=0?'#76ff7a':'#ff5f6d'), borderWidth:1, borderRadius:2, barPercentage:.6 },
+      ]
+    },
+    options:{ responsive:true, maintainAspectRatio:false, indexAxis:'y',
+      plugins:{ legend:{display:false}, tooltip:{...TT, callbacks:{label:ctx=>` ${ctx.dataset.label}: $${ctx.raw.toLocaleString()}`}} },
+      scales:{ x:{...ax.x, ticks:{...ax.x.ticks, callback:v=>'$'+(v/1000).toFixed(0)+'K'}}, y:ax.y }
+    }
+  });
+})();
+
+// ═══ CHART: Region ═══
+(function(){
+  const ax = AX();
+  const rKeys = ['West','East','Central','South'];
+  const rSales = [241385,204526,156473,112993];
+  const rProfit = [10417,3238,-2667,6668];
+  new Chart(document.getElementById('regionChart'), {
+    type:'bar',
+    data:{ labels:rKeys, datasets:[
+      { label:'Sales', data:rSales, backgroundColor:'rgba(192,132,252,0.5)', borderColor:'#c084fc', borderWidth:1, borderRadius:2, barPercentage:.7, categoryPercentage:.75 },
+      { label:'Profit', data:rProfit, backgroundColor:rProfit.map(v=>v>=0?'rgba(118,255,122,0.55)':'rgba(255,95,109,0.55)'), borderColor:rProfit.map(v=>v>=0?'#76ff7a':'#ff5f6d'), borderWidth:1, borderRadius:2, barPercentage:.7, categoryPercentage:.75 },
+    ]},
+    options:{ responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{display:false}, tooltip:{...TT, callbacks:{label:ctx=>` ${ctx.dataset.label}: $${(ctx.raw/1000).toFixed(1)}K`}} },
+      scales:{ x:ax.x, y:{...ax.y, ticks:{...ax.y.ticks, callback:v=>'$'+(v/1000).toFixed(0)+'K'}} }
+    }
+  });
+})();
+
+// ═══ CHART: Sub-Category (horizontal, full width) ═══
+const SC = { Chairs:{s:315711,p:25230}, Tables:{s:198823,p:-16957}, Bookcases:{s:113765,p:-3304}, Furnishings:{s:87078,p:12687} };
+const scKeys = ['Chairs','Tables','Bookcases','Furnishings'];
+
+(function(){
+  const ax = AX();
+  new Chart(document.getElementById('subcatChart'), {
+    type:'bar',
+    data:{ labels:scKeys, datasets:[
+      { label:'Sales', data:scKeys.map(k=>SC[k].s),
+        backgroundColor:'rgba(79,195,247,0.6)', borderColor:'#4fc3f7',
+        borderWidth:1, borderRadius:3, barPercentage:.55, categoryPercentage:.8 },
+      { label:'Profit', data:scKeys.map(k=>SC[k].p),
+        backgroundColor:scKeys.map(k=> SC[k].p>=0?'rgba(118,255,122,0.6)':'rgba(255,95,109,0.6)'),
+        borderColor:scKeys.map(k=> SC[k].p>=0?'#76ff7a':'#ff5f6d'),
+        borderWidth:1, borderRadius:3, barPercentage:.55, categoryPercentage:.8 },
+    ]},
+    options:{ responsive:true, maintainAspectRatio:false,
+      indexAxis:'y',
+      plugins:{
+        legend:{display:false},
+        tooltip:{...TT, callbacks:{
+          label: ctx => {
+            const val = ctx.raw;
+            const sign = val >= 0 ? '+' : '';
+            return ` ${ctx.dataset.label}: ${sign}$${(val/1000).toFixed(1)}K`;
+          }
+        }}
+      },
+      scales:{
+        x:{...ax.x, ticks:{...ax.x.ticks, callback:v=>'$'+(v/1000).toFixed(0)+'K'}},
+        y:{...ax.y, ticks:{...ax.y.ticks, font:{family:'DM Mono',size:12}}}
+      }
+    }
+  });
+})();
+</script>
+</body>
+</html>
