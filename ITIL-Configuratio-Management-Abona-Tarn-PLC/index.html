@@ -1,1 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ITIL Configuration Management — Abona & Tarn PLC</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#0a0c10;--surface:#111418;--surface2:#181c22;--border:rgba(255,255,255,0.07);--green:#76ff7a;--green-dim:rgba(118,255,122,0.12);--amber:#ffb347;--amber-dim:rgba(255,179,71,0.12);--red:#ff5f6d;--red-dim:rgba(255,95,109,0.12);--blue:#4fc3f7;--blue-dim:rgba(79,195,247,0.12);--purple:#c084fc;--purple-dim:rgba(192,132,252,0.12);--text:#e8eaf0;--text-muted:#6b7280;--text-sub:#9ca3af;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;}
+  body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(118,255,122,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(118,255,122,0.025) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0;}
+  .w{position:relative;z-index:1;max-width:1400px;margin:0 auto;padding:0 24px 60px;}
 
+  header{padding:40px 0 32px;display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:20px;border-bottom:1px solid var(--border);margin-bottom:36px;}
+  .badge{display:inline-flex;align-items:center;gap:8px;background:var(--green-dim);border:1px solid rgba(118,255,122,0.3);color:var(--green);font-family:'DM Mono',monospace;font-size:11px;letter-spacing:0.08em;padding:5px 12px;border-radius:2px;margin-bottom:16px;text-transform:uppercase;}
+  .badge::before{content:'';width:6px;height:6px;background:var(--green);border-radius:50%;animation:pulse 2s infinite;}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
+  h1{font-family:'Syne',sans-serif;font-size:clamp(26px,4vw,42px);font-weight:800;line-height:1.1;letter-spacing:-0.02em;color:#fff;}
+  h1 span{color:var(--green);}
+  .header-sub{margin-top:10px;font-size:14px;color:var(--text-sub);font-weight:300;max-width:520px;line-height:1.6;}
+  .header-right{display:flex;flex-direction:column;align-items:flex-end;gap:10px;}
+  .author-card{background:var(--surface);border:1px solid var(--border);padding:14px 20px;border-radius:4px;text-align:right;}
+  .author-name{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:#fff;}
+  .author-meta{font-size:12px;color:var(--text-muted);margin-top:3px;font-family:'DM Mono',monospace;}
+  .module-tag{font-family:'DM Mono',monospace;font-size:11px;color:var(--text-muted);letter-spacing:0.06em;}
+
+  .sl{font-family:'DM Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:0.14em;color:var(--text-muted);margin:40px 0 16px;display:flex;align-items:center;gap:12px;}
+  .sl::after{content:'';flex:1;height:1px;background:var(--border);}
+
+  .card{background:var(--surface);border:1px solid var(--border);padding:24px;position:relative;margin-bottom:16px;}
+  .card-h{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px;gap:12px;}
+  .ct{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:#fff;letter-spacing:-0.01em;}
+  .cs{font-size:12px;color:var(--text-muted);margin-top:4px;font-weight:300;line-height:1.5;}
+  .tag{font-family:'DM Mono',monospace;font-size:10px;padding:4px 10px;background:var(--surface2);border:1px solid var(--border);color:var(--text-muted);border-radius:2px;white-space:nowrap;letter-spacing:0.05em;text-transform:uppercase;}
+  .prose{font-size:13px;color:var(--text-sub);line-height:1.8;}
+  .prose strong{color:#fff;font-weight:500;}
+  .hl{color:var(--green);font-family:'DM Mono',monospace;font-size:12px;}
+
+  .g2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;}
+  .g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:16px;}
+  .g4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px;}
+  .g5{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:16px;}
+  .g21{display:grid;grid-template-columns:2fr 1fr;gap:16px;margin-bottom:16px;}
+  @media(max-width:1100px){.g4,.g5{grid-template-columns:repeat(3,1fr);}}
+  @media(max-width:900px){.g2,.g3,.g21{grid-template-columns:1fr;}.g4,.g5{grid-template-columns:repeat(2,1fr);}}
+  @media(max-width:600px){.g4,.g5{grid-template-columns:1fr;}}
+
+  /* ═══ COMPANY PROFILE STAT ═══ */
+  .stat{background:var(--surface);border:1px solid var(--border);padding:20px 18px 16px;position:relative;overflow:hidden;transition:border-color 0.2s;}
+  .stat:hover{border-color:rgba(118,255,122,0.2);}
+  .stat::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
+  .stat.g::after{background:var(--green);}.stat.b::after{background:var(--blue);}.stat.a::after{background:var(--amber);}.stat.r::after{background:var(--red);}.stat.p::after{background:var(--purple);}
+  .stat-label{font-family:'DM Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);margin-bottom:10px;}
+  .stat-val{font-family:'Syne',sans-serif;font-size:22px;font-weight:700;line-height:1.1;}
+  .stat.g .stat-val{color:var(--green);}.stat.b .stat-val{color:var(--blue);}.stat.a .stat-val{color:var(--amber);}.stat.r .stat-val{color:var(--red);}.stat.p .stat-val{color:var(--purple);}
+  .stat-unit{font-size:13px;font-weight:400;opacity:0.7;margin-left:2px;}
+  .stat-desc{font-size:11px;color:var(--text-muted);margin-top:8px;line-height:1.4;}
+
+  /* ═══ PROBLEM NODES ═══ */
+  .problem-grid{display:grid;grid-template-columns:1fr auto 1fr;gap:0;align-items:stretch;margin-bottom:16px;}
+  @media(max-width:900px){.problem-grid{grid-template-columns:1fr;}}
+  .problem-side{display:flex;flex-direction:column;gap:10px;}
+  .problem-node{background:var(--surface);border:1px solid var(--border);padding:16px 18px;border-left:3px solid var(--red);transition:border-color 0.2s;}
+  .problem-node:hover{border-color:rgba(255,95,109,0.4);}
+  .problem-node .pn-title{font-family:'Syne',sans-serif;font-size:12px;font-weight:700;color:#fff;margin-bottom:4px;}
+  .problem-node .pn-desc{font-size:11px;color:var(--text-muted);line-height:1.5;}
+  .problem-center{display:flex;align-items:center;justify-content:center;padding:0 24px;position:relative;}
+  .problem-center::before{content:'';position:absolute;top:0;bottom:0;width:1px;background:var(--border);}
+  .center-label{position:relative;z-index:2;background:var(--bg);padding:16px 0;text-align:center;}
+  .center-label .cl-icon{font-family:'Syne',sans-serif;font-size:28px;font-weight:800;color:var(--red);line-height:1;}
+  .center-label .cl-text{font-family:'DM Mono',monospace;font-size:9px;color:var(--text-muted);letter-spacing:0.12em;text-transform:uppercase;margin-top:6px;}
+
+  /* ═══ SOLUTION HUB ═══ */
+  .hub{position:relative;padding:60px 0;text-align:center;margin-bottom:16px;}
+  .hub-center{display:inline-block;background:var(--surface);border:2px solid rgba(118,255,122,0.4);padding:24px 36px;position:relative;z-index:2;}
+  .hub-center .hc-title{font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:var(--green);}
+  .hub-center .hc-sub{font-family:'DM Mono',monospace;font-size:10px;color:var(--text-muted);letter-spacing:0.08em;text-transform:uppercase;margin-top:4px;}
+  .hub-spokes{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-top:20px;}
+  @media(max-width:900px){.hub-spokes{grid-template-columns:repeat(3,1fr);}}
+  @media(max-width:600px){.hub-spokes{grid-template-columns:1fr 1fr;}}
+  .spoke{background:var(--surface);border:1px solid var(--border);padding:14px 12px;text-align:center;transition:border-color 0.2s;}
+  .spoke:hover{border-color:rgba(118,255,122,0.25);}
+  .spoke-title{font-family:'Syne',sans-serif;font-size:11px;font-weight:700;color:#fff;margin-bottom:4px;}
+  .spoke-desc{font-size:10px;color:var(--text-muted);line-height:1.4;}
+
+  /* ═══ SVS RING ═══ */
+  .svs-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:16px;}
+  @media(max-width:900px){.svs-grid{grid-template-columns:repeat(3,1fr);}}
+  @media(max-width:600px){.svs-grid{grid-template-columns:1fr 1fr;}}
+  .svs-card{background:var(--surface);border:1px solid var(--border);padding:18px 16px;text-align:center;position:relative;overflow:hidden;}
+  .svs-card::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
+  .svs-num{font-family:'DM Mono',monospace;font-size:10px;color:var(--text-muted);letter-spacing:0.1em;margin-bottom:8px;}
+  .svs-title{font-family:'Syne',sans-serif;font-size:12px;font-weight:700;color:#fff;margin-bottom:6px;line-height:1.3;}
+  .svs-desc{font-size:11px;color:var(--text-muted);line-height:1.5;}
+
+  /* ═══ SVC CHAIN ═══ */
+  .svc-chain{display:flex;gap:0;overflow-x:auto;margin-bottom:16px;padding-bottom:4px;}
+  .svc-link{flex:1;min-width:140px;background:var(--surface);border:1px solid var(--border);padding:16px 14px;text-align:center;position:relative;}
+  .svc-link:not(:last-child)::after{content:'';position:absolute;right:-8px;top:50%;transform:translateY(-50%);width:0;height:0;border-top:8px solid transparent;border-bottom:8px solid transparent;border-left:7px solid var(--green);z-index:2;}
+  .svc-link .svc-name{font-family:'Syne',sans-serif;font-size:11px;font-weight:700;color:#fff;margin-bottom:4px;}
+  .svc-link .svc-how{font-size:10px;color:var(--text-muted);line-height:1.4;}
+
+  /* ═══ ITIL INTEGRATION ═══ */
+  .itil-card{background:var(--surface);border:1px solid var(--border);padding:22px;transition:border-color 0.2s;}
+  .itil-card:hover{border-color:rgba(118,255,122,0.2);}
+  .itil-num{font-family:'DM Mono',monospace;font-size:10px;color:var(--green);letter-spacing:0.1em;margin-bottom:6px;}
+  .itil-title{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:#fff;margin-bottom:8px;}
+  .itil-desc{font-size:12px;color:var(--text-sub);line-height:1.7;}
+  .itil-example{font-size:11px;color:var(--text-muted);margin-top:10px;padding-top:10px;border-top:1px solid var(--border);line-height:1.6;font-style:italic;}
+
+  /* ═══ TIMELINE ═══ */
+  .timeline{position:relative;padding-left:40px;margin-bottom:16px;}
+  .timeline::before{content:'';position:absolute;left:15px;top:0;bottom:0;width:2px;background:linear-gradient(180deg,var(--green),var(--blue),var(--purple),var(--amber),var(--green));}
+  .tl-item{position:relative;padding:14px 0;}
+  .tl-dot{position:absolute;left:-33px;top:18px;width:12px;height:12px;border-radius:50%;box-shadow:0 0 8px currentColor;}
+  .tl-dot.c1{background:var(--green);color:var(--green);}
+  .tl-dot.c2{background:var(--blue);color:var(--blue);}
+  .tl-dot.c3{background:var(--purple);color:var(--purple);}
+  .tl-dot.c4{background:var(--amber);color:var(--amber);}
+  .tl-body{background:var(--surface);border:1px solid var(--border);padding:18px 22px;transition:border-color 0.2s;}
+  .tl-body:hover{border-color:rgba(118,255,122,0.2);}
+  .tl-phase{font-family:'DM Mono',monospace;font-size:10px;color:var(--green);letter-spacing:0.1em;margin-bottom:4px;}
+  .tl-title{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:#fff;margin-bottom:6px;}
+  .tl-desc{font-size:12px;color:var(--text-muted);line-height:1.6;}
+
+  /* ═══ KPI BARS ═══ */
+  .kpi-row{display:flex;align-items:center;gap:14px;padding:14px 0;border-bottom:1px solid rgba(255,255,255,0.04);}
+  .kpi-row:last-child{border-bottom:none;}
+  .kpi-name{font-family:'DM Mono',monospace;font-size:11px;color:var(--text-sub);width:180px;flex-shrink:0;line-height:1.3;}
+  .kpi-bar-track{flex:1;height:20px;background:var(--surface2);border-radius:2px;overflow:hidden;position:relative;}
+  .kpi-bar-fill{height:100%;border-radius:2px;display:flex;align-items:center;justify-content:flex-end;padding-right:8px;font-family:'DM Mono',monospace;font-size:10px;color:#0a0c10;font-weight:700;transition:width 1s ease;}
+  .kpi-target{font-family:'DM Mono',monospace;font-size:11px;color:var(--text-muted);width:90px;text-align:right;flex-shrink:0;}
+
+  /* ═══ RISK MATRIX ═══ */
+  .risk-row{display:grid;grid-template-columns:1fr 80px 80px 1fr;gap:0;border-bottom:1px solid rgba(255,255,255,0.04);align-items:center;}
+  .risk-row:last-child{border-bottom:none;}
+  .risk-row.rh{border-bottom:1px solid var(--border);}
+  .risk-row.rh>div{font-family:'DM Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);padding:0 0 12px;}
+  .risk-cell{padding:12px 8px 12px 0;font-size:12px;color:var(--text-sub);line-height:1.5;}
+  .risk-cell:first-child{color:#fff;font-weight:500;font-size:13px;}
+  .risk-badge{font-family:'DM Mono',monospace;font-size:10px;padding:3px 8px;border-radius:2px;text-align:center;display:inline-block;font-weight:500;}
+  .risk-badge.high{background:var(--red-dim);color:var(--red);}
+  .risk-badge.med{background:var(--amber-dim);color:var(--amber);}
+  .risk-badge.low{background:var(--green-dim);color:var(--green);}
+
+  /* ═══ DELIVERABLE TABLE ═══ */
+  table{width:100%;border-collapse:collapse;font-size:13px;}
+  thead th{font-family:'DM Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);padding:0 14px 12px 0;text-align:left;border-bottom:1px solid var(--border);}
+  tbody tr{border-bottom:1px solid rgba(255,255,255,0.04);transition:background 0.1s;}
+  tbody tr:hover{background:rgba(255,255,255,0.03);}
+  tbody td{padding:11px 14px 11px 0;color:var(--text-sub);}
+  tbody td:first-child{color:#fff;font-weight:500;}
+
+  footer{border-top:1px solid var(--border);margin-top:48px;padding-top:28px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;}
+  .footer-left{font-size:12px;color:var(--text-muted);line-height:1.7;}
+  .footer-links{display:flex;gap:16px;}
+  .footer-link{font-family:'DM Mono',monospace;font-size:11px;color:var(--text-muted);text-decoration:none;border-bottom:1px solid transparent;transition:all 0.15s;letter-spacing:0.04em;padding-bottom:1px;}
+  .footer-link:hover{color:var(--green);border-color:var(--green);}
+  .fade-in{opacity:0;transform:translateY(12px);animation:fadeIn 0.5s ease forwards;}
+  @keyframes fadeIn{to{opacity:1;transform:none;}}
+</style>
+</head>
+<body>
+<div class="w">
+
+  <!-- ═══════════ HEADER ═══════════ -->
+  <header class="fade-in">
+    <div>
+      <div class="badge">KV5024 IT Service Management · Northumbria University</div>
+      <h1>ITIL <span>Configuration Management</span><br>Abona & Tarn PLC</h1>
+      <p class="header-sub">Designing a Configuration Management Database (CMDB) implementation strategy for a 87-store UK retail corporation to resolve fragmented IT systems, improve change planning, and accelerate incident resolution.</p>
+    </div>
+    <div class="header-right">
+      <div class="author-card">
+        <div class="author-name">Nawaf Almutairi</div>
+        <div class="author-meta">BSc Computer Science</div>
+        <div class="author-meta" style="margin-top:4px;">Northumbria University</div>
+      </div>
+      <div class="module-tag">Framework: ITIL 4</div>
+    </div>
+  </header>
+
+  <!-- ═══════════ COMPANY PROFILE ═══════════ -->
+  <div class="sl">— Company Profile</div>
+  <div class="g5 fade-in">
+    <div class="stat g"><div class="stat-label">Stores</div><div class="stat-val">87</div><div class="stat-desc">High-street & shopping centre locations across UK</div></div>
+    <div class="stat b"><div class="stat-label">Distribution Centres</div><div class="stat-val">5</div><div class="stat-desc">Luton, Swindon, Nottingham, Leeds, Dumfries</div></div>
+    <div class="stat a"><div class="stat-label">Headquarters</div><div class="stat-val">Leeds</div><div class="stat-desc">Finance, procurement, HR, marketing, IT operations</div></div>
+    <div class="stat p"><div class="stat-label">Founded</div><div class="stat-val">1977</div><div class="stat-desc">Merger of 4 regional department store chains</div></div>
+    <div class="stat g"><div class="stat-label">Sector</div><div class="stat-val">Retail</div><div class="stat-desc">UK department stores with e-commerce platform</div></div>
+  </div>
+
+  <!-- ═══════════ THE PROBLEM ═══════════ -->
+  <div class="sl">— The Problem: Fragmented IT Infrastructure</div>
+  <div class="problem-grid fade-in">
+    <div class="problem-side">
+      <div class="problem-node">
+        <div class="pn-title">Separate POS Systems</div>
+        <div class="pn-desc">Each of the 87 stores runs its own point-of-sale system with locally managed LAN. No centralised control or consistent configuration.</div>
+      </div>
+      <div class="problem-node">
+        <div class="pn-title">Disjointed WMS</div>
+        <div class="pn-desc">Warehouse Management Systems across 5 distribution centres operate independently with no direct communication to the ERP system.</div>
+      </div>
+      <div class="problem-node">
+        <div class="pn-title">Batch-Only ERP</div>
+        <div class="pn-desc">ERP system only receives daily sales data via overnight batch jobs. No real-time integration with POS or WMS platforms.</div>
+      </div>
+    </div>
+    <div class="problem-center">
+      <div class="center-label">
+        <div class="cl-icon">!</div>
+        <div class="cl-text">Siloed<br>Systems</div>
+      </div>
+    </div>
+    <div class="problem-side">
+      <div class="problem-node">
+        <div class="pn-title">Standalone E-Commerce</div>
+        <div class="pn-desc">Website is mostly separate from core systems — unable to track inventory or respond to customer activity in real time.</div>
+      </div>
+      <div class="problem-node">
+        <div class="pn-title">No Unified Asset View</div>
+        <div class="pn-desc">IT department cannot answer basic questions like "Which POS systems run outdated software?" or "Which servers support which WMS modules?"</div>
+      </div>
+      <div class="problem-node">
+        <div class="pn-title">Slow Incident Resolution</div>
+        <div class="pn-desc">When a POS device crashes, support teams operate with incomplete data about dependencies and configurations, causing delays.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════ THE SOLUTION ═══════════ -->
+  <div class="sl">— The Solution: CMDB as Central Hub</div>
+  <div class="hub fade-in">
+    <div class="hub-center">
+      <div class="hc-title">Configuration Management Database</div>
+      <div class="hc-sub">Single source of truth for all IT assets & relationships</div>
+    </div>
+    <div class="hub-spokes">
+      <div class="spoke"><div class="spoke-title">POS Systems</div><div class="spoke-desc">Track all 87 store configurations, versions, and dependencies</div></div>
+      <div class="spoke"><div class="spoke-title">WMS Platforms</div><div class="spoke-desc">Map warehouse systems and their ERP integration points</div></div>
+      <div class="spoke"><div class="spoke-title">ERP System</div><div class="spoke-desc">Central enterprise platform with finance, HR, inventory modules</div></div>
+      <div class="spoke"><div class="spoke-title">Network / LAN</div><div class="spoke-desc">Store-level LANs and outsourced WAN infrastructure</div></div>
+      <div class="spoke"><div class="spoke-title">E-Commerce</div><div class="spoke-desc">Website, APIs, endpoints, and web service integrations</div></div>
+    </div>
+  </div>
+
+  <div class="g2 fade-in">
+    <div class="card" style="border-left:3px solid var(--green)">
+      <div class="card-h"><div><div class="ct">What is Configuration Management?</div><div class="cs">ITIL 4 Definition</div></div><div class="tag">Definition</div></div>
+      <div class="prose">Configuration Management ensures that <strong>accurate and reliable information</strong> about the configuration of services and the Configuration Items (CIs) that support them is available when and where it is needed. This information is stored in a CMDB which provides a logical model of the IT infrastructure by capturing <strong>relationships and dependencies</strong> between assets, services, and systems.<br><br><span style="font-size:11px;color:var(--text-muted)">Axelos (2019, p. 104)</span></div>
+    </div>
+    <div class="card">
+      <div class="card-h"><div><div class="ct">Key Benefits for Abona & Tarn</div><div class="cs">Why CMDB resolves their specific challenges</div></div><div class="tag">Benefits</div></div>
+      <div class="prose" style="font-size:12px">
+        <strong>Improved Visibility:</strong> Central record of all CIs — hardware, software, services, locations, owners. Quick identification of misconfigured or non-compliant systems.<br><br>
+        <strong>Better Change Planning:</strong> Predict impact of proposed changes using dependency maps. Reduce change failures by basing decisions on current, accurate data.<br><br>
+        <strong>Faster Incident Resolution:</strong> Service desk agents can identify exact software versions, patch levels, and related systems when diagnosing issues.<br><br>
+        <strong>Reduced Duplication:</strong> Single point of truth prevents unknowingly duplicating assets, renewing invalid licenses, or overlooking vulnerabilities.<br><br>
+        <strong>Audit Readiness:</strong> Historical records of configuration changes support GDPR, PCI DSS, and internal audit compliance.
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════ SVS ═══════════ -->
+  <div class="sl">— ITIL 4 Service Value System (SVS)</div>
+  <div class="card fade-in" style="margin-bottom:16px">
+    <div class="card-h"><div><div class="ct">How Configuration Management Fits Into the SVS</div><div class="cs">Contributing to all 5 components of the Service Value System</div></div><div class="tag">Framework</div></div>
+    <div class="prose" style="margin-bottom:16px">The SVS describes how all organisational components interact to create value through IT-enabled services. Configuration Management acts as the <strong>backbone of data</strong> for many ITIL practices and plays a pivotal role across the entire system.</div>
+  </div>
+  <div class="svs-grid fade-in">
+    <div class="svs-card" style="border-top:2px solid var(--green)"><div class="svs-num">01</div><div class="svs-title">Guiding Principles</div><div class="svs-desc">Focus on value, collaborate and promote visibility, optimise and automate</div></div>
+    <div class="svs-card" style="border-top:2px solid var(--blue)"><div class="svs-num">02</div><div class="svs-title">Governance</div><div class="svs-desc">Assets documented, approved, tracked for audits and compliance</div></div>
+    <div class="svs-card" style="border-top:2px solid var(--purple)"><div class="svs-num">03</div><div class="svs-title">Service Value Chain</div><div class="svs-desc">Supports Plan, Improve, Engage, Design, Obtain, Deliver</div></div>
+    <div class="svs-card" style="border-top:2px solid var(--amber)"><div class="svs-num">04</div><div class="svs-title">Practices</div><div class="svs-desc">Backbone for Change, Incident, Release, ITAM, Service Catalogue</div></div>
+    <div class="svs-card" style="border-top:2px solid var(--green)"><div class="svs-num">05</div><div class="svs-title">Continual Improvement</div><div class="svs-desc">Accurate data enables performance review and improvement initiatives</div></div>
+  </div>
+
+  <!-- ═══════════ SERVICE VALUE CHAIN ═══════════ -->
+  <div class="sl">— Service Value Chain: CMDB Contribution</div>
+  <div class="svc-chain fade-in">
+    <div class="svc-link"><div class="svc-name">Plan</div><div class="svc-how">Budget planning, capacity management, IT strategy</div></div>
+    <div class="svc-link"><div class="svc-name">Improve</div><div class="svc-how">Performance reviews supported by accurate asset data</div></div>
+    <div class="svc-link"><div class="svc-name">Engage</div><div class="svc-how">Shared knowledge between IT and business units</div></div>
+    <div class="svc-link"><div class="svc-name">Design & Transition</div><div class="svc-how">CI relationships and dependencies for testing and deployment</div></div>
+    <div class="svc-link"><div class="svc-name">Obtain / Build</div><div class="svc-how">Identify existing resources before new procurement</div></div>
+    <div class="svc-link"><div class="svc-name">Deliver & Support</div><div class="svc-how">Service desk data for efficient incident handling</div></div>
+  </div>
+
+  <!-- ═══════════ ITIL INTEGRATION ═══════════ -->
+  <div class="sl">— Integration With Other ITIL Practices</div>
+  <div class="g2 fade-in">
+    <div class="itil-card"><div class="itil-num">4.2.1</div><div class="itil-title">Change Enablement</div><div class="itil-desc">CMDB relationship data enables accurate impact assessment for every change request. Increases change success rate, reduces unplanned downtime, and empowers Change Advisory Boards (CABs) to make informed decisions.</div><div class="itil-example">Before upgrading all store POS systems, the CAB can review dependencies (network bandwidth, payment processors, printers) using the CMDB to predict and prevent disruptions.</div></div>
+    <div class="itil-card"><div class="itil-num">4.2.2</div><div class="itil-title">Incident & Problem Management</div><div class="itil-desc">When a payment device fails, the CMDB enables the service desk to identify the model, software version, related systems, and trace similar issues at other locations. Supports root cause analysis across stores.</div><div class="itil-example">If the same POS model fails in multiple stores, CMDB data supports pattern analysis and faster root cause identification.</div></div>
+    <div class="itil-card"><div class="itil-num">4.2.3</div><div class="itil-title">Release Management</div><div class="itil-desc">CMDB defines CI standards, documents environments, and supports deployment strategies. Reduces release failures from version incompatibility, overlooked dependencies, or untested environments.</div><div class="itil-example">When rolling out a new ERP patch, the CMDB ensures the underlying server, database versions, and APIs are compatible before deployment begins.</div></div>
+    <div class="itil-card"><div class="itil-num">4.2.4</div><div class="itil-title">IT Asset Management (ITAM)</div><div class="itil-desc">While ITAM focuses on financial and contractual aspects (costs, warranties, lifecycle), Configuration Management emphasises technical attributes and relationships. Their integration provides a comprehensive view supporting both financial oversight and operational control.</div><div class="itil-example">Synergy between ITAM and Configuration Management is documented in ITIL best practices as a foundation for effective governance (Addy, 2007).</div></div>
+  </div>
+
+  <!-- ═══════════ KPIs ═══════════ -->
+  <div class="sl">— Success Criteria & Key Performance Indicators</div>
+  <div class="card fade-in">
+    <div class="card-h"><div><div class="ct">Recommended KPIs for Abona & Tarn</div><div class="cs">Based on industry benchmarks from Device42 (2023), Cloudaware (2023), and Cisco (2022)</div></div><div class="tag">Metrics</div></div>
+    <div class="kpi-row"><div class="kpi-name">CI Accuracy in CMDB</div><div class="kpi-bar-track"><div class="kpi-bar-fill" style="width:95%;background:var(--green)">95%</div></div><div class="kpi-target">Target: > 95%</div></div>
+    <div class="kpi-row"><div class="kpi-name">CMDB Completeness</div><div class="kpi-bar-track"><div class="kpi-bar-fill" style="width:90%;background:var(--green)">90%</div></div><div class="kpi-target">Target: > 90%</div></div>
+    <div class="kpi-row"><div class="kpi-name">Incident Resolution Improvement</div><div class="kpi-bar-track"><div class="kpi-bar-fill" style="width:20%;background:var(--blue)">-20%</div></div><div class="kpi-target">Reduce by 20%</div></div>
+    <div class="kpi-row"><div class="kpi-name">Change Success Rate</div><div class="kpi-bar-track"><div class="kpi-bar-fill" style="width:98%;background:var(--green)">98%</div></div><div class="kpi-target">Target: > 98%</div></div>
+    <div class="kpi-row"><div class="kpi-name">CI Update Frequency</div><div class="kpi-bar-track"><div class="kpi-bar-fill" style="width:100%;background:var(--purple)">Monthly / Auto</div></div><div class="kpi-target">Monthly+</div></div>
+    <div class="kpi-row"><div class="kpi-name">Audit Readiness</div><div class="kpi-bar-track"><div class="kpi-bar-fill" style="width:100%;background:var(--amber)">100%</div></div><div class="kpi-target">100% compliance</div></div>
+    <div class="kpi-row"><div class="kpi-name">User Satisfaction (CMDB)</div><div class="kpi-bar-track"><div class="kpi-bar-fill" style="width:85%;background:var(--blue)">85%</div></div><div class="kpi-target">Target: > 85%</div></div>
+  </div>
+
+  <!-- ═══════════ IMPLEMENTATION TIMELINE ═══════════ -->
+  <div class="sl">— Implementation Plan: 8 Phases</div>
+  <div class="card fade-in" style="padding-bottom:8px">
+    <div class="card-h"><div><div class="ct">Phased Implementation Roadmap</div><div class="cs">Systematic approach minimising disruption to business operations</div></div><div class="tag">Roadmap</div></div>
+    <div class="timeline">
+      <div class="tl-item"><div class="tl-dot c1"></div><div class="tl-body"><div class="tl-phase">Phase 1</div><div class="tl-title">Initiation & Planning</div><div class="tl-desc">Appoint Configuration Manager, form implementation team, define objectives, scope, and timelines. Identify stakeholders and secure executive support and budget.</div></div></div>
+      <div class="tl-item"><div class="tl-dot c2"></div><div class="tl-body"><div class="tl-phase">Phase 2</div><div class="tl-title">Current State Assessment</div><div class="tl-desc">Comprehensive IT asset audit across all 87 stores, 5 distribution centres, and Leeds HQ. Map existing POS, WMS, ERP systems and their dependencies. Identify gaps and legacy systems.</div></div></div>
+      <div class="tl-item"><div class="tl-dot c3"></div><div class="tl-body"><div class="tl-phase">Phase 3</div><div class="tl-title">CI Classification & Attribute Definition</div><div class="tl-desc">Define what constitutes a Configuration Item. Establish mandatory attributes (location, owner, software version, status). Create relationship models between systems.</div></div></div>
+      <div class="tl-item"><div class="tl-dot c4"></div><div class="tl-body"><div class="tl-phase">Phase 4</div><div class="tl-title">Tool Selection & Configuration</div><div class="tl-desc">Evaluate CMDB platforms based on integration capability, usability, scalability, and automation. Configure roles, permissions, validation rules, and interface layouts.</div></div></div>
+      <div class="tl-item"><div class="tl-dot c1"></div><div class="tl-body"><div class="tl-phase">Phase 5</div><div class="tl-title">Data Discovery & Population</div><div class="tl-desc">Use automated discovery tools (Lansweeper, SCCM) for detection. Manually validate legacy systems. Upload data to CMDB and map all relationships.</div></div></div>
+      <div class="tl-item"><div class="tl-dot c2"></div><div class="tl-body"><div class="tl-phase">Phase 6</div><div class="tl-title">Training & Communication</div><div class="tl-desc">Develop tailored training for different user groups. Conduct workshops and provide ongoing support documentation for all CMDB stakeholders.</div></div></div>
+      <div class="tl-item"><div class="tl-dot c3"></div><div class="tl-body"><div class="tl-phase">Phase 7</div><div class="tl-title">Pilot & Rollout</div><div class="tl-desc">Select a small group of stores and one distribution centre for pilot. Monitor performance and user feedback. Adjust processes before full nationwide rollout.</div></div></div>
+      <div class="tl-item"><div class="tl-dot c4"></div><div class="tl-body"><div class="tl-phase">Phase 8</div><div class="tl-title">Ongoing Operations & Continual Improvement</div><div class="tl-desc">Establish regular CMDB audits. Track KPIs and performance. Integrate Configuration Management into broader ITIL processes for long-term sustainability.</div></div></div>
+    </div>
+  </div>
+
+  <!-- ═══════════ RISK MATRIX ═══════════ -->
+  <div class="sl">— Risk Assessment</div>
+  <div class="card fade-in">
+    <div class="card-h"><div><div class="ct">Implementation Risks & Mitigations</div><div class="cs">Based on ITIL 4 risk governance principles (Axelos, 2019; Cloudaware, 2023)</div></div><div class="tag">Risk Matrix</div></div>
+    <div class="risk-row rh"><div>Risk</div><div>Impact</div><div>Likelihood</div><div>Mitigation Strategy</div></div>
+    <div class="risk-row"><div class="risk-cell">Incomplete or outdated asset data</div><div class="risk-cell"><span class="risk-badge high">High</span></div><div class="risk-cell"><span class="risk-badge med">Medium</span></div><div class="risk-cell">Conduct audits; use automated discovery tools; cross-check physical and digital records</div></div>
+    <div class="risk-row"><div class="risk-cell">Staff resistance or low adoption</div><div class="risk-cell"><span class="risk-badge med">Medium</span></div><div class="risk-cell"><span class="risk-badge high">High</span></div><div class="risk-cell">Provide early engagement, clear training, and regular feedback channels</div></div>
+    <div class="risk-row"><div class="risk-cell">Integration failures (ERP/POS/WMS)</div><div class="risk-cell"><span class="risk-badge high">High</span></div><div class="risk-cell"><span class="risk-badge med">Medium</span></div><div class="risk-cell">Use phased rollout, test environments, and modular APIs</div></div>
+    <div class="risk-row"><div class="risk-cell">Data inconsistency or decay</div><div class="risk-cell"><span class="risk-badge med">Medium</span></div><div class="risk-cell"><span class="risk-badge med">Medium</span></div><div class="risk-cell">Schedule regular CMDB updates; assign CI ownership</div></div>
+    <div class="risk-row"><div class="risk-cell">Scope creep or uncontrolled expansion</div><div class="risk-cell"><span class="risk-badge med">Medium</span></div><div class="risk-cell"><span class="risk-badge med">Medium</span></div><div class="risk-cell">Define and freeze initial scope; use agile sprints for future phases</div></div>
+    <div class="risk-row"><div class="risk-cell">Insufficient tool support or licensing</div><div class="risk-cell"><span class="risk-badge med">Medium</span></div><div class="risk-cell"><span class="risk-badge low">Low</span></div><div class="risk-cell">Select scalable, well-supported tools; review licensing during procurement</div></div>
+  </div>
+
+  <!-- ═══════════ DELIVERABLES ═══════════ -->
+  <div class="sl">— Deliverables & Roles</div>
+  <div class="g2 fade-in">
+    <div class="card">
+      <div class="card-h"><div><div class="ct">Component Deliverables</div><div class="cs">Living documents reviewed quarterly during early adoption</div></div><div class="tag">Outputs</div></div>
+      <table>
+        <thead><tr><th>Component</th><th>Purpose</th></tr></thead>
+        <tbody>
+          <tr><td>CI Templates</td><td>Standardise attributes and metadata for different CI types</td></tr>
+          <tr><td>Naming Conventions</td><td>Ensure consistent, searchable, scalable CI naming</td></tr>
+          <tr><td>Relationship Mapping</td><td>Visualise dependencies between systems, services, hardware</td></tr>
+          <tr><td>Integration Interfaces</td><td>Automate data exchange with ERP, POS, and WMS</td></tr>
+          <tr><td>Data Governance Policy</td><td>Define accuracy, update frequency, ownership, retention rules</td></tr>
+          <tr><td>Access Control & Roles</td><td>Assign user roles and restrict access by responsibility</td></tr>
+          <tr><td>Audit Logs</td><td>Enable traceability for compliance and internal reviews</td></tr>
+          <tr><td>Update Procedures</td><td>Define when and how CIs are added, modified, or removed</td></tr>
+          <tr><td>Training Materials</td><td>Ensure long-term usability and process adherence</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card">
+      <div class="card-h"><div><div class="ct">Key Roles & Responsibilities</div><div class="cs">Based on ITIL 4 guidelines (Axelos, 2019)</div></div><div class="tag">Team</div></div>
+      <table>
+        <thead><tr><th>Role</th><th>Responsibility</th></tr></thead>
+        <tbody>
+          <tr><td>Configuration Manager</td><td>Oversees implementation, defines CI structure, enforces governance</td></tr>
+          <tr><td>CMDB Administrator</td><td>Manages the tool, ensures data accuracy, handles configuration</td></tr>
+          <tr><td>ITSM Tool Admin</td><td>Supports tool integration with ERP, POS, Active Directory</td></tr>
+          <tr><td>Store/Regional IT Techs</td><td>Perform physical audits and field validation of IT assets</td></tr>
+          <tr><td>Service Desk Agents</td><td>Use CMDB for incident diagnosis and resolution</td></tr>
+          <tr><td>Training Coordinator</td><td>Develops and delivers education programs for CMDB users</td></tr>
+          <tr><td>Change Advisory Board</td><td>Uses CMDB data for risk assessments and change approval</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ═══════════ CONCLUSION ═══════════ -->
+  <div class="sl">— Conclusion</div>
+  <div class="card fade-in" style="border-left:3px solid var(--green)">
+    <div class="card-h"><div><div class="ct">Strategic Impact</div><div class="cs">Configuration Management as a foundation for digital transformation</div></div><div class="tag">Summary</div></div>
+    <div class="prose">
+      Abona & Tarn PLC faces a critical juncture in its digital evolution. While the company has built a strong national presence, its <strong>outdated and fragmented IT systems</strong> hinder operational efficiency, business agility, and customer satisfaction.<br><br>
+      Implementing ITIL's Configuration Management through a structured CMDB provides a <strong>single source of truth</strong> for all Configuration Items across the organisation. It ensures that accurate, reliable, and timely information is available to support change planning, incident resolution, audit compliance, and long-term IT governance.<br><br>
+      Whether the company aims to modernise its e-commerce platform, adopt cloud-based technologies, or implement AI-driven analytics, a robust CMDB provides the <strong>visibility and control</strong> needed to manage complexity and scale efficiently. Configuration Management is not just a tactical fix — it is a <strong>strategic initiative</strong> supporting future digital transformation.
+    </div>
+  </div>
+
+  <!-- ═══════════ REFERENCES ═══════════ -->
+  <div class="sl">— References</div>
+  <div class="card fade-in">
+    <div class="prose" style="font-size:12px;line-height:2">
+      Addy, R. (2007) <em>Effective Configuration Management in a DevOps World</em>. Van Haren Publishing.<br>
+      Axelos (2019) <em>ITIL Foundation: ITIL 4 Edition</em>. London: TSO.<br>
+      Cisco (2022) 'Why IT asset management is critical to compliance and security'. Available at: cisco.com.<br>
+      Cloudaware (2023) 'CMDB Best Practices: How to Avoid the Most Common Mistakes'. Available at: cloudaware.com.<br>
+      Device42 (2023) 'Benefits of CMDB Implementation in Large Enterprises'. Available at: device42.com.<br>
+      Galup, S. et al. (2009) 'An overview of IT service management', <em>Communications of the ACM</em>, 52(5), pp.124-127.<br>
+      Rudd, C., Lloyd, V. and Rudd, M. (2012) <em>ITIL Practitioner Guidance</em>. London: TSO.<br>
+      van Bon, J. (2011) <em>Foundations of IT Service Management Based on ITIL V3</em>. 3rd ed. Van Haren Publishing.
+    </div>
+  </div>
+
+  <!-- ═══════════ FOOTER ═══════════ -->
+  <footer class="fade-in">
+    <div class="footer-left">
+      <div>KV5024 IT Service Management · Northumbria University · 2024-2026</div>
+      <div>Interactive report built with HTML/CSS</div>
+    </div>
+    <div class="footer-links">
+      <a class="footer-link" href="https://nawafbalmutairi.github.io">Portfolio</a>
+      <a class="footer-link" href="https://github.com/nawafbalmutairi">GitHub</a>
+      <a class="footer-link" href="https://linkedin.com/in/nawafbalmutairi">LinkedIn</a>
+    </div>
+  </footer>
+
+</div>
+</body>
+</html>
