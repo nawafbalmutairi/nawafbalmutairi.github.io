@@ -3,304 +3,336 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Nawaf Almutairi | IT Support · Business Intelligence · AI Machine Learning · UI/UX Design · Software Architecture</title>
-<meta name="description" content="Nawaf Almutairi — BSc Computer Science from Northumbria University. IT Support, Business Intelligence, AI Machine Learning, UI/UX Design, Software Architecture. Python, SQL, Power BI, DAX, ETL, Microsoft Azure ML, PHP, REST API, Unity, Figma, ITIL 4, CMDB, Data Analysis, Data Visualisation, Technical Support.">
-<meta name="keywords" content="Nawaf Almutairi, IT Support, Business Intelligence, Power BI, Machine Learning, AI, UI/UX Design, Python, SQL, DAX, ETL, Data Analysis, Azure, Computer Science, Data Visualization, Technical Support, System Administration, Software Architecture, REST API, PHP, ITIL, CMDB, Unity, Figma, Northumbria University, Microservices, Kubernetes, CI/CD, Agile, Git, GitHub, Data Cleaning, Statistical Analysis, HCI, User-Centred Design, Design Thinking, Accessibility">
-<meta name="author" content="Nawaf Almutairi">
-<meta name="robots" content="index, follow">
-<meta property="og:title" content="Nawaf Almutairi — Computer Science Portfolio">
-<meta property="og:description" content="IT Support, Business Intelligence, AI/ML, UI/UX Design, Software Architecture. Python, SQL, Power BI, Azure ML, PHP, Unity.">
-<meta property="og:type" content="website">
-<meta property="og:url" content="https://nawafbalmutairi.github.io">
-<link rel="canonical" href="https://nawafbalmutairi.github.io">
-<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<title>Nawaf Almutairi | Data Analyst · Business Intelligence · Machine Learning</title>
+<meta name="description" content="Nawaf Almutairi — BSc Computer Science, Northumbria University. Data Analysis, Business Intelligence, Machine Learning, Software Architecture.">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@200;300;400;500;600;700;800;900&family=JetBrains+Mono:wght@300;400;500;700&display=swap" rel="stylesheet">
 <style>
-  :root{--bg:#0a0c10;--surface:#111418;--surface2:#181c22;--border:rgba(255,255,255,0.07);--green:#76ff7a;--green-dim:rgba(118,255,122,0.12);--amber:#ffb347;--amber-dim:rgba(255,179,71,0.12);--blue:#4fc3f7;--blue-dim:rgba(79,195,247,0.12);--purple:#c084fc;--purple-dim:rgba(192,132,252,0.12);--text:#e8eaf0;--text-muted:#6b7280;--text-sub:#9ca3af;}
-  *{margin:0;padding:0;box-sizing:border-box;}
-  body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;}
-  body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(118,255,122,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(118,255,122,0.025) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0;}
-  .w{position:relative;z-index:1;max-width:1200px;margin:0 auto;padding:0 24px 80px;}
-  header{padding:48px 0 36px;display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:20px;border-bottom:1px solid var(--border);margin-bottom:40px;}
-  .badge{display:inline-flex;align-items:center;gap:8px;background:var(--green-dim);border:1px solid rgba(118,255,122,0.3);color:var(--green);font-family:'DM Mono',monospace;font-size:11px;letter-spacing:0.08em;padding:5px 12px;border-radius:2px;margin-bottom:16px;text-transform:uppercase;}
-  .badge::before{content:'';width:6px;height:6px;background:var(--green);border-radius:50%;animation:pulse 2s infinite;}
-  @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
-  h1{font-family:'Syne',sans-serif;font-size:clamp(32px,5vw,56px);font-weight:800;line-height:1.05;letter-spacing:-0.02em;color:#fff;}
-  h1 span{color:var(--green);}
-  .header-sub{margin-top:12px;font-size:14px;color:var(--text-sub);font-weight:300;max-width:490px;line-height:1.7;}
-  .header-right{display:flex;flex-direction:column;align-items:flex-end;gap:10px;}
-  .author-card{background:var(--surface);border:1px solid var(--border);padding:14px 20px;border-radius:4px;text-align:right;}
-  .author-name{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:#fff;}
-  .author-meta{font-size:12px;color:var(--text-muted);margin-top:3px;font-family:'DM Mono',monospace;}
-  .sl{font-family:'DM Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:0.14em;color:var(--text-muted);margin:40px 0 16px;display:flex;align-items:center;gap:12px;}
-  .sl::after{content:'';flex:1;height:1px;background:var(--border);}
-  .g2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;}
-  .g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:16px;}
-  .g4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px;}
-  .g31{display:grid;grid-template-columns:1fr 2fr;gap:16px;margin-bottom:16px;}
-  @media(max-width:900px){.g2,.g3,.g4,.g31{grid-template-columns:1fr;}}
-  .card{background:var(--surface);border:1px solid var(--border);padding:24px;margin-bottom:16px;}
-  .card-h{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px;gap:12px;}
-  .ct{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:#fff;letter-spacing:-0.01em;}
-  .cs{font-size:12px;color:var(--text-muted);margin-top:4px;font-weight:300;line-height:1.5;}
-  .tag{font-family:'DM Mono',monospace;font-size:10px;padding:4px 10px;background:var(--surface2);border:1px solid var(--border);color:var(--text-muted);border-radius:2px;white-space:nowrap;letter-spacing:0.05em;text-transform:uppercase;flex-shrink:0;}
-  .tag.green{background:var(--green-dim);border-color:rgba(118,255,122,0.3);color:var(--green);}
-  .stat{background:var(--surface);border:1px solid var(--border);padding:20px 18px 16px;position:relative;overflow:hidden;transition:border-color 0.2s;}
-  .stat:hover{border-color:rgba(118,255,122,0.2);}
-  .stat::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
-  .stat.g::after{background:var(--green);}.stat.b::after{background:var(--blue);}.stat.a::after{background:var(--amber);}.stat.p::after{background:var(--purple);}
-  .stat-label{font-family:'DM Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);margin-bottom:10px;}
-  .stat-val{font-family:'Syne',sans-serif;font-size:22px;font-weight:700;line-height:1.1;}
-  .stat.g .stat-val{color:var(--green);}.stat.b .stat-val{color:var(--blue);}.stat.a .stat-val{color:var(--amber);}.stat.p .stat-val{color:var(--purple);}
-  .stat-desc{font-size:11px;color:var(--text-muted);margin-top:8px;line-height:1.4;}
-  .about{font-size:13px;color:var(--text-sub);line-height:1.85;font-weight:300;}
-  .about p+p{margin-top:14px;}
-  .skill-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.04);}
-  .skill-row:last-child{border-bottom:none;}
-  .skill-name{font-family:'DM Mono',monospace;font-size:11px;color:var(--text-sub);text-transform:uppercase;letter-spacing:0.06em;width:130px;flex-shrink:0;}
-  .skill-bar{flex:1;height:3px;background:rgba(255,255,255,0.06);border-radius:2px;overflow:hidden;}
-  .skill-fill{height:100%;background:var(--green);border-radius:2px;transform:scaleX(0);transform-origin:left;transition:transform 1.2s ease;}
-  .skill-pct{font-family:'DM Mono',monospace;font-size:10px;color:var(--text-muted);width:36px;text-align:right;flex-shrink:0;}
-  .pills{display:flex;flex-wrap:wrap;gap:6px;}
-  .pill{font-family:'DM Mono',monospace;font-size:10px;padding:4px 10px;border:1px solid var(--border);color:var(--text-sub);letter-spacing:0.04em;transition:border-color 0.2s,color 0.2s;}
-  .pill:hover{border-color:rgba(118,255,122,0.3);color:var(--green);}
-  /* EDUCATION */
-  .edu-card{background:var(--surface);border:1px solid var(--border);padding:24px;position:relative;border-left:3px solid var(--green);}
-  .edu-date{font-family:'DM Mono',monospace;font-size:10px;color:var(--green);letter-spacing:0.08em;margin-bottom:6px;}
-  .edu-title{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;color:#fff;margin-bottom:2px;}
-  .edu-sub{font-size:13px;color:var(--text-muted);margin-bottom:10px;font-weight:300;}
-  .edu-desc{font-size:12px;color:var(--text-sub);line-height:1.7;}
-  .mod-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px;}
-  .mod{font-family:'DM Mono',monospace;font-size:10px;padding:4px 10px;background:var(--surface2);border:1px solid var(--border);color:var(--text-muted);letter-spacing:0.04em;}
-  /* CERT */
-  .cert{background:var(--surface);border:1px solid var(--border);padding:16px 18px;transition:border-color 0.2s;}
-  .cert:hover{border-color:rgba(118,255,122,0.15);}
-  .cert-issuer{font-family:'DM Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:0.1em;color:var(--green);margin-bottom:6px;}
-  .cert-name{font-size:13px;color:#fff;font-weight:500;line-height:1.4;margin-bottom:5px;}
-  .cert-date{font-family:'DM Mono',monospace;font-size:10px;color:var(--text-muted);}
-  /* PROJECT */
-  .project{background:var(--surface);border:1px solid var(--border);padding:24px;position:relative;overflow:hidden;transition:border-color 0.2s,transform 0.2s;}
-  .project::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--green);transform:scaleX(0);transition:transform 0.3s ease;}
-  .project:hover{border-color:rgba(118,255,122,0.2);transform:translateY(-2px);}
-  .project:hover::after{transform:scaleX(1);}
-  .project.featured{border-top:2px solid var(--green);grid-column:span 2;}
-  .project.featured::after{display:none;}
-  .project-type{font-family:'DM Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:0.1em;color:var(--green);margin-bottom:10px;display:flex;align-items:center;gap:10px;}
-  .new-badge{background:var(--green);color:#0a0c10;font-size:9px;padding:2px 6px;font-weight:700;letter-spacing:0.08em;}
-  .project-title{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;color:#fff;margin-bottom:10px;letter-spacing:-0.01em;line-height:1.3;}
-  .project-desc{font-size:13px;color:var(--text-sub);line-height:1.7;font-weight:300;}
-  .tag-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:16px;}
-  .ptag{font-family:'DM Mono',monospace;font-size:10px;padding:3px 9px;background:var(--surface2);border:1px solid var(--border);color:var(--text-muted);letter-spacing:0.05em;text-transform:uppercase;}
-  .project-link{display:inline-flex;align-items:center;gap:6px;margin-top:16px;font-family:'DM Mono',monospace;font-size:11px;color:var(--green);text-decoration:none;letter-spacing:0.05em;transition:gap 0.2s;}
-  .project-link:hover{gap:10px;}
-  .project-year{font-family:'DM Mono',monospace;font-size:11px;color:var(--text-muted);margin-top:14px;}
-  .contact-link{display:flex;align-items:center;gap:14px;padding:16px 20px;background:var(--surface);border:1px solid var(--border);text-decoration:none;transition:border-color 0.15s;}
-  .contact-link:hover{border-color:rgba(118,255,122,0.3);}
-  .contact-icon{font-family:'DM Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:0.1em;color:var(--green);width:80px;flex-shrink:0;}
-  .contact-val{font-size:13px;color:var(--text-sub);}
-  footer{border-top:1px solid var(--border);margin-top:60px;padding-top:28px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;}
-  .footer-left{font-size:12px;color:var(--text-muted);font-family:'DM Mono',monospace;}
-  .footer-links{display:flex;gap:20px;}
-  .footer-link{font-family:'DM Mono',monospace;font-size:11px;color:var(--text-muted);text-decoration:none;border-bottom:1px solid transparent;transition:all 0.15s;padding-bottom:1px;}
-  .footer-link:hover{color:var(--green);border-color:var(--green);}
-  .fade-in{opacity:0;transform:translateY(12px);animation:fadeIn 0.5s ease forwards;}
-  @keyframes fadeIn{to{opacity:1;transform:none;}}
-  .fade-in:nth-child(1){animation-delay:0.05s}.fade-in:nth-child(2){animation-delay:0.1s}.fade-in:nth-child(3){animation-delay:0.15s}.fade-in:nth-child(4){animation-delay:0.2s}
-  @media(max-width:600px){.g4{grid-template-columns:repeat(2,1fr);}.project.featured{grid-column:span 1;}}
+:root{--bg:#08090e;--surface:#0e1017;--surface2:#151820;--border:rgba(255,255,255,0.06);--text:#e4e6f0;--muted:#4e5266;--sub:#7d819a;--accent:#4ade80;--blue:#38bdf8;--purple:#a78bfa;--rose:#fb7185;--cyan:#22d3ee;}
+*{margin:0;padding:0;box-sizing:border-box;}html{scroll-behavior:smooth;}body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden;}
+::selection{background:rgba(74,222,128,0.2);color:#fff;}
+
+/* GLOBAL PARTICLES */
+#particles{position:fixed;inset:0;z-index:0;pointer-events:none;}
+
+/* INTRO */
+#intro{position:fixed;inset:0;z-index:9999;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity 0.8s,visibility 0.8s;}
+#intro.done{opacity:0;visibility:hidden;pointer-events:none;}
+#intro::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 50% 50%,rgba(74,222,128,0.04) 0%,transparent 60%);}
+.i-name{font-family:'Outfit';font-weight:900;font-size:clamp(26px,5.5vw,68px);color:#fff;opacity:0;transform:translateY(30px);letter-spacing:-0.03em;position:relative;z-index:1;text-transform:uppercase;}
+.i-name span{background:linear-gradient(135deg,var(--accent),var(--cyan),var(--blue));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.i-sub{font-family:'JetBrains Mono',monospace;font-size:clamp(10px,1.3vw,13px);color:var(--muted);opacity:0;transform:translateY(20px);margin-top:14px;letter-spacing:0.12em;text-transform:uppercase;position:relative;z-index:1;}
+.i-roles{display:flex;gap:12px;margin-top:26px;position:relative;z-index:1;flex-wrap:wrap;justify-content:center;}
+.i-role{font-family:'JetBrains Mono',monospace;font-size:clamp(9px,1vw,11px);padding:5px 14px;border:1px solid var(--border);opacity:0;transform:scale(0.8);letter-spacing:0.06em;}
+.i-role:nth-child(1){border-color:rgba(74,222,128,0.4);color:var(--accent);}
+.i-role:nth-child(2){border-color:rgba(56,189,248,0.3);color:var(--blue);}
+.i-role:nth-child(3){border-color:rgba(167,139,250,0.3);color:var(--purple);}
+.i-role:nth-child(4){border-color:rgba(34,211,238,0.3);color:var(--cyan);}
+.i-bar{width:200px;height:2px;background:var(--surface2);margin-top:36px;border-radius:2px;overflow:hidden;position:relative;z-index:1;}
+.i-bar-fill{height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--cyan),var(--blue),var(--purple));border-radius:2px;}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:22px 48px;display:flex;justify-content:space-between;align-items:center;transition:all 0.4s;}
+nav.scrolled{background:rgba(8,9,14,0.94);backdrop-filter:blur(16px);padding:14px 48px;border-bottom:1px solid var(--border);}
+.nav-logo{font-family:'Outfit';font-weight:800;font-size:13px;color:#fff;letter-spacing:0.1em;text-transform:uppercase;}.nav-logo span{color:var(--accent);}
+.nav-links{display:flex;gap:28px;}
+.nav-link{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);text-decoration:none;letter-spacing:0.06em;transition:color 0.2s;text-transform:uppercase;}.nav-link:hover{color:var(--accent);}
+
+/* HERO */
+#hero{position:relative;min-height:100vh;display:flex;align-items:center;overflow:hidden;z-index:1;}
+.hero-wrap{position:relative;z-index:2;max-width:1200px;margin:0 auto;padding:0 48px;width:100%;}
+.hero-hi{font-family:'Outfit';font-size:clamp(16px,2vw,22px);font-weight:300;color:var(--accent);margin-bottom:12px;opacity:0;transform:translateX(-20px);}
+.hero-name{font-family:'Outfit';font-size:clamp(52px,10vw,130px);font-weight:900;line-height:0.9;letter-spacing:-0.05em;color:#fff;text-transform:uppercase;opacity:0;transform:translateY(20px);}
+.hero-name .outline{-webkit-text-stroke:2px rgba(74,222,128,0.2);color:transparent;}
+.hero-strip{display:flex;align-items:stretch;border-top:1px solid var(--border);border-bottom:1px solid var(--border);margin-top:40px;opacity:0;transform:translateY(20px);}
+.strip-item{flex:1;padding:24px 16px;border-right:1px solid var(--border);}.strip-item:first-child{padding-left:0;}.strip-item:last-child{border-right:none;}
+.strip-label{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:6px;}
+.strip-val{font-size:15px;font-weight:600;color:var(--text);}.strip-val span{color:var(--accent);}
+.strip-val a{color:var(--accent);text-decoration:none;}
+.hero-bottom{display:flex;justify-content:space-between;align-items:flex-start;padding-top:32px;opacity:0;transform:translateY(20px);}
+.hero-desc{max-width:480px;font-size:clamp(14px,1.5vw,17px);color:var(--sub);line-height:1.8;font-weight:300;}.hero-desc strong{color:#fff;font-weight:600;}
+.hero-ctas{display:flex;gap:12px;flex-shrink:0;}
+.cta{font-family:'JetBrains Mono',monospace;font-size:11px;padding:14px 28px;border:1px solid var(--border);color:var(--text);text-decoration:none;letter-spacing:0.06em;text-transform:uppercase;transition:all 0.3s;white-space:nowrap;}.cta:hover{border-color:var(--accent);color:var(--accent);}
+.cta.green{background:var(--accent);color:var(--bg);border-color:var(--accent);font-weight:500;}.cta.green:hover{background:transparent;color:var(--accent);}
+
+/* SECTION */
+.sec{position:relative;z-index:1;}
+.sh{display:flex;justify-content:space-between;align-items:center;margin-bottom:40px;padding:0 48px;}
+.sh-title{font-family:'Outfit';font-size:clamp(24px,3.5vw,40px);font-weight:800;color:var(--accent);font-style:italic;}.sh-title em{color:#fff;font-style:normal;}
+.sh-tag{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:0.04em;}
+
+/* STATS */
+#stats{padding:80px 48px;max-width:1200px;margin:0 auto;position:relative;z-index:1;}
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);}
+.stat{padding:28px 0;border-bottom:1px solid rgba(74,222,128,0.15);}
+.stat-num{font-family:'Outfit';font-size:clamp(36px,5vw,56px);font-weight:900;color:#fff;display:flex;align-items:baseline;gap:2px;}
+.stat-num .plus{color:var(--accent);font-weight:700;font-size:0.6em;}
+.stat-label{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent);letter-spacing:0.08em;margin-top:6px;text-transform:uppercase;}
+
+/* ═══ SKILLS — CLEAN ANIMATED ROWS ═══ */
+#skills{padding:80px 0;max-width:1200px;margin:0 auto;}
+.sk-rows{padding:0 48px;display:flex;flex-direction:column;gap:0;}
+.sk-row{display:flex;align-items:flex-start;padding:28px 0;border-bottom:1px solid var(--border);gap:32px;opacity:0;transform:translateY(16px);transition:all 0.6s cubic-bezier(0.16,1,0.3,1);}
+.sk-row.visible{opacity:1;transform:none;}
+.sk-row:last-child{border-bottom:none;}
+.sk-row-left{width:200px;flex-shrink:0;padding-left:16px;position:relative;}
+.sk-row-left::before{content:'';position:absolute;left:0;top:4px;bottom:4px;width:3px;border-radius:2px;}
+.sk-row:nth-child(1) .sk-row-left::before{background:var(--accent);}
+.sk-row:nth-child(2) .sk-row-left::before{background:var(--blue);}
+.sk-row:nth-child(3) .sk-row-left::before{background:var(--purple);}
+.sk-row:nth-child(4) .sk-row-left::before{background:var(--cyan);}
+.sk-row-icon{font-size:20px;margin-bottom:8px;}
+.sk-row-name{font-family:'Outfit';font-size:16px;font-weight:700;color:#fff;line-height:1.3;}
+.sk-row-count{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:0.06em;margin-top:4px;}
+.sk-row-right{flex:1;display:flex;flex-wrap:wrap;gap:8px;align-items:flex-start;}
+.sk-pill{font-family:'JetBrains Mono',monospace;font-size:11px;padding:8px 16px;background:var(--surface);border:1px solid var(--border);color:var(--sub);letter-spacing:0.02em;opacity:0;transform:translateY(8px);transition:all 0.4s cubic-bezier(0.16,1,0.3,1),border-color 0.2s,color 0.2s;}
+.sk-row.visible .sk-pill{opacity:1;transform:none;}
+.sk-row:nth-child(1) .sk-pill:hover{border-color:rgba(74,222,128,0.3);color:var(--accent);}
+.sk-row:nth-child(2) .sk-pill:hover{border-color:rgba(56,189,248,0.3);color:var(--blue);}
+.sk-row:nth-child(3) .sk-pill:hover{border-color:rgba(167,139,250,0.3);color:var(--purple);}
+.sk-row:nth-child(4) .sk-pill:hover{border-color:rgba(34,211,238,0.3);color:var(--cyan);}
+@media(max-width:700px){.sk-row{flex-direction:column;gap:16px;}.sk-row-left{width:auto;}}
+
+/* ═══ CONTACT — PERSONALITY SPLIT ═══ */
+#contact{padding:80px 0;max-width:1200px;margin:0 auto;}
+.ct-split{display:grid;grid-template-columns:1.3fr 1fr;gap:24px;padding:0 48px;align-items:stretch;}
+@media(max-width:800px){.ct-split{grid-template-columns:1fr;}}
+.ct-message{background:var(--surface);border:1px solid var(--border);padding:48px;position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:center;}
+.ct-message::before{content:'';position:absolute;top:-30%;right:-15%;width:300px;height:300px;background:radial-gradient(circle,rgba(74,222,128,0.06) 0%,transparent 70%);pointer-events:none;}
+.ct-avail{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:20px;display:flex;align-items:center;gap:10px;position:relative;z-index:1;}
+.ct-avail::before{content:'';width:8px;height:8px;background:var(--accent);border-radius:50%;animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
+.ct-hello{font-family:'Outfit';font-size:clamp(26px,3.5vw,40px);font-weight:800;color:#fff;line-height:1.2;letter-spacing:-0.02em;margin-bottom:16px;position:relative;z-index:1;}
+.ct-hello span{color:var(--accent);}
+.ct-body{font-size:14px;color:var(--sub);line-height:1.8;font-weight:300;position:relative;z-index:1;margin-bottom:24px;}
+.ct-interests{display:flex;flex-wrap:wrap;gap:8px;position:relative;z-index:1;}
+.ct-int{font-family:'JetBrains Mono',monospace;font-size:10px;padding:6px 14px;border:1px solid rgba(74,222,128,0.15);color:var(--accent);letter-spacing:0.04em;transition:all 0.2s;}
+.ct-int:hover{background:rgba(74,222,128,0.06);border-color:rgba(74,222,128,0.3);}
+.ct-card{background:var(--surface2);border:1px solid var(--border);padding:40px;display:flex;flex-direction:column;justify-content:center;gap:0;}
+.ct-card-title{font-family:'Outfit';font-size:14px;font-weight:700;color:#fff;margin-bottom:24px;letter-spacing:0.02em;}
+.ct-row{display:flex;align-items:center;gap:14px;padding:16px 0;border-bottom:1px solid var(--border);text-decoration:none;transition:all 0.25s;}
+.ct-row:last-child{border-bottom:none;}
+.ct-row:hover{padding-left:8px;}
+.ct-row-dot{width:10px;height:10px;border-radius:50%;border:2px solid var(--accent);flex-shrink:0;transition:all 0.25s;}
+.ct-row:hover .ct-row-dot{background:var(--accent);}
+.ct-row-info{display:flex;flex-direction:column;gap:2px;}
+.ct-row-label{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:0.08em;text-transform:uppercase;}
+.ct-row-val{font-size:14px;color:var(--sub);transition:color 0.25s;}
+.ct-row:hover .ct-row-val{color:var(--accent);}
+#projects{padding:80px 0;max-width:1200px;margin:0 auto;}
+.p-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;padding:0 48px;}
+.p-card{opacity:0;transform:translateY(30px);transition:all 0.6s cubic-bezier(0.16,1,0.3,1);}.p-card.visible{opacity:1;transform:none;}
+.p-frame{position:relative;margin-bottom:18px;}
+.p-frame::before,.p-frame::after{content:'';position:absolute;width:14px;height:14px;z-index:2;transition:all 0.3s;}
+.p-frame::before{top:-1px;left:-1px;border-top:2px solid var(--muted);border-left:2px solid var(--muted);}
+.p-frame::after{top:-1px;right:-1px;border-top:2px solid var(--muted);border-right:2px solid var(--muted);}
+.p-bl,.p-br{position:absolute;width:14px;height:14px;z-index:2;transition:all 0.3s;}
+.p-bl{bottom:-1px;left:-1px;border-bottom:2px solid var(--muted);border-left:2px solid var(--muted);}
+.p-br{bottom:-1px;right:-1px;border-bottom:2px solid var(--muted);border-right:2px solid var(--muted);}
+.p-card:hover .p-frame::before,.p-card:hover .p-frame::after,.p-card:hover .p-bl,.p-card:hover .p-br{border-color:var(--accent);width:20px;height:20px;}
+.p-thumb{width:100%;aspect-ratio:16/10;background:var(--surface);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;}
+.p-thumb-text{font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:700;opacity:0.08;}
+.p-overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(8,9,14,0.88);opacity:0;transition:opacity 0.3s;}.p-card:hover .p-overlay{opacity:1;}
+.p-overlay a{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent);text-decoration:none;letter-spacing:0.06em;border:1px solid var(--accent);padding:10px 22px;transition:all 0.2s;}.p-overlay a:hover{background:var(--accent);color:var(--bg);}
+.p-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px;}
+.p-title{font-family:'Outfit';font-size:15px;font-weight:700;color:#fff;}
+.p-year{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);}
+.p-desc{font-size:12px;color:var(--sub);line-height:1.65;font-weight:300;margin-bottom:12px;}
+.p-tags{display:flex;flex-wrap:wrap;gap:5px;}
+.p-tag{font-family:'JetBrains Mono',monospace;font-size:9px;padding:3px 9px;border:1px solid var(--border);color:var(--muted);letter-spacing:0.04em;}
+.p-card:nth-child(1) .p-thumb{background:linear-gradient(135deg,rgba(74,222,128,0.06),rgba(56,189,248,0.04));}
+.p-card:nth-child(2) .p-thumb{background:linear-gradient(135deg,rgba(56,189,248,0.06),rgba(167,139,250,0.04));}
+.p-card:nth-child(3) .p-thumb{background:linear-gradient(135deg,rgba(74,222,128,0.04),rgba(251,113,133,0.04));}
+.p-card:nth-child(4) .p-thumb{background:linear-gradient(135deg,rgba(251,113,133,0.06),rgba(167,139,250,0.04));}
+.p-card:nth-child(5) .p-thumb{background:linear-gradient(135deg,rgba(34,211,238,0.06),rgba(74,222,128,0.04));}
+.p-card:nth-child(6) .p-thumb{background:linear-gradient(135deg,rgba(167,139,250,0.06),rgba(74,222,128,0.04));}
+
+/* FOOTER */
+footer{border-top:1px solid var(--border);margin:0 48px;padding:24px 0;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;position:relative;z-index:1;}
+.ft-l{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);}
+.ft-r{font-size:11px;color:var(--muted);}.ft-r a{color:var(--accent);text-decoration:none;}
+
+/* REVEAL */
+.rv{opacity:0;transform:translateY(25px);transition:all 0.7s cubic-bezier(0.16,1,0.3,1);}.rv.visible{opacity:1;transform:none;}
+.rv-d1{transition-delay:0.1s}.rv-d2{transition-delay:0.2s}.rv-d3{transition-delay:0.3s}
+
+@media(max-width:900px){.p-grid{grid-template-columns:1fr !important;}.sk-stats{grid-template-columns:1fr 1fr !important;}.stats-row{grid-template-columns:1fr 1fr;}.ct-circles{gap:20px;}}
+@media(max-width:600px){nav{padding:16px 20px;}nav.scrolled{padding:12px 20px;}.hero-wrap,.sh,.sk-grid,.p-grid,.ct-wrap,#stats{padding-left:20px !important;padding-right:20px !important;}.hero-strip{flex-direction:column;}.strip-item{border-right:none;border-bottom:1px solid var(--border);padding:14px 0;}.strip-item:first-child{padding-left:0;}.strip-item:last-child{border-bottom:none;}.hero-bottom{flex-direction:column;gap:24px;}.hero-ctas{flex-direction:column;width:100%;}.cta{text-align:center;justify-content:center;}.ct-icons{grid-template-columns:1fr !important;}.ct-banner{padding:32px;}.sh-tag{display:none;}.nav-links{gap:16px;}.nav-link{font-size:10px;}footer{margin:0 20px;}}
 </style>
 </head>
 <body>
-<div class="w">
 
-  <!-- ═══ HEADER ═══ -->
-  <header class="fade-in">
-    <div>
-      <div class="badge">Open to opportunities · 2025</div>
-      <h1>Nawaf <span>Almutairi</span></h1>
-      <p class="header-sub">Computer Science graduate specialising in IT Support, Business Intelligence, AI &amp; Machine Learning, Software Architecture, and UI/UX Design. Delivering data-driven insights, scalable systems, and user-centred solutions.</p>
-    </div>
-    <div class="header-right">
-      <div class="author-card">
-        <div class="author-name">Nawaf Almutairi</div>
-        <div class="author-meta">BSc Computer Science</div>
-        <div class="author-meta" style="margin-top:4px;">Northumbria University</div>
-      </div>
-      <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--text-muted);">Newcastle, UK · Available globally</div>
-    </div>
-  </header>
+<!-- GLOBAL PARTICLES -->
+<canvas id="particles"></canvas>
 
-  <!-- ═══ AT A GLANCE ═══ -->
-  <div class="sl">— At a Glance</div>
-  <div class="g4 fade-in">
-    <div class="stat g"><div class="stat-label">Projects Delivered</div><div class="stat-val">15+</div><div class="stat-desc">BI, AI/ML, ITSM, HCI, Software Arch, UI/UX</div></div>
-    <div class="stat b"><div class="stat-label">Specialisations</div><div class="stat-val">6</div><div class="stat-desc">IT · BI · AI/ML · HCI · ITSM · Architecture</div></div>
-    <div class="stat a"><div class="stat-label">Certifications</div><div class="stat-val">6</div><div class="stat-desc">Google IT Support Professional</div></div>
-    <div class="stat p"><div class="stat-label">Technologies</div><div class="stat-val">28+</div><div class="stat-desc">Python, SQL, Power BI, Azure, PHP, Unity</div></div>
-  </div>
-
-  <!-- ═══ PROFILE & SKILLS ═══ -->
-  <div class="sl">— Profile & Skills</div>
-  <div class="g31 fade-in">
-    <div class="card" style="margin-bottom:0">
-      <div class="card-h"><div><div class="ct">Core Skills</div></div><div class="tag">Proficiency</div></div>
-      <div class="skill-row"><div class="skill-name">Python / SQL</div><div class="skill-bar"><div class="skill-fill" data-w="100"></div></div><div class="skill-pct">100%</div></div>
-      <div class="skill-row"><div class="skill-name">IT Support</div><div class="skill-bar"><div class="skill-fill" data-w="100"></div></div><div class="skill-pct">100%</div></div>
-      <div class="skill-row"><div class="skill-name">Power BI / DAX</div><div class="skill-bar"><div class="skill-fill" data-w="100"></div></div><div class="skill-pct">100%</div></div>
-      <div class="skill-row"><div class="skill-name">AI / ML (Azure)</div><div class="skill-bar"><div class="skill-fill" data-w="100"></div></div><div class="skill-pct">100%</div></div>
-      <div class="skill-row"><div class="skill-name">UI/UX Design</div><div class="skill-bar"><div class="skill-fill" data-w="100"></div></div><div class="skill-pct">100%</div></div>
-      <div class="skill-row"><div class="skill-name">PHP / REST API</div><div class="skill-bar"><div class="skill-fill" data-w="100"></div></div><div class="skill-pct">100%</div></div>
-      <div class="skill-row"><div class="skill-name">Software Arch.</div><div class="skill-bar"><div class="skill-fill" data-w="100"></div></div><div class="skill-pct">100%</div></div>
-      <div class="skill-row"><div class="skill-name">ITIL / ITSM</div><div class="skill-bar"><div class="skill-fill" data-w="100"></div></div><div class="skill-pct">100%</div></div>
-    </div>
-    <div style="display:flex;flex-direction:column;gap:16px;">
-      <div class="card" style="margin-bottom:0">
-        <div class="card-h"><div><div class="ct">About Me</div></div><div class="tag">Profile</div></div>
-        <div class="about">
-          <p>Computer Science student at Northumbria University with hands-on project experience across IT Support, Business Intelligence, Artificial Intelligence, Software Architecture, and UI/UX Design. Skilled in technical support, troubleshooting, system administration, and incident management across Windows and Linux environments.</p>
-          <p>Proficient in Python, SQL, Power BI, DAX, and PHP for data analysis, ETL, data modelling, dashboard creation, and REST API development. Experienced deploying machine learning models on Microsoft Azure and delivering data-driven insights. Experienced in microservices architecture, CI/CD pipelines, and cloud deployment on AWS. Skilled in UI/UX design using Figma and Unity with design thinking and accessibility principles. Strong communicator in Agile cross-functional teams. Fluent in Arabic (native) and English (professional working proficiency).</p>
-        </div>
-      </div>
-      <div class="card" style="margin-bottom:0">
-        <div class="card-h"><div><div class="ct">Technical Stack</div></div><div class="tag">Technologies</div></div>
-        <div class="pills">
-          <div class="pill">Python</div><div class="pill">SQL</div><div class="pill">PHP</div><div class="pill">Power BI</div><div class="pill">DAX</div><div class="pill">ETL</div><div class="pill">Pandas</div><div class="pill">Chart.js</div><div class="pill">REST API</div><div class="pill">SQLite</div><div class="pill">Microsoft Azure ML</div><div class="pill">PyTorch</div><div class="pill">DenseNet</div><div class="pill">ResNet</div><div class="pill">Unity</div><div class="pill">Figma</div><div class="pill">Canva</div><div class="pill">Git / GitHub</div><div class="pill">Kubernetes</div><div class="pill">AWS</div><div class="pill">CI/CD</div><div class="pill">Docker</div><div class="pill">ITIL 4</div><div class="pill">CMDB</div><div class="pill">Agile / Scrum</div><div class="pill">Trello</div><div class="pill">Windows</div><div class="pill">Linux</div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ═══ EDUCATION & CERTIFICATIONS ═══ -->
-  <div class="sl">— Education & Certifications</div>
-  <div class="g2 fade-in">
-    <div>
-      <div class="edu-card">
-        <div class="edu-date">2023 — 2026</div>
-        <div class="edu-title">Northumbria University</div>
-        <div class="edu-sub">BSc (Hons) Computer Science · First Class Honours (Expected)</div>
-        <div class="edu-desc">Specialising in Data Analysis, Business Intelligence, Artificial Intelligence, Software Architecture, and Human-Computer Interaction.</div>
-        <div class="mod-row">
-          <span class="mod">KV4009 Data Fundamentals</span>
-          <span class="mod">KV5024 IT Service Management</span>
-          <span class="mod">KV5035 Software Architecture</span>
-          <span class="mod">KV5047 Human-Computer Interaction</span>
-          <span class="mod">KV6011 Business Intelligence</span>
-          <span class="mod">KV6014 Computing Project</span>
-        </div>
-      </div>
-    </div>
-    <div>
-      <div style="margin-bottom:12px">
-        <div class="ct">Certifications</div>
-        <div class="cs">Google IT Support · Professional Certificate · Dec 2025</div>
-      </div>
-      <div style="display:flex;flex-direction:column;gap:10px;">
-        <div class="cert"><div class="cert-issuer">Google</div><div class="cert-name">Technical Support Fundamentals</div><div class="cert-date">Dec 2025</div></div>
-        <div class="cert"><div class="cert-issuer">Google</div><div class="cert-name">The Bits and Bytes of Computer Networking</div><div class="cert-date">Dec 2025</div></div>
-        <div class="cert"><div class="cert-issuer">Google</div><div class="cert-name">Operating Systems and You: Becoming a Power User</div><div class="cert-date">Dec 2025</div></div>
-        <div class="cert"><div class="cert-issuer">Google</div><div class="cert-name">System Administration and IT Infrastructure Services</div><div class="cert-date">Dec 2025</div></div>
-        <div class="cert"><div class="cert-issuer">Google</div><div class="cert-name">IT Security: Defense Against the Digital Dark Arts</div><div class="cert-date">Dec 2025</div></div>
-        <div class="cert"><div class="cert-issuer">Google</div><div class="cert-name">Accelerate Your Job Search with AI</div><div class="cert-date">Dec 2025</div></div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ═══ PROJECTS (sorted by date: 2025 first, then 2024) ═══ -->
-  <div class="sl">— Projects</div>
-  <div class="g2">
-
-    <!-- 2025 -->
-    <div class="project featured fade-in">
-      <div class="project-type">Business Intelligence <span class="new-badge">NEW</span></div>
-      <div class="project-title">NVIDIA AI-GPU Supply Chain BI Dashboard</div>
-      <div class="project-desc">Conducted business intelligence analysis using SSM and BPM frameworks. Designed interactive Power BI dashboard with DAX measures tracking 8 KPIs including Forecast Accuracy (96.4%), MAPE, Backorders (42,274 units), and Capacity Utilisation (57%). Built star-schema data model with ETL pipeline across H100 and H200 GPU lines.</div>
-      <div class="tag-row"><span class="ptag">Power BI</span><span class="ptag">SSM / BPM</span><span class="ptag">Python</span><span class="ptag">DAX</span><span class="ptag">ETL</span><span class="ptag">Supply Chain</span></div>
-      <a href="https://nawafbalmutairi.github.io/nvidia-bi-dashboard" target="_blank" class="project-link">View live dashboard →</a>
-      <div class="project-year">2025 · KV6011 Business Intelligence</div>
-    </div>
-
-    <div class="project fade-in">
-      <div class="project-type">Software Architecture</div>
-      <div class="project-title">Conference-Info Platform — REST API &amp; Microservices</div>
-      <div class="project-desc">Built REST API backend in PHP/SQLite serving CHI 2023 data across 5 endpoints (GET, POST, PATCH, DELETE, OPTIONS). Scored 43/50 (86%). Designed multi-conference microservices architecture using Kruchten 4+1 model with DDD, API gateway, OAuth2, Kafka streaming, Kubernetes on AWS EKS, and CI/CD via GitHub Actions.</div>
-      <div class="tag-row"><span class="ptag">PHP</span><span class="ptag">REST API</span><span class="ptag">SQLite</span><span class="ptag">Microservices</span><span class="ptag">4+1 Model</span><span class="ptag">DDD</span><span class="ptag">AWS</span><span class="ptag">CI/CD</span><span class="ptag">Kubernetes</span></div>
-      <a href="https://nawafbalmutairi.github.io/Conference-Info-Platform" target="_blank" class="project-link">View architecture dashboard →</a>
-      <div class="project-year">2025 · KV5035 Software Architecture</div>
-    </div>
-
-    <div class="project fade-in">
-      <div class="project-type">IT Service Management</div>
-      <div class="project-title">ITIL Configuration Management — Abona &amp; Tarn PLC</div>
-      <div class="project-desc">Designed ITIL 4 Configuration Management strategy for an 87-store UK retailer. Proposed CMDB architecture resolving fragmented POS, WMS, and ERP systems. Defined 7 KPIs including CI accuracy (&gt;95%), change success rate (&gt;98%), and incident resolution improvement (-20%). Integrated with Change Enablement, Incident Management, and Release Management.</div>
-      <div class="tag-row"><span class="ptag">ITIL 4</span><span class="ptag">CMDB</span><span class="ptag">ITSM</span><span class="ptag">Incident Management</span><span class="ptag">Change Enablement</span></div>
-      <a href="https://nawafbalmutairi.github.io/ITIL-Configuratio-Management-Abona-Tarn-PLC/index.html" target="_blank" class="project-link">View interactive report →</a>
-      <div class="project-year">2025 · KV5024 IT Service Management</div>
-    </div>
-
-    <div class="project fade-in">
-      <div class="project-type">Human-Computer Interaction</div>
-      <div class="project-title">UCD Practical Work — Work-Life Balance App</div>
-      <div class="project-desc">Led user-centred design for a student productivity app. Created 3 personas, defined MoSCoW requirements (9 functional + 6 non-functional), designed 6 interface sketches, built wireflow and interactive prototype in Figma. Conducted cognitive walkthrough across 9 tasks identifying critical usability issues. Applied design thinking, inclusive design, and accessibility standards.</div>
-      <div class="tag-row"><span class="ptag">UCD</span><span class="ptag">Figma</span><span class="ptag">Wireframing</span><span class="ptag">Prototyping</span><span class="ptag">Personas</span><span class="ptag">MoSCoW</span><span class="ptag">Cognitive Walkthrough</span></div>
-      <a href="https://nawafbalmutairi.github.io/UCD-Practical-Work-Work-Life-Balance-App/index.html" target="_blank" class="project-link">View UCD case study →</a>
-      <div class="project-year">2025 · KV5047 Human-Computer Interaction</div>
-    </div>
-
-    <div class="project fade-in">
-      <div class="project-type">UI/UX Design · Game Development</div>
-      <div class="project-title">Astro Dash — Game UI/UX Design</div>
-      <div class="project-desc">Led UI/UX design team for a 2D pixel-art arcade game in Unity. Designed 6 screens using Unity Canvas with consistent visual language. Created wireframes in Figma, defined 8 user stories with story splitting, conducted cognitive walkthrough. Applied information architecture, user-centred design, and mobile-first responsive layouts.</div>
-      <div class="tag-row"><span class="ptag">Unity</span><span class="ptag">UI/UX</span><span class="ptag">Figma</span><span class="ptag">Pixel Art</span><span class="ptag">Prototyping</span><span class="ptag">User Stories</span><span class="ptag">Design Thinking</span><span class="ptag">Agile</span></div>
-      <a href="https://nawafbalmutairi.github.io/Astro-Dash/" target="_blank" class="project-link">View design showcase →</a>
-      <div class="project-year">2025 · KV6014 Computing Project</div>
-    </div>
-
-    <!-- 2024 -->
-    <div class="project fade-in">
-      <div class="project-type">Machine Learning</div>
-      <div class="project-title">AI Face Recognition &amp; Gender Classification</div>
-      <div class="project-desc">Built and evaluated DenseNet and ResNet CNNs on Azure ML Designer for gender classification. Trained on 100 Kaggle images with 70/30 split. DenseNet achieved 86.7% accuracy on real-time inference with custom 30-image dataset. Applied image transformation, PyTorch GPU training, and evaluation across 4 runs.</div>
-      <div class="tag-row"><span class="ptag">Python</span><span class="ptag">Azure ML</span><span class="ptag">DenseNet</span><span class="ptag">ResNet</span><span class="ptag">CNN</span><span class="ptag">PyTorch</span><span class="ptag">Computer Vision</span></div>
-      <a href="https://nawafbalmutairi.github.io/AI-Face-Recognition-Gender-Classification/index.html" target="_blank" class="project-link">View model dashboard →</a>
-      <div class="project-year">2024 · KV4009 Data Fundamentals</div>
-    </div>
-
-    <div class="project fade-in">
-      <div class="project-type">Data Analytics</div>
-      <div class="project-title">US Furniture Sales Analysis Dashboard</div>
-      <div class="project-desc">End-to-end analysis on 2,121 US transactions using Python/Pandas. Descriptive statistics, ETL with mean/mode imputation for 212 missing values. Built interactive Chart.js dashboard with 48-month time series, discount-profit scatter, discount band analysis, and state-level drill-down table.</div>
-      <div class="tag-row"><span class="ptag">Python</span><span class="ptag">Pandas</span><span class="ptag">ETL</span><span class="ptag">Data Cleaning</span><span class="ptag">Chart.js</span><span class="ptag">Statistical Analysis</span><span class="ptag">Data Visualisation</span></div>
-      <a href="https://nawafbalmutairi.github.io/furniture-sales-dashboard/" target="_blank" class="project-link">View interactive dashboard →</a>
-      <div class="project-year">2024 · KV4009 Data Fundamentals</div>
-    </div>
-
-  </div>
-
-  <!-- ═══ CONTACT ═══ -->
-  <div class="sl">— Contact</div>
-  <div class="g2">
-    <a href="https://www.linkedin.com/in/nawaf-almutairi-907766290/" target="_blank" class="contact-link fade-in"><div class="contact-icon">LinkedIn</div><div class="contact-val">linkedin.com/in/nawaf-almutairi-907766290</div></a>
-    <a href="mailto:NawafBAlmutairi@outlook.sa" class="contact-link fade-in"><div class="contact-icon">Email</div><div class="contact-val">NawafBAlmutairi@outlook.sa</div></a>
-    <a href="https://github.com/nawafbalmutairi" target="_blank" class="contact-link fade-in"><div class="contact-icon">GitHub</div><div class="contact-val">github.com/nawafbalmutairi</div></a>
-    <a href="tel:+966501649447" class="contact-link fade-in"><div class="contact-icon">Phone</div><div class="contact-val">+966 50 164 9447</div></a>
-  </div>
-
-  <footer>
-    <div class="footer-left">© 2026 Nawaf Almutairi · BSc Computer Science · Northumbria University</div>
-    <div class="footer-links">
-      <a class="footer-link" href="https://nawafbalmutairi.github.io/nvidia-bi-dashboard">BI Dashboard</a>
-      <a class="footer-link" href="https://github.com/nawafbalmutairi">GitHub</a>
-      <a class="footer-link" href="https://linkedin.com/in/nawafbalmutairi">LinkedIn</a>
-    </div>
-  </footer>
-
+<!-- INTRO -->
+<div id="intro">
+  <div class="i-name" id="iName">NAWAF <span>ALMUTAIRI</span></div>
+  <div class="i-sub" id="iSub">BSc Computer Science · Northumbria University</div>
+  <div class="i-roles" id="iRoles"><div class="i-role">Data Analyst</div><div class="i-role">Business Intelligence</div><div class="i-role">Machine Learning</div><div class="i-role">Software Architecture</div></div>
+  <div class="i-bar"><div class="i-bar-fill" id="iBar"></div></div>
 </div>
+
+<!-- NAV -->
+<nav id="nav"><div class="nav-logo">NAWAF<span>.</span></div><div class="nav-links"><a href="#skills" class="nav-link">Skills</a><a href="#projects" class="nav-link">Projects</a><a href="#contact" class="nav-link">Contact</a></div></nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-wrap" id="heroWrap">
+    <div><div class="hero-hi" id="heroHi">Data Analyst &amp; BI Developer</div><div class="hero-name" id="heroName">NAWAF<br><span class="outline">ALMUTAIRI</span></div></div>
+    <div class="hero-strip" id="heroStrip">
+      <div class="strip-item"><div class="strip-label">Specialisation</div><div class="strip-val">Data Analysis <span>·</span> BI <span>·</span> ML</div></div>
+      <div class="strip-item"><div class="strip-label">Education</div><div class="strip-val">BSc Computer Science <span>·</span> First Class</div></div>
+      <div class="strip-item"><div class="strip-label">University</div><div class="strip-val">Northumbria University</div></div>
+      <div class="strip-item"><div class="strip-label">Portfolio</div><div class="strip-val"><a href="https://nawafbalmutairi.github.io" target="_blank">nawafbalmutairi.github.io</a></div></div>
+    </div>
+    <div class="hero-bottom" id="heroBottom">
+      <div class="hero-desc">Building <strong>analytical solutions</strong> that turn raw data into measurable business impact — from <strong>Power BI dashboards</strong> tracking £180K+ in cost savings to <strong>ML models</strong> achieving 86.7% accuracy.</div>
+      <div class="hero-ctas"><a href="#projects" class="cta green">Explore Work ↓</a><a href="https://github.com/nawafbalmutairi" target="_blank" class="cta">GitHub ⟶</a></div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<section id="stats" class="sec">
+  <div class="stats-row">
+    <div class="stat rv"><div class="stat-num"><span class="counter" data-target="15">0</span><span class="plus">+</span></div><div class="stat-label">Projects</div></div>
+    <div class="stat rv rv-d1"><div class="stat-num"><span class="counter" data-target="7">0</span><span class="plus">+</span></div><div class="stat-label">Live Dashboards</div></div>
+    <div class="stat rv rv-d2"><div class="stat-num"><span class="counter" data-target="6">0</span><span class="plus"></span></div><div class="stat-label">Certifications</div></div>
+    <div class="stat rv rv-d3"><div class="stat-num"><span class="counter" data-target="28">0</span><span class="plus">+</span></div><div class="stat-label">Technologies</div></div>
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section id="skills" class="sec">
+  <div class="sh"><div class="sh-title"><em>Skills</em></div><div class="sh-tag">&lt; 28+ Technologies /&gt;</div></div>
+  <div class="sk-rows">
+    <div class="sk-row">
+      <div class="sk-row-left"><div class="sk-row-icon">📊</div><div class="sk-row-name">Data & BI</div><div class="sk-row-count">9 tools</div></div>
+      <div class="sk-row-right"><span class="sk-pill">Python</span><span class="sk-pill">SQL</span><span class="sk-pill">Power BI</span><span class="sk-pill">DAX</span><span class="sk-pill">ETL</span><span class="sk-pill">Pandas</span><span class="sk-pill">NumPy</span><span class="sk-pill">Chart.js</span><span class="sk-pill">Excel</span></div>
+    </div>
+    <div class="sk-row">
+      <div class="sk-row-left"><div class="sk-row-icon">🧠</div><div class="sk-row-name">AI & ML</div><div class="sk-row-count">6 tools</div></div>
+      <div class="sk-row-right"><span class="sk-pill">Azure ML</span><span class="sk-pill">PyTorch</span><span class="sk-pill">DenseNet</span><span class="sk-pill">ResNet</span><span class="sk-pill">CNN</span><span class="sk-pill">Computer Vision</span></div>
+    </div>
+    <div class="sk-row">
+      <div class="sk-row-left"><div class="sk-row-icon">⚙️</div><div class="sk-row-name">Architecture</div><div class="sk-row-count">8 tools</div></div>
+      <div class="sk-row-right"><span class="sk-pill">PHP</span><span class="sk-pill">REST API</span><span class="sk-pill">SQLite</span><span class="sk-pill">Microservices</span><span class="sk-pill">Kubernetes</span><span class="sk-pill">AWS</span><span class="sk-pill">Docker</span><span class="sk-pill">CI/CD</span></div>
+    </div>
+    <div class="sk-row">
+      <div class="sk-row-left"><div class="sk-row-icon">🎨</div><div class="sk-row-name">Design & Tools</div><div class="sk-row-count">8 tools</div></div>
+      <div class="sk-row-right"><span class="sk-pill">Figma</span><span class="sk-pill">Unity</span><span class="sk-pill">UCD</span><span class="sk-pill">ITIL 4</span><span class="sk-pill">CMDB</span><span class="sk-pill">Git/GitHub</span><span class="sk-pill">Agile/Scrum</span><span class="sk-pill">Linux</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- PROJECTS -->
+<section id="projects" class="sec">
+  <div class="sh"><div class="sh-title"><em>Projects</em></div><div class="sh-tag">&lt; Data Transformed into Decisions. /&gt;</div></div>
+  <div class="p-grid">
+    <div class="p-card"><div class="p-frame"><div class="p-thumb"><div class="p-thumb-text">NVIDIA BI</div><div class="p-overlay"><a href="https://nawafbalmutairi.github.io/nvidia-bi-dashboard" target="_blank">VIEW LIVE →</a></div></div><div class="p-bl"></div><div class="p-br"></div></div><div class="p-head"><div class="p-title">NVIDIA Supply Chain BI</div><div class="p-year">2025</div></div><div class="p-desc">Power BI dashboard with 15+ DAX measures tracking 8 KPIs. Identified £180K+ in projected cost savings.</div><div class="p-tags"><span class="p-tag">Power BI</span><span class="p-tag">DAX</span><span class="p-tag">ETL</span><span class="p-tag">Star-Schema</span></div></div>
+    <div class="p-card"><div class="p-frame"><div class="p-thumb"><div class="p-thumb-text">AI / ML</div><div class="p-overlay"><a href="https://nawafbalmutairi.github.io/AI-Face-Recognition-Gender-Classification/index.html" target="_blank">VIEW LIVE →</a></div></div><div class="p-bl"></div><div class="p-br"></div></div><div class="p-head"><div class="p-title">AI Face Recognition</div><div class="p-year">2024</div></div><div class="p-desc">DenseNet &amp; ResNet CNNs on Azure ML. 86.7% accuracy. PyTorch GPU training across 4 iterations.</div><div class="p-tags"><span class="p-tag">Azure ML</span><span class="p-tag">PyTorch</span><span class="p-tag">CNN</span></div></div>
+    <div class="p-card"><div class="p-frame"><div class="p-thumb"><div class="p-thumb-text">REST API</div><div class="p-overlay"><a href="https://nawafbalmutairi.github.io/Conference-Info-Platform" target="_blank">VIEW LIVE →</a></div></div><div class="p-bl"></div><div class="p-br"></div></div><div class="p-head"><div class="p-title">Conference Microservices</div><div class="p-year">2025</div></div><div class="p-desc">PHP REST API, 5 endpoints, Kruchten 4+1 with Kubernetes on AWS. Scored 86%.</div><div class="p-tags"><span class="p-tag">PHP</span><span class="p-tag">REST API</span><span class="p-tag">AWS</span><span class="p-tag">K8s</span></div></div>
+    <div class="p-card"><div class="p-frame"><div class="p-thumb"><div class="p-thumb-text">ANALYTICS</div><div class="p-overlay"><a href="https://nawafbalmutairi.github.io/furniture-sales-dashboard/" target="_blank">VIEW LIVE →</a></div></div><div class="p-bl"></div><div class="p-br"></div></div><div class="p-head"><div class="p-title">US Retail Sales Analysis</div><div class="p-year">2024</div></div><div class="p-desc">2,121 transactions, Python/Pandas. ETL, time series, discount-profit correlation.</div><div class="p-tags"><span class="p-tag">Python</span><span class="p-tag">Pandas</span><span class="p-tag">ETL</span><span class="p-tag">Chart.js</span></div></div>
+    <div class="p-card"><div class="p-frame"><div class="p-thumb"><div class="p-thumb-text">ITIL</div><div class="p-overlay"><a href="https://nawafbalmutairi.github.io/ITIL-Configuratio-Management-Abona-Tarn-PLC/index.html" target="_blank">VIEW LIVE →</a></div></div><div class="p-bl"></div><div class="p-br"></div></div><div class="p-head"><div class="p-title">ITIL Config Management</div><div class="p-year">2025</div></div><div class="p-desc">CMDB strategy for 87-store retailer. 7 KPIs, CI accuracy >95%.</div><div class="p-tags"><span class="p-tag">ITIL 4</span><span class="p-tag">CMDB</span><span class="p-tag">ITSM</span></div></div>
+    <div class="p-card"><div class="p-frame"><div class="p-thumb"><div class="p-thumb-text">UI / UX</div><div class="p-overlay"><a href="https://nawafbalmutairi.github.io/UCD-Practical-Work-Work-Life-Balance-App/index.html" target="_blank">VIEW LIVE →</a></div></div><div class="p-bl"></div><div class="p-br"></div></div><div class="p-head"><div class="p-title">UCD Work-Life App</div><div class="p-year">2025</div></div><div class="p-desc">Personas, MoSCoW, Figma prototype, cognitive walkthrough. Design thinking.</div><div class="p-tags"><span class="p-tag">Figma</span><span class="p-tag">UCD</span><span class="p-tag">Prototyping</span></div></div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact" class="sec">
+  <div class="sh"><div class="sh-title"><em>Get In Touch</em></div></div>
+  <div class="ct-split">
+    <div class="ct-message rv">
+      <div class="ct-avail">Available for opportunities</div>
+      <div class="ct-hello">Got a <span>data challenge</span> or a <span>role</span> in mind?</div>
+      <div class="ct-body">I'm looking for Data Analyst, Business Intelligence, or Machine Learning roles where I can turn messy datasets into clear business outcomes. Whether it's a graduate position, an internship, or a project collaboration — I'd love to hear from you.</div>
+      <div class="ct-interests"><span class="ct-int">Data Analytics</span><span class="ct-int">Power BI</span><span class="ct-int">Python</span><span class="ct-int">Machine Learning</span><span class="ct-int">SQL</span><span class="ct-int">Consulting</span></div>
+    </div>
+    <div class="ct-card rv rv-d2">
+      <div class="ct-card-title">Reach out</div>
+      <a href="mailto:NawafBAlmutairi@outlook.sa" class="ct-row"><div class="ct-row-dot"></div><div class="ct-row-info"><div class="ct-row-label">Email</div><div class="ct-row-val">NawafBAlmutairi@outlook.sa</div></div></a>
+      <a href="tel:+966501649447" class="ct-row"><div class="ct-row-dot"></div><div class="ct-row-info"><div class="ct-row-label">Phone</div><div class="ct-row-val">+966 50 164 9447</div></div></a>
+      <a href="https://www.linkedin.com/in/nawaf-almutairi-907766290/" target="_blank" class="ct-row"><div class="ct-row-dot"></div><div class="ct-row-info"><div class="ct-row-label">LinkedIn</div><div class="ct-row-val">linkedin.com/in/nawafbalmutairi</div></div></a>
+      <a href="https://github.com/nawafbalmutairi" target="_blank" class="ct-row"><div class="ct-row-dot"></div><div class="ct-row-info"><div class="ct-row-label">GitHub</div><div class="ct-row-val">github.com/nawafbalmutairi</div></div></a>
+    </div>
+  </div>
+</section>
+
+<footer><div class="ft-l">Designed &amp; built by Nawaf Almutairi</div><div class="ft-r">BSc Computer Science · <a href="https://nawafbalmutairi.github.io">nawafbalmutairi.github.io</a></div></footer>
+
 <script>
-  window.addEventListener('load', () => {
-    setTimeout(() => {
-      document.querySelectorAll('.skill-fill').forEach(el => {
-        el.style.transform = `scaleX(${el.dataset.w / 100})`;
-      });
-    }, 400);
+// INTRO
+var intro=document.getElementById('intro'),iBar=document.getElementById('iBar');
+setTimeout(function(){var n=document.getElementById('iName');n.style.transition='opacity 0.6s,transform 0.6s';n.style.opacity='1';n.style.transform='none'},300);
+setTimeout(function(){var s=document.getElementById('iSub');s.style.transition='opacity 0.5s,transform 0.5s';s.style.opacity='1';s.style.transform='none'},900);
+document.querySelectorAll('.i-role').forEach(function(r,i){setTimeout(function(){r.style.transition='opacity 0.4s,transform 0.4s';r.style.opacity='1';r.style.transform='scale(1)'},1400+i*180)});
+setTimeout(function(){var p=0;var iv=setInterval(function(){p+=2;iBar.style.width=p+'%';if(p>=100){clearInterval(iv);setTimeout(function(){intro.classList.add('done');startHero()},400)}},18)},2300);
+
+// HERO STAGGER
+function startHero(){
+  var hi=document.getElementById('heroHi'),nm=document.getElementById('heroName'),st=document.getElementById('heroStrip'),bt=document.getElementById('heroBottom');
+  setTimeout(function(){hi.style.transition='opacity 0.6s,transform 0.6s';hi.style.opacity='1';hi.style.transform='none'},200);
+  setTimeout(function(){nm.style.transition='opacity 0.7s,transform 0.7s';nm.style.opacity='1';nm.style.transform='none'},500);
+  setTimeout(function(){st.style.transition='opacity 0.6s,transform 0.6s';st.style.opacity='1';st.style.transform='none'},900);
+  setTimeout(function(){bt.style.transition='opacity 0.6s,transform 0.6s';bt.style.opacity='1';bt.style.transform='none'},1200);
+}
+
+// PARTICLES — FULL PAGE
+var cvs=document.getElementById('particles'),ctx=cvs.getContext('2d');
+var W,H;
+function resize(){W=cvs.width=window.innerWidth;H=cvs.height=document.documentElement.scrollHeight}
+resize();window.addEventListener('resize',resize);
+var dots=[];for(var i=0;i<80;i++)dots.push({x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-0.5)*0.3,vy:(Math.random()-0.5)*0.3,r:Math.random()*1.5+0.5});
+function draw(){
+  resize();ctx.clearRect(0,0,W,H);
+  var scrollY=window.scrollY;
+  dots.forEach(function(d){
+    d.x+=d.vx;d.y+=d.vy;
+    if(d.x<0||d.x>W)d.vx*=-1;
+    if(d.y<0||d.y>H)d.vy*=-1;
+    var screenY=d.y-scrollY;
+    if(screenY>-50&&screenY<window.innerHeight+50){
+      ctx.beginPath();ctx.arc(d.x,d.y,d.r,0,Math.PI*2);ctx.fillStyle='rgba(74,222,128,0.25)';ctx.fill();
+    }
   });
+  for(var i=0;i<dots.length;i++){
+    var screenYi=dots[i].y-scrollY;
+    if(screenYi<-50||screenYi>window.innerHeight+50)continue;
+    for(var j=i+1;j<dots.length;j++){
+      var dx=dots[i].x-dots[j].x,dy=dots[i].y-dots[j].y,dist=Math.sqrt(dx*dx+dy*dy);
+      if(dist<130){ctx.beginPath();ctx.moveTo(dots[i].x,dots[i].y);ctx.lineTo(dots[j].x,dots[j].y);ctx.strokeStyle='rgba(74,222,128,'+(0.06*(1-dist/130))+')';ctx.lineWidth=0.5;ctx.stroke()}
+    }
+  }
+  requestAnimationFrame(draw);
+}
+draw();
+
+// PARALLAX
+var heroWrap=document.getElementById('heroWrap');
+window.addEventListener('scroll',function(){
+  var y=window.scrollY,vh=window.innerHeight;
+  if(y<vh){var p=y/vh;heroWrap.style.transform='translateY('+y*0.25+'px) scale('+(1-p*0.06)+')';heroWrap.style.opacity=1-p*1.1}
+});
+
+// NAV
+window.addEventListener('scroll',function(){document.getElementById('nav').classList.toggle('scrolled',window.scrollY>80)});
+
+// SCROLL REVEAL
+var rvObs=new IntersectionObserver(function(e){e.forEach(function(en){if(en.isIntersecting)en.target.classList.add('visible')})},{threshold:0.1});
+document.querySelectorAll('.rv').forEach(function(el){rvObs.observe(el)});
+
+// SKILL ROW REVEAL + PILL STAGGER
+var skObs=new IntersectionObserver(function(e){e.forEach(function(en){if(en.isIntersecting){en.target.classList.add('visible');var pills=en.target.querySelectorAll('.sk-pill');pills.forEach(function(p,i){p.style.transitionDelay=(i*0.06)+'s'});skObs.unobserve(en.target)}})},{threshold:0.15});
+document.querySelectorAll('.sk-row').forEach(function(r){skObs.observe(r)});
+
+// PROJECT STAGGER
+var pCards=document.querySelectorAll('.p-card');
+var pcObs=new IntersectionObserver(function(e){e.forEach(function(en){if(en.isIntersecting){var i=Array.from(pCards).indexOf(en.target);setTimeout(function(){en.target.classList.add('visible')},i*100);pcObs.unobserve(en.target)}})},{threshold:0.05});
+pCards.forEach(function(c){pcObs.observe(c)});
+
+// COUNTERS
+var ctObs=new IntersectionObserver(function(e){e.forEach(function(en){if(en.isIntersecting){var el=en.target,t=parseInt(el.dataset.target);var c=0,s=Math.ceil(t/45);var tm=setInterval(function(){c+=s;if(c>=t){c=t;clearInterval(tm)}el.textContent=c},25);ctObs.unobserve(el)}})},{threshold:0.5});
+document.querySelectorAll('.counter').forEach(function(c){ctObs.observe(c)});
 </script>
 </body>
 </html>
