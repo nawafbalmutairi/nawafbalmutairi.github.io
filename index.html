@@ -3,336 +3,2314 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Nawaf Almutairi | Data Analyst · Business Intelligence · Machine Learning</title>
-<meta name="description" content="Nawaf Almutairi — BSc Computer Science, Northumbria University. Data Analysis, Business Intelligence, Machine Learning, Software Architecture.">
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@200;300;400;500;600;700;800;900&family=JetBrains+Mono:wght@300;400;500;700&display=swap" rel="stylesheet">
+<title>Nawaf Almutairi — Data · Business Intelligence · Machine Learning</title>
+<meta name="description" content="Nawaf Almutairi — recent BSc Computer Science graduate, Northumbria University. Building analytical systems that turn data into decisions. Open to August 2026 graduate roles in data, BI, and consulting.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 60'><rect x='3' y='3' width='54' height='54' fill='none' stroke='%23e64d2e' stroke-width='2.5'/><path d='M16 26L16 12L21 12L33 23L33 12L38 12L38 26L33 26L21 15L21 26Z' fill='%230a0a0a'/><line x1='3' y1='33' x2='57' y2='33' stroke='%23e64d2e' stroke-width='2'/><text x='30' y='53' text-anchor='middle' font-family='Georgia' font-style='italic' font-weight='900' font-size='24' fill='%230a0a0a'>A</text></svg>">
+
 <style>
-:root{--bg:#08090e;--surface:#0e1017;--surface2:#151820;--border:rgba(255,255,255,0.06);--text:#e4e6f0;--muted:#4e5266;--sub:#7d819a;--accent:#4ade80;--blue:#38bdf8;--purple:#a78bfa;--rose:#fb7185;--cyan:#22d3ee;}
-*{margin:0;padding:0;box-sizing:border-box;}html{scroll-behavior:smooth;}body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden;}
-::selection{background:rgba(74,222,128,0.2);color:#fff;}
+:root{
+  --bg:#f5f1ea;
+  --bg-2:#ece6d8;
+  --bg-3:#dfd6c2;
+  --ink:#0a0a0a;
+  --ink-2:#222020;
+  --ink-3:#3d3a36;
+  --mute:#7a756d;
+  --line:#cdc6b7;
+  --line-2:#b8af9c;
+  --ember:#e64d2e;
+  --ember-d:#c43f23;
+  --ember-l:rgba(230,77,46,0.08);
+  --serif:'Newsreader',Georgia,serif;
+  --sans:'Inter',-apple-system,sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  font-family:var(--sans);
+  background:var(--bg);
+  color:var(--ink);
+  overflow-x:hidden;
+  font-weight:400;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+  font-feature-settings:"ss01","cv11";
+}
+::selection{background:var(--ember);color:var(--bg);}
+img{max-width:100%;display:block;}
 
-/* GLOBAL PARTICLES */
-#particles{position:fixed;inset:0;z-index:0;pointer-events:none;}
+/* paper texture */
+body::before{
+  content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:radial-gradient(circle at 1px 1px,rgba(10,10,10,0.04) 1px,transparent 0);
+  background-size:4px 4px;opacity:0.5;
+}
+main,nav,footer,.side-rail{position:relative;z-index:1;}
 
-/* INTRO */
-#intro{position:fixed;inset:0;z-index:9999;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity 0.8s,visibility 0.8s;}
-#intro.done{opacity:0;visibility:hidden;pointer-events:none;}
-#intro::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 50% 50%,rgba(74,222,128,0.04) 0%,transparent 60%);}
-.i-name{font-family:'Outfit';font-weight:900;font-size:clamp(26px,5.5vw,68px);color:#fff;opacity:0;transform:translateY(30px);letter-spacing:-0.03em;position:relative;z-index:1;text-transform:uppercase;}
-.i-name span{background:linear-gradient(135deg,var(--accent),var(--cyan),var(--blue));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
-.i-sub{font-family:'JetBrains Mono',monospace;font-size:clamp(10px,1.3vw,13px);color:var(--muted);opacity:0;transform:translateY(20px);margin-top:14px;letter-spacing:0.12em;text-transform:uppercase;position:relative;z-index:1;}
-.i-roles{display:flex;gap:12px;margin-top:26px;position:relative;z-index:1;flex-wrap:wrap;justify-content:center;}
-.i-role{font-family:'JetBrains Mono',monospace;font-size:clamp(9px,1vw,11px);padding:5px 14px;border:1px solid var(--border);opacity:0;transform:scale(0.8);letter-spacing:0.06em;}
-.i-role:nth-child(1){border-color:rgba(74,222,128,0.4);color:var(--accent);}
-.i-role:nth-child(2){border-color:rgba(56,189,248,0.3);color:var(--blue);}
-.i-role:nth-child(3){border-color:rgba(167,139,250,0.3);color:var(--purple);}
-.i-role:nth-child(4){border-color:rgba(34,211,238,0.3);color:var(--cyan);}
-.i-bar{width:200px;height:2px;background:var(--surface2);margin-top:36px;border-radius:2px;overflow:hidden;position:relative;z-index:1;}
-.i-bar-fill{height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--cyan),var(--blue),var(--purple));border-radius:2px;}
+/* ═══════════════════════════════════════════════
+   NA MONOGRAM — drawn in SVG, used everywhere
+   ═══════════════════════════════════════════════ */
+.monogram{
+  display:inline-block;
+  flex-shrink:0;
+  position:relative;
+}
+.monogram svg{width:100%;height:100%;display:block;}
+.monogram.sm{width:38px;height:38px;}
+.monogram.md{width:64px;height:64px;}
+.monogram.lg{width:140px;height:140px;}
+.monogram.xl{width:240px;height:240px;}
 
-/* NAV */
-nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:22px 48px;display:flex;justify-content:space-between;align-items:center;transition:all 0.4s;}
-nav.scrolled{background:rgba(8,9,14,0.94);backdrop-filter:blur(16px);padding:14px 48px;border-bottom:1px solid var(--border);}
-.nav-logo{font-family:'Outfit';font-weight:800;font-size:13px;color:#fff;letter-spacing:0.1em;text-transform:uppercase;}.nav-logo span{color:var(--accent);}
-.nav-links{display:flex;gap:28px;}
-.nav-link{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);text-decoration:none;letter-spacing:0.06em;transition:color 0.2s;text-transform:uppercase;}.nav-link:hover{color:var(--accent);}
+/* ═══ NAVIGATION ═══ */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  padding:18px 56px;
+  display:flex;justify-content:space-between;align-items:center;
+  transition:all 0.4s cubic-bezier(0.4,0,0.2,1);
+  border-bottom:1px solid transparent;
+}
+nav.scrolled{
+  background:rgba(245,241,234,0.92);
+  backdrop-filter:blur(14px) saturate(1.1);
+  -webkit-backdrop-filter:blur(14px) saturate(1.1);
+  padding:12px 56px;
+  border-bottom:1px solid var(--line);
+}
+.mark{
+  display:flex;align-items:center;gap:14px;
+  text-decoration:none;
+}
+.mark-text{display:flex;flex-direction:column;line-height:1;}
+.mark-name{
+  font-family:var(--serif);
+  font-size:17px;color:var(--ink);
+  letter-spacing:-0.012em;font-weight:500;
+}
+.mark-name em{font-style:italic;color:var(--ember);}
+.mark-role{
+  font-family:var(--mono);font-size:9px;
+  color:var(--mute);letter-spacing:0.14em;
+  text-transform:uppercase;margin-top:4px;
+}
+.nav-r{display:flex;gap:32px;align-items:center;}
+.nav-link{
+  font-family:var(--mono);
+  font-size:11px;color:var(--ink-2);text-decoration:none;
+  letter-spacing:0.06em;text-transform:lowercase;
+  transition:color 0.2s;position:relative;
+}
+.nav-link::after{
+  content:'';position:absolute;bottom:-4px;left:0;
+  width:0;height:1px;background:var(--ember);transition:width 0.3s;
+}
+.nav-link:hover{color:var(--ember);}
+.nav-link:hover::after{width:100%;}
+.nav-cta{
+  font-family:var(--mono);font-size:11px;
+  padding:9px 16px;
+  background:var(--ink);color:var(--bg);
+  text-decoration:none;letter-spacing:0.06em;text-transform:lowercase;
+  transition:all 0.25s;
+}
+.nav-cta:hover{background:var(--ember);}
 
-/* HERO */
-#hero{position:relative;min-height:100vh;display:flex;align-items:center;overflow:hidden;z-index:1;}
-.hero-wrap{position:relative;z-index:2;max-width:1200px;margin:0 auto;padding:0 48px;width:100%;}
-.hero-hi{font-family:'Outfit';font-size:clamp(16px,2vw,22px);font-weight:300;color:var(--accent);margin-bottom:12px;opacity:0;transform:translateX(-20px);}
-.hero-name{font-family:'Outfit';font-size:clamp(52px,10vw,130px);font-weight:900;line-height:0.9;letter-spacing:-0.05em;color:#fff;text-transform:uppercase;opacity:0;transform:translateY(20px);}
-.hero-name .outline{-webkit-text-stroke:2px rgba(74,222,128,0.2);color:transparent;}
-.hero-strip{display:flex;align-items:stretch;border-top:1px solid var(--border);border-bottom:1px solid var(--border);margin-top:40px;opacity:0;transform:translateY(20px);}
-.strip-item{flex:1;padding:24px 16px;border-right:1px solid var(--border);}.strip-item:first-child{padding-left:0;}.strip-item:last-child{border-right:none;}
-.strip-label{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:6px;}
-.strip-val{font-size:15px;font-weight:600;color:var(--text);}.strip-val span{color:var(--accent);}
-.strip-val a{color:var(--accent);text-decoration:none;}
-.hero-bottom{display:flex;justify-content:space-between;align-items:flex-start;padding-top:32px;opacity:0;transform:translateY(20px);}
-.hero-desc{max-width:480px;font-size:clamp(14px,1.5vw,17px);color:var(--sub);line-height:1.8;font-weight:300;}.hero-desc strong{color:#fff;font-weight:600;}
-.hero-ctas{display:flex;gap:12px;flex-shrink:0;}
-.cta{font-family:'JetBrains Mono',monospace;font-size:11px;padding:14px 28px;border:1px solid var(--border);color:var(--text);text-decoration:none;letter-spacing:0.06em;text-transform:uppercase;transition:all 0.3s;white-space:nowrap;}.cta:hover{border-color:var(--accent);color:var(--accent);}
-.cta.green{background:var(--accent);color:var(--bg);border-color:var(--accent);font-weight:500;}.cta.green:hover{background:transparent;color:var(--accent);}
+/* ═══════════════════════════════════════════════
+   SIDE RAIL — Sticky vertical name on left edge
+   ═══════════════════════════════════════════════ */
+.side-rail{
+  position:fixed;top:0;left:0;height:100vh;
+  width:48px;
+  display:flex;flex-direction:column;
+  justify-content:space-between;align-items:center;
+  padding:90px 0 24px;
+  z-index:50;
+  pointer-events:none;
+  border-right:1px solid var(--line);
+}
+.side-rail-text{
+  font-family:var(--mono);
+  font-size:11px;color:var(--ink-2);
+  letter-spacing:0.32em;text-transform:uppercase;
+  writing-mode:vertical-rl;
+  transform:rotate(180deg);
+  white-space:nowrap;
+  font-weight:500;
+}
+.side-rail-text .accent{color:var(--ember);}
+.side-rail-dot{
+  width:6px;height:6px;border-radius:50%;
+  background:var(--ember);
+  box-shadow:0 0 0 3px rgba(230,77,46,0.18);
+  animation:rail-pulse 2.4s infinite ease-in-out;
+}
+@keyframes rail-pulse{
+  0%,100%{box-shadow:0 0 0 3px rgba(230,77,46,0.18);}
+  50%{box-shadow:0 0 0 6px rgba(230,77,46,0.05);}
+}
+@media(max-width:900px){.side-rail{display:none;}}
 
-/* SECTION */
-.sec{position:relative;z-index:1;}
-.sh{display:flex;justify-content:space-between;align-items:center;margin-bottom:40px;padding:0 48px;}
-.sh-title{font-family:'Outfit';font-size:clamp(24px,3.5vw,40px);font-weight:800;color:var(--accent);font-style:italic;}.sh-title em{color:#fff;font-style:normal;}
-.sh-tag{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:0.04em;}
+/* main content needs left padding to avoid the rail */
+@media(min-width:901px){
+  main{padding-left:48px;}
+  nav{padding-left:104px;}
+  nav.scrolled{padding-left:104px;}
+  footer{padding-left:104px;}
+}
 
-/* STATS */
-#stats{padding:80px 48px;max-width:1200px;margin:0 auto;position:relative;z-index:1;}
-.stats-row{display:grid;grid-template-columns:repeat(4,1fr);}
-.stat{padding:28px 0;border-bottom:1px solid rgba(74,222,128,0.15);}
-.stat-num{font-family:'Outfit';font-size:clamp(36px,5vw,56px);font-weight:900;color:#fff;display:flex;align-items:baseline;gap:2px;}
-.stat-num .plus{color:var(--accent);font-weight:700;font-size:0.6em;}
-.stat-label{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent);letter-spacing:0.08em;margin-top:6px;text-transform:uppercase;}
+/* ═══════════════════════════════════════════════
+   HERO — Name as the visual centerpiece
+   ═══════════════════════════════════════════════ */
+#hero{
+  min-height:100vh;
+  padding:140px 56px 80px;
+  display:flex;flex-direction:column;justify-content:space-between;
+  position:relative;
+}
+@keyframes fadeUp{from{opacity:0;transform:translateY(28px);}to{opacity:1;transform:none;}}
+@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+@keyframes slideRight{from{opacity:0;transform:translateX(-20px);}to{opacity:1;transform:none;}}
 
-/* ═══ SKILLS — CLEAN ANIMATED ROWS ═══ */
-#skills{padding:80px 0;max-width:1200px;margin:0 auto;}
-.sk-rows{padding:0 48px;display:flex;flex-direction:column;gap:0;}
-.sk-row{display:flex;align-items:flex-start;padding:28px 0;border-bottom:1px solid var(--border);gap:32px;opacity:0;transform:translateY(16px);transition:all 0.6s cubic-bezier(0.16,1,0.3,1);}
-.sk-row.visible{opacity:1;transform:none;}
-.sk-row:last-child{border-bottom:none;}
-.sk-row-left{width:200px;flex-shrink:0;padding-left:16px;position:relative;}
-.sk-row-left::before{content:'';position:absolute;left:0;top:4px;bottom:4px;width:3px;border-radius:2px;}
-.sk-row:nth-child(1) .sk-row-left::before{background:var(--accent);}
-.sk-row:nth-child(2) .sk-row-left::before{background:var(--blue);}
-.sk-row:nth-child(3) .sk-row-left::before{background:var(--purple);}
-.sk-row:nth-child(4) .sk-row-left::before{background:var(--cyan);}
-.sk-row-icon{font-size:20px;margin-bottom:8px;}
-.sk-row-name{font-family:'Outfit';font-size:16px;font-weight:700;color:#fff;line-height:1.3;}
-.sk-row-count{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:0.06em;margin-top:4px;}
-.sk-row-right{flex:1;display:flex;flex-wrap:wrap;gap:8px;align-items:flex-start;}
-.sk-pill{font-family:'JetBrains Mono',monospace;font-size:11px;padding:8px 16px;background:var(--surface);border:1px solid var(--border);color:var(--sub);letter-spacing:0.02em;opacity:0;transform:translateY(8px);transition:all 0.4s cubic-bezier(0.16,1,0.3,1),border-color 0.2s,color 0.2s;}
-.sk-row.visible .sk-pill{opacity:1;transform:none;}
-.sk-row:nth-child(1) .sk-pill:hover{border-color:rgba(74,222,128,0.3);color:var(--accent);}
-.sk-row:nth-child(2) .sk-pill:hover{border-color:rgba(56,189,248,0.3);color:var(--blue);}
-.sk-row:nth-child(3) .sk-pill:hover{border-color:rgba(167,139,250,0.3);color:var(--purple);}
-.sk-row:nth-child(4) .sk-pill:hover{border-color:rgba(34,211,238,0.3);color:var(--cyan);}
-@media(max-width:700px){.sk-row{flex-direction:column;gap:16px;}.sk-row-left{width:auto;}}
+.hero-top{
+  display:flex;justify-content:space-between;align-items:flex-start;
+  gap:32px;margin-bottom:80px;
+  animation:fadeIn 1s 0.1s both;
+}
+.hero-status{
+  display:inline-flex;align-items:center;gap:10px;
+  font-family:var(--mono);font-size:11px;
+  color:var(--ember);letter-spacing:0.12em;
+  text-transform:uppercase;font-weight:500;
+}
+.hero-status::before{
+  content:'';width:8px;height:8px;border-radius:50%;
+  background:var(--ember);
+  box-shadow:0 0 12px var(--ember);
+  animation:rail-pulse 2s infinite;
+}
+.hero-coord{
+  font-family:var(--mono);font-size:11px;
+  color:var(--mute);letter-spacing:0.06em;text-transform:uppercase;
+  text-align:right;line-height:1.6;
+}
 
-/* ═══ CONTACT — PERSONALITY SPLIT ═══ */
-#contact{padding:80px 0;max-width:1200px;margin:0 auto;}
-.ct-split{display:grid;grid-template-columns:1.3fr 1fr;gap:24px;padding:0 48px;align-items:stretch;}
-@media(max-width:800px){.ct-split{grid-template-columns:1fr;}}
-.ct-message{background:var(--surface);border:1px solid var(--border);padding:48px;position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:center;}
-.ct-message::before{content:'';position:absolute;top:-30%;right:-15%;width:300px;height:300px;background:radial-gradient(circle,rgba(74,222,128,0.06) 0%,transparent 70%);pointer-events:none;}
-.ct-avail{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:20px;display:flex;align-items:center;gap:10px;position:relative;z-index:1;}
-.ct-avail::before{content:'';width:8px;height:8px;background:var(--accent);border-radius:50%;animation:pulse 2s infinite;}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
-.ct-hello{font-family:'Outfit';font-size:clamp(26px,3.5vw,40px);font-weight:800;color:#fff;line-height:1.2;letter-spacing:-0.02em;margin-bottom:16px;position:relative;z-index:1;}
-.ct-hello span{color:var(--accent);}
-.ct-body{font-size:14px;color:var(--sub);line-height:1.8;font-weight:300;position:relative;z-index:1;margin-bottom:24px;}
-.ct-interests{display:flex;flex-wrap:wrap;gap:8px;position:relative;z-index:1;}
-.ct-int{font-family:'JetBrains Mono',monospace;font-size:10px;padding:6px 14px;border:1px solid rgba(74,222,128,0.15);color:var(--accent);letter-spacing:0.04em;transition:all 0.2s;}
-.ct-int:hover{background:rgba(74,222,128,0.06);border-color:rgba(74,222,128,0.3);}
-.ct-card{background:var(--surface2);border:1px solid var(--border);padding:40px;display:flex;flex-direction:column;justify-content:center;gap:0;}
-.ct-card-title{font-family:'Outfit';font-size:14px;font-weight:700;color:#fff;margin-bottom:24px;letter-spacing:0.02em;}
-.ct-row{display:flex;align-items:center;gap:14px;padding:16px 0;border-bottom:1px solid var(--border);text-decoration:none;transition:all 0.25s;}
-.ct-row:last-child{border-bottom:none;}
-.ct-row:hover{padding-left:8px;}
-.ct-row-dot{width:10px;height:10px;border-radius:50%;border:2px solid var(--accent);flex-shrink:0;transition:all 0.25s;}
-.ct-row:hover .ct-row-dot{background:var(--accent);}
-.ct-row-info{display:flex;flex-direction:column;gap:2px;}
-.ct-row-label{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:0.08em;text-transform:uppercase;}
-.ct-row-val{font-size:14px;color:var(--sub);transition:color 0.25s;}
-.ct-row:hover .ct-row-val{color:var(--accent);}
-#projects{padding:80px 0;max-width:1200px;margin:0 auto;}
-.p-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;padding:0 48px;}
-.p-card{opacity:0;transform:translateY(30px);transition:all 0.6s cubic-bezier(0.16,1,0.3,1);}.p-card.visible{opacity:1;transform:none;}
-.p-frame{position:relative;margin-bottom:18px;}
-.p-frame::before,.p-frame::after{content:'';position:absolute;width:14px;height:14px;z-index:2;transition:all 0.3s;}
-.p-frame::before{top:-1px;left:-1px;border-top:2px solid var(--muted);border-left:2px solid var(--muted);}
-.p-frame::after{top:-1px;right:-1px;border-top:2px solid var(--muted);border-right:2px solid var(--muted);}
-.p-bl,.p-br{position:absolute;width:14px;height:14px;z-index:2;transition:all 0.3s;}
-.p-bl{bottom:-1px;left:-1px;border-bottom:2px solid var(--muted);border-left:2px solid var(--muted);}
-.p-br{bottom:-1px;right:-1px;border-bottom:2px solid var(--muted);border-right:2px solid var(--muted);}
-.p-card:hover .p-frame::before,.p-card:hover .p-frame::after,.p-card:hover .p-bl,.p-card:hover .p-br{border-color:var(--accent);width:20px;height:20px;}
-.p-thumb{width:100%;aspect-ratio:16/10;background:var(--surface);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;}
-.p-thumb-text{font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:700;opacity:0.08;}
-.p-overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(8,9,14,0.88);opacity:0;transition:opacity 0.3s;}.p-card:hover .p-overlay{opacity:1;}
-.p-overlay a{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent);text-decoration:none;letter-spacing:0.06em;border:1px solid var(--accent);padding:10px 22px;transition:all 0.2s;}.p-overlay a:hover{background:var(--accent);color:var(--bg);}
-.p-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px;}
-.p-title{font-family:'Outfit';font-size:15px;font-weight:700;color:#fff;}
-.p-year{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);}
-.p-desc{font-size:12px;color:var(--sub);line-height:1.65;font-weight:300;margin-bottom:12px;}
-.p-tags{display:flex;flex-wrap:wrap;gap:5px;}
-.p-tag{font-family:'JetBrains Mono',monospace;font-size:9px;padding:3px 9px;border:1px solid var(--border);color:var(--muted);letter-spacing:0.04em;}
-.p-card:nth-child(1) .p-thumb{background:linear-gradient(135deg,rgba(74,222,128,0.06),rgba(56,189,248,0.04));}
-.p-card:nth-child(2) .p-thumb{background:linear-gradient(135deg,rgba(56,189,248,0.06),rgba(167,139,250,0.04));}
-.p-card:nth-child(3) .p-thumb{background:linear-gradient(135deg,rgba(74,222,128,0.04),rgba(251,113,133,0.04));}
-.p-card:nth-child(4) .p-thumb{background:linear-gradient(135deg,rgba(251,113,133,0.06),rgba(167,139,250,0.04));}
-.p-card:nth-child(5) .p-thumb{background:linear-gradient(135deg,rgba(34,211,238,0.06),rgba(74,222,128,0.04));}
-.p-card:nth-child(6) .p-thumb{background:linear-gradient(135deg,rgba(167,139,250,0.06),rgba(74,222,128,0.04));}
+/* THE NAME — graphic centerpiece */
+.name-wrap{
+  position:relative;
+  margin-bottom:48px;
+}
+.name-line{
+  display:block;
+  font-family:var(--serif);
+  font-size:clamp(72px,15vw,260px);
+  line-height:0.86;
+  letter-spacing:-0.045em;
+  color:var(--ink);
+  font-weight:400;
+  font-variation-settings:"opsz" 72;
+  overflow:hidden;
+}
+.name-line .letter{
+  display:inline-block;
+  opacity:0;
+  transform:translateY(60px);
+  animation:nameLetterIn 0.7s cubic-bezier(0.16,1,0.3,1) both;
+}
+@keyframes nameLetterIn{from{opacity:0;transform:translateY(60px);}to{opacity:1;transform:none;}}
+.name-line.line-2{
+  font-style:italic;
+  color:var(--ember);
+  margin-left:clamp(40px,8vw,140px);
+  font-variation-settings:"opsz" 72;
+}
 
-/* FOOTER */
-footer{border-top:1px solid var(--border);margin:0 48px;padding:24px 0;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;position:relative;z-index:1;}
-.ft-l{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);}
-.ft-r{font-size:11px;color:var(--muted);}.ft-r a{color:var(--accent);text-decoration:none;}
+/* BIO under name — personal byline */
+.name-bio{
+  max-width:780px;
+  margin-top:56px;
+  margin-left:clamp(0px,4vw,80px);
+  animation:fadeUp 0.9s 1.4s both;
+}
+.bio-tag{
+  font-family:var(--mono);font-size:11px;
+  color:var(--ember);letter-spacing:0.16em;text-transform:uppercase;
+  margin-bottom:18px;font-weight:500;
+  display:flex;align-items:center;gap:14px;
+}
+.bio-tag::before{
+  content:'';width:32px;height:1px;background:var(--ember);
+}
+.name-bio p{
+  font-family:var(--serif);
+  font-size:clamp(17px,1.7vw,23px);
+  line-height:1.55;color:var(--ink-2);
+  font-weight:400;letter-spacing:-0.008em;
+}
+.name-bio p em{color:var(--ember);font-style:italic;}
+.name-bio p strong{color:var(--ink);font-weight:500;}
+
+.hero-deck{
+  display:grid;grid-template-columns:auto 1fr auto;gap:48px;
+  align-items:end;
+  margin-top:auto;
+  padding-top:48px;
+  border-top:1px solid var(--ink);
+  animation:fadeUp 1s 1.4s both;
+}
+@media(max-width:900px){
+  .hero-deck{grid-template-columns:1fr;gap:24px;align-items:flex-start;}
+}
+
+.deck-monogram{position:relative;}
+.deck-monogram::after{
+  content:'';position:absolute;top:50%;left:calc(100% + 24px);
+  width:80px;height:1px;background:var(--line-2);
+}
+@media(max-width:900px){.deck-monogram::after{display:none;}}
+
+.deck-statement{
+  font-family:var(--serif);
+  font-size:clamp(20px,2vw,28px);
+  line-height:1.35;
+  color:var(--ink-2);
+  font-weight:400;
+  max-width:680px;
+  letter-spacing:-0.012em;
+}
+.deck-statement em{font-style:italic;color:var(--ember);font-weight:500;}
+
+.deck-cta{
+  font-family:var(--mono);font-size:11px;
+  padding:14px 22px;
+  background:var(--ink);color:var(--bg);
+  text-decoration:none;letter-spacing:0.08em;text-transform:lowercase;
+  transition:all 0.3s cubic-bezier(0.16,1,0.3,1);
+  display:inline-flex;align-items:center;gap:10px;
+  white-space:nowrap;
+}
+.deck-cta:hover{background:var(--ember);transform:translateY(-2px);}
+.deck-cta .arr{transition:transform 0.3s;}
+.deck-cta:hover .arr{transform:translate(3px,-3px);}
+
+/* ═══════════════════════════════════════════════
+   MARQUEE — infinite horizontal scroll
+   ═══════════════════════════════════════════════ */
+.marquee{
+  border-top:1px solid var(--ink);
+  border-bottom:1px solid var(--ink);
+  overflow:hidden;
+  padding:18px 0;
+  position:relative;
+  background:var(--bg);
+}
+.marquee-track{
+  display:flex;
+  white-space:nowrap;
+  animation:marquee-scroll 50s linear infinite;
+  gap:48px;
+}
+.marquee-item{
+  display:inline-flex;align-items:center;gap:48px;
+  font-family:var(--serif);
+  font-size:clamp(28px,3.5vw,44px);
+  color:var(--ink);
+  font-weight:400;
+  letter-spacing:-0.015em;
+  flex-shrink:0;
+}
+.marquee-item em{font-style:italic;color:var(--ember);}
+.marquee-item .dot{
+  width:10px;height:10px;border-radius:50%;
+  background:var(--ember);
+  display:inline-block;
+  flex-shrink:0;
+}
+.marquee:hover .marquee-track{animation-play-state:paused;}
+@keyframes marquee-scroll{from{transform:translateX(0);}to{transform:translateX(-50%);}}
+
+/* ═══════════════════════════════════════════════
+   MANIFESTO — A short bold statement
+   ═══════════════════════════════════════════════ */
+#manifesto{padding:120px 56px;}
+.man-wrap{
+  max-width:1400px;margin:0 auto;
+  display:grid;grid-template-columns:auto 1fr;gap:64px;
+  align-items:start;
+}
+@media(max-width:900px){.man-wrap{grid-template-columns:1fr;gap:32px;}}
+
+.man-label{
+  font-family:var(--mono);font-size:11px;
+  color:var(--ember);letter-spacing:0.16em;text-transform:uppercase;
+  min-width:140px;line-height:1.6;
+  padding-top:14px;
+  border-top:1px solid var(--ember);
+}
+.man-statement{
+  font-family:var(--serif);
+  font-size:clamp(28px,3.5vw,52px);
+  font-weight:300;
+  line-height:1.18;color:var(--ink);
+  letter-spacing:-0.022em;
+}
+.man-statement em{font-style:italic;color:var(--ember);font-weight:400;}
+.man-statement .strike{
+  position:relative;display:inline-block;
+}
+.man-statement .strike::after{
+  content:'';position:absolute;left:-2%;right:-2%;
+  top:55%;height:3px;background:var(--ember);
+  transform:rotate(-2deg);
+}
+.man-credits{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:0;
+  margin-top:64px;
+  padding-top:48px;
+  border-top:1px solid var(--line);
+}
+@media(max-width:700px){.man-credits{grid-template-columns:1fr;gap:24px;border-top:none;padding-top:0;}}
+.man-cred{
+  padding:0 32px;
+  border-right:1px solid var(--line);
+}
+.man-cred:first-child{padding-left:0;}
+.man-cred:last-child{padding-right:0;border-right:none;}
+@media(max-width:700px){.man-cred{padding:24px 0;border-right:none;border-bottom:1px solid var(--line);}.man-cred:last-child{border-bottom:none;}}
+.mc-label{
+  font-family:var(--mono);font-size:9px;
+  color:var(--mute);letter-spacing:0.14em;text-transform:uppercase;
+  margin-bottom:12px;
+}
+.mc-value{
+  font-family:var(--serif);font-size:22px;
+  color:var(--ink);line-height:1.3;letter-spacing:-0.01em;
+  font-weight:500;
+}
+.mc-value .ac{color:var(--ember);font-style:italic;font-weight:400;}
+
+/* ═══════════════════════════════════════════════
+   IMPACT STRIP — Real numbers
+   ═══════════════════════════════════════════════ */
+#impact{
+  padding:80px 56px;
+  border-top:1px solid var(--ink);
+  border-bottom:1px solid var(--ink);
+  background:var(--bg-2);
+}
+.imp{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:0;
+  max-width:1400px;margin:0 auto;
+}
+.imp-cell{
+  padding:0 32px 0 0;border-right:1px solid var(--line);
+  min-height:140px;
+}
+.imp-cell:last-child{border-right:none;padding-right:0;}
+.imp-cell:not(:first-child){padding-left:32px;}
+.imp-fn{
+  font-family:var(--mono);font-size:9px;
+  color:var(--mute);letter-spacing:0.12em;text-transform:uppercase;
+}
+.imp-num{
+  font-family:var(--serif);
+  font-size:clamp(52px,7vw,92px);
+  font-weight:400;color:var(--ink);line-height:1;
+  letter-spacing:-0.035em;
+  margin:24px 0 14px;
+}
+.imp-num .ac{color:var(--ember);font-style:italic;}
+.imp-num .sm{font-size:0.4em;color:var(--mute);font-style:normal;letter-spacing:0;}
+.imp-label{
+  font-family:var(--sans);font-size:13px;
+  color:var(--ink-2);line-height:1.45;font-weight:400;
+}
+@media(max-width:780px){
+  .imp{grid-template-columns:1fr 1fr;}
+  .imp-cell:nth-child(2){border-right:none;}
+  .imp-cell{border-bottom:1px solid var(--line);padding:24px 0;}
+  .imp-cell:nth-last-child(-n+2){border-bottom:none;}
+  .imp-cell:not(:first-child){padding-left:0;}
+  .imp-cell:nth-child(odd){padding-right:24px;}
+  .imp-cell:nth-child(even){padding-left:24px;}
+}
+
+/* ═══════════════════════════════════════════════
+   SECTION HEAD
+   ═══════════════════════════════════════════════ */
+.sec{padding:120px 56px;position:relative;}
+.sec-wrap{max-width:1400px;margin:0 auto;}
+.sec-head{
+  display:flex;justify-content:space-between;align-items:flex-end;
+  padding-bottom:32px;border-bottom:1px solid var(--ink);
+  margin-bottom:80px;gap:32px;
+}
+.sec-mark{
+  font-family:var(--mono);font-size:11px;
+  color:var(--ember);letter-spacing:0.16em;text-transform:uppercase;
+  margin-bottom:18px;
+  display:flex;align-items:center;gap:14px;
+  font-weight:500;
+}
+.sec-mark::before{
+  content:'';width:32px;height:1px;background:var(--ember);
+}
+.sec-title{
+  font-family:var(--serif);
+  font-size:clamp(40px,6vw,96px);
+  font-weight:300;color:var(--ink);line-height:0.95;
+  letter-spacing:-0.03em;
+}
+.sec-title .it{font-style:italic;color:var(--ember);font-weight:300;}
+.sec-deck{
+  font-family:var(--serif);font-style:italic;
+  font-size:17px;color:var(--ink-3);
+  max-width:340px;text-align:right;line-height:1.5;
+}
+@media(max-width:700px){
+  .sec-head{flex-direction:column;align-items:flex-start;}
+  .sec-deck{text-align:left;}
+}
+
+/* ═══════════════════════════════════════════════
+   CASE STUDIES — BIG NUMBERED CHAPTERS
+   ═══════════════════════════════════════════════ */
+.case{
+  margin-bottom:140px;
+  position:relative;
+}
+.case:last-child{margin-bottom:0;}
+
+/* CHAPTER MASTHEAD — Big number + title */
+.case-masthead{
+  padding:0 56px 64px;
+  position:relative;
+}
+.case-num-row{
+  display:flex;align-items:flex-start;gap:48px;
+  margin-bottom:32px;
+}
+@media(max-width:780px){.case-num-row{flex-direction:column;gap:18px;}}
+.case-num{
+  font-family:var(--serif);
+  font-size:clamp(120px,20vw,280px);
+  line-height:0.78;
+  letter-spacing:-0.06em;
+  color:var(--ember);
+  font-weight:300;font-style:italic;
+  font-variation-settings:"opsz" 72;
+  flex-shrink:0;
+}
+.case-num-meta{
+  flex:1;
+}
+.case-kind{
+  font-family:var(--mono);font-size:11px;
+  color:var(--ember);letter-spacing:0.14em;text-transform:uppercase;
+  margin-bottom:14px;font-weight:500;
+}
+.case-title{
+  font-family:var(--serif);
+  font-size:clamp(34px,5vw,76px);
+  line-height:0.96;font-weight:400;
+  color:var(--ink);letter-spacing:-0.028em;
+  margin-bottom:20px;
+}
+.case-title .it{font-style:italic;color:var(--ember);}
+.case-date{
+  font-family:var(--mono);font-size:10px;
+  color:var(--mute);letter-spacing:0.1em;text-transform:uppercase;
+  padding-top:14px;border-top:1px solid var(--line);
+}
+
+.case-deck{
+  font-family:var(--serif);
+  font-size:clamp(20px,2vw,26px);
+  line-height:1.4;color:var(--ink-2);font-weight:400;
+  max-width:880px;
+  letter-spacing:-0.012em;
+  margin-bottom:32px;
+}
+.case-deck em{font-style:italic;color:var(--ember);}
+
+.case-tags{display:flex;flex-wrap:wrap;gap:6px;}
+.case-tag{
+  font-family:var(--mono);font-size:10px;
+  padding:7px 13px;
+  background:var(--bg-2);border:1px solid var(--line);
+  color:var(--ink-2);letter-spacing:0.04em;
+}
+
+/* CASE HERO IMAGE */
+.case-hero{
+  width:100%;margin:32px 0 0;position:relative;
+}
+.case-hero-cap{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:14px 56px;
+  font-family:var(--mono);font-size:10px;
+  color:var(--mute);letter-spacing:0.1em;text-transform:uppercase;
+  border-bottom:1px solid var(--line);
+}
+.case-hero-cap .figure{color:var(--ember);font-weight:600;}
+.case-hero-frame{
+  width:100%;border-top:1px solid var(--ink);border-bottom:1px solid var(--ink);
+  background:var(--bg-2);overflow:hidden;position:relative;
+}
+.case-hero-frame img{width:100%;height:auto;display:block;}
+
+/* CASE HERO — TYPOGRAPHIC (no image) for dissertation/face */
+.typo-hero{
+  width:100%;
+  border-top:1px solid var(--ink);
+  border-bottom:1px solid var(--ink);
+  background:var(--bg-2);
+  padding:80px 56px;
+  display:grid;
+  grid-template-columns:1.4fr 1fr;
+  gap:48px;
+  align-items:center;
+  position:relative;
+  overflow:hidden;
+}
+@media(max-width:900px){.typo-hero{grid-template-columns:1fr;gap:32px;}}
+.typo-hero::before{
+  content:'';position:absolute;inset:0;
+  background-image:
+    linear-gradient(var(--line) 1px,transparent 1px),
+    linear-gradient(90deg,var(--line) 1px,transparent 1px);
+  background-size:48px 48px;
+  background-position:-1px -1px;
+  opacity:0.4;
+  pointer-events:none;
+  mask-image:linear-gradient(180deg,transparent 0%,#000 30%,#000 70%,transparent 100%);
+  -webkit-mask-image:linear-gradient(180deg,transparent 0%,#000 30%,#000 70%,transparent 100%);
+}
+.typo-hero-l,.typo-hero-r{position:relative;z-index:1;}
+.typo-stat-grid{
+  display:grid;grid-template-columns:1fr 1fr;gap:0;
+  border-top:1px solid var(--ink);
+}
+.typo-stat-cell{
+  padding:24px 24px 24px 0;
+  border-right:1px solid var(--line);
+  border-bottom:1px solid var(--line);
+}
+.typo-stat-cell:nth-child(2n){border-right:none;padding-right:0;padding-left:24px;}
+.typo-stat-cell:nth-last-child(-n+2){border-bottom:none;}
+.tsc-label{
+  font-family:var(--mono);font-size:9px;
+  color:var(--mute);letter-spacing:0.14em;text-transform:uppercase;
+  margin-bottom:10px;
+}
+.tsc-val{
+  font-family:var(--serif);
+  font-size:clamp(48px,5.5vw,88px);
+  line-height:0.92;font-weight:300;
+  color:var(--ink);letter-spacing:-0.04em;
+}
+.tsc-val .ac{color:var(--ember);font-style:italic;font-weight:400;}
+.tsc-val .sm{font-size:0.42em;color:var(--mute);font-style:normal;font-weight:400;letter-spacing:0;}
+.tsc-sub{
+  font-family:var(--sans);font-size:12px;
+  color:var(--ink-3);margin-top:8px;
+}
+
+/* SVG VIZ in typo-hero (right side) */
+.typo-viz{
+  background:var(--bg);
+  border:1px solid var(--line);
+  padding:32px;
+  position:relative;
+}
+.typo-viz-title{
+  font-family:var(--mono);font-size:10px;
+  color:var(--ember);letter-spacing:0.12em;text-transform:uppercase;
+  margin-bottom:6px;font-weight:600;
+}
+.typo-viz-sub{
+  font-family:var(--serif);font-style:italic;
+  font-size:13px;color:var(--mute);
+  margin-bottom:24px;
+}
+
+/* SVG chart styles for model-bars */
+.model-bars{display:flex;flex-direction:column;gap:14px;}
+.model-bar{display:grid;grid-template-columns:90px 1fr 50px;align-items:center;gap:12px;}
+.model-bar-name{
+  font-family:var(--sans);font-size:12px;color:var(--ink-2);
+  font-weight:600;
+}
+.model-bar.winner .model-bar-name{color:var(--ember);}
+.model-bar.winner .model-bar-name::after{content:' ★';color:var(--ember);}
+.model-bar-track{
+  height:8px;background:var(--bg-3);border-radius:2px;overflow:hidden;
+}
+.model-bar-fill{
+  height:100%;background:var(--ink);
+  width:0;border-radius:2px;
+  transition:width 1.4s cubic-bezier(0.16,1,0.3,1);
+}
+.model-bar.winner .model-bar-fill{background:var(--ember);}
+.model-bar-val{
+  font-family:var(--mono);font-size:12px;
+  color:var(--ink);text-align:right;font-weight:600;
+}
+
+/* CASE STORY — Story slabs */
+.case-story{padding:96px 56px 0;}
+.story-slab{
+  display:grid;grid-template-columns:1fr 1fr;gap:64px;
+  margin-bottom:96px;align-items:center;
+}
+.story-slab.reverse{direction:rtl;}
+.story-slab.reverse > *{direction:ltr;}
+@media(max-width:900px){
+  .story-slab,.story-slab.reverse{grid-template-columns:1fr;direction:ltr;gap:32px;}
+}
+
+.story-mark{
+  font-family:var(--mono);font-size:11px;
+  color:var(--ember);letter-spacing:0.14em;text-transform:uppercase;
+  display:flex;align-items:center;gap:14px;margin-bottom:18px;font-weight:500;
+}
+.story-mark .num{
+  font-family:var(--serif);font-style:italic;
+  font-size:16px;color:var(--ember);font-weight:400;
+}
+.story-title{
+  font-family:var(--serif);
+  font-size:clamp(28px,3.6vw,46px);
+  font-weight:400;line-height:1.02;
+  color:var(--ink);letter-spacing:-0.028em;
+  margin-bottom:24px;
+}
+.story-title .it{font-style:italic;color:var(--ember);}
+.story-body{
+  font-family:var(--sans);font-size:15px;
+  line-height:1.7;color:var(--ink-2);font-weight:400;
+  margin-bottom:20px;
+}
+.story-body strong{color:var(--ink);font-weight:600;}
+.story-body em{color:var(--ember);font-style:italic;}
+
+.story-points{
+  list-style:none;
+  border-top:1px solid var(--line);
+  padding-top:18px;margin-top:24px;
+}
+.story-points li{
+  font-family:var(--sans);font-size:13px;
+  color:var(--ink-3);line-height:1.6;
+  padding:12px 0;border-bottom:1px solid var(--line);
+  display:flex;gap:14px;
+}
+.story-points li:last-child{border-bottom:none;}
+.story-points li::before{
+  content:attr(data-n);
+  font-family:var(--mono);font-size:10px;
+  color:var(--ember);letter-spacing:0.04em;
+  flex-shrink:0;width:32px;font-weight:600;
+}
+
+/* FIGURE FRAME for images */
+.fig{position:relative;}
+.fig-inner{
+  border:1px solid var(--line);background:var(--bg-2);
+  overflow:hidden;position:relative;
+}
+.fig-inner img{width:100%;height:auto;display:block;}
+.fig-cap{
+  display:flex;justify-content:space-between;align-items:baseline;
+  margin-top:14px;padding-top:14px;
+  border-top:1px solid var(--line);
+  font-family:var(--mono);font-size:10px;
+  color:var(--mute);letter-spacing:0.06em;text-transform:uppercase;
+  gap:14px;
+}
+.fig-cap .label{color:var(--ember);font-weight:600;}
+.fig-cap .title{
+  flex:1;color:var(--ink-2);text-transform:none;letter-spacing:0.01em;
+  font-family:var(--serif);font-style:italic;font-size:13px;
+}
+
+/* IMAGE PLACEHOLDER for projects awaiting hero images */
+.hero-placeholder{
+  width:100%;aspect-ratio:16/8;
+  background:var(--bg-2);
+  border:1px dashed var(--line-2);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:18px;position:relative;
+}
+.hero-placeholder::before{
+  content:'';position:absolute;inset:20px;
+  border:1px solid var(--line);
+}
+.hp-mono{opacity:0.4;}
+.hp-title{
+  font-family:var(--serif);font-style:italic;font-size:22px;
+  color:var(--ink-3);position:relative;z-index:1;
+}
+.hp-label{
+  font-family:var(--mono);font-size:10px;
+  color:var(--mute);letter-spacing:0.14em;text-transform:uppercase;
+  position:relative;z-index:1;
+}
+
+/* OUTCOME BLOCK — interactive */
+.outcome-block{
+  background:var(--bg-2);border:1px solid var(--line);
+  padding:48px;margin-bottom:96px;
+}
+@media(max-width:780px){.outcome-block{padding:24px;}}
+.outcome-head{
+  display:flex;justify-content:space-between;align-items:baseline;
+  margin-bottom:32px;flex-wrap:wrap;gap:18px;
+}
+.outcome-mark{
+  font-family:var(--mono);font-size:11px;
+  color:var(--ember);letter-spacing:0.14em;text-transform:uppercase;
+  display:flex;align-items:center;gap:10px;font-weight:500;
+}
+.outcome-mark .num{font-family:var(--serif);font-style:italic;font-size:14px;}
+.outcome-instr{
+  font-family:var(--serif);font-style:italic;
+  font-size:14px;color:var(--ink-3);
+}
+
+/* NVIDIA — KPI cards */
+.kpi-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:14px;
+  margin-bottom:24px;
+}
+@media(max-width:780px){.kpi-grid{grid-template-columns:1fr 1fr;}}
+.kpi-card{
+  background:var(--bg);border:1px solid var(--line);
+  padding:22px;position:relative;cursor:pointer;
+  transition:all 0.25s;
+}
+.kpi-card:hover{border-color:var(--ember);transform:translateY(-2px);}
+.kpi-card.active{border-color:var(--ember);background:var(--ember-l);}
+.kpi-label{
+  font-family:var(--mono);font-size:9px;
+  color:var(--mute);letter-spacing:0.12em;text-transform:uppercase;
+  margin-bottom:12px;
+}
+.kpi-val{
+  font-family:var(--serif);font-size:38px;
+  color:var(--ink);line-height:1;letter-spacing:-0.025em;font-weight:400;
+}
+.kpi-val .ac{color:var(--ember);font-style:italic;}
+.kpi-val .unit{font-size:0.5em;color:var(--mute);font-style:normal;letter-spacing:0;margin-left:4px;}
+.kpi-hint{
+  position:absolute;bottom:10px;right:12px;
+  font-family:var(--mono);font-size:9px;
+  color:var(--mute);letter-spacing:0.04em;opacity:0.55;
+}
+
+.kpi-detail{
+  font-family:var(--serif);font-size:15px;font-style:italic;
+  line-height:1.55;color:var(--ink-2);
+  padding:22px 24px;background:var(--bg);
+  border:1px dashed var(--line-2);
+}
+.kpi-detail em{color:var(--ember);font-style:italic;}
+.kpi-detail strong{
+  font-family:var(--mono);font-style:normal;color:var(--ember);
+  font-size:11px;font-weight:600;letter-spacing:0.06em;
+}
+
+/* ═══ INTERACTIVE DASHBOARD — NVIDIA hotspot overlay ═══ */
+.dash-hint{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:13px 18px;
+  background:var(--bg);
+  border:1px solid var(--line);
+  border-bottom:none;
+  font-family:var(--mono);font-size:10px;
+  color:var(--ink-2);letter-spacing:0.1em;text-transform:uppercase;
+  gap:14px;flex-wrap:wrap;
+}
+.dash-hint-l{display:flex;align-items:center;gap:10px;}
+.dash-hint .dot{
+  width:7px;height:7px;border-radius:50%;
+  background:var(--ember);animation:rail-pulse 2s infinite;
+}
+.dash-hint-r{color:var(--ember);font-weight:600;}
+
+.interactive-dash{
+  position:relative;
+  width:100%;
+  background:var(--bg);
+  border:1px solid var(--line);
+  overflow:hidden;
+  user-select:none;
+}
+.interactive-dash img{
+  width:100%;height:auto;display:block;
+  pointer-events:none;
+  -webkit-user-drag:none;
+  user-drag:none;
+}
+.dash-hotspot{
+  position:absolute;
+  background:transparent;
+  border:2px solid transparent;
+  cursor:pointer;padding:0;
+  transition:all 0.25s cubic-bezier(0.16,1,0.3,1);
+  border-radius:3px;
+}
+.dash-hotspot:hover{
+  background:rgba(230,77,46,0.08);
+  border-color:rgba(230,77,46,0.45);
+}
+.dash-hotspot.active{
+  background:rgba(230,77,46,0.14);
+  border-color:var(--ember);
+  box-shadow:0 0 0 3px rgba(230,77,46,0.2);
+}
+.dash-num{
+  position:absolute;
+  top:-10px;left:-10px;
+  width:22px;height:22px;
+  background:var(--ember);color:var(--bg);
+  font-family:var(--mono);font-size:11px;font-weight:700;
+  border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  border:2px solid var(--bg);
+  transition:all 0.25s;
+  pointer-events:none;
+  box-shadow:0 2px 6px rgba(0,0,0,0.15);
+}
+.dash-hotspot.active .dash-num{
+  background:var(--ink);
+  transform:scale(1.12);
+}
+
+.dash-detail{
+  background:var(--bg);
+  border:1px solid var(--line);
+  border-top:none;
+  padding:24px 28px;
+  font-family:var(--serif);font-size:15px;font-style:italic;
+  line-height:1.6;color:var(--ink-2);
+}
+.dash-detail em{color:var(--ember);font-style:italic;}
+.dash-detail strong{
+  font-family:var(--mono);font-style:normal;color:var(--ember);
+  font-size:11px;font-weight:600;letter-spacing:0.06em;
+}
+
+/* DISSERTATION — Model switcher */
+.model-switcher{
+  display:flex;gap:0;border:1px solid var(--line);
+  margin-bottom:24px;background:var(--bg);overflow:hidden;
+}
+.ms-btn{
+  flex:1;font-family:var(--mono);
+  font-size:11px;letter-spacing:0.08em;text-transform:uppercase;
+  padding:14px 12px;background:transparent;border:none;
+  border-right:1px solid var(--line);
+  color:var(--mute);cursor:pointer;transition:all 0.25s;
+  position:relative;display:flex;flex-direction:column;align-items:center;gap:4px;
+}
+.ms-btn:last-child{border-right:none;}
+.ms-btn .ms-r2{
+  font-family:var(--serif);font-style:italic;
+  font-size:14px;color:var(--line-2);transition:color 0.25s;
+}
+.ms-btn:hover{color:var(--ink-2);background:var(--bg-2);}
+.ms-btn.active{color:var(--ink);background:var(--bg-2);font-weight:600;}
+.ms-btn.active .ms-r2{color:var(--ember);}
+.ms-btn.winner.active{background:var(--ember-l);}
+.ms-btn.winner.active::before{
+  content:'★';position:absolute;top:6px;right:8px;
+  font-size:9px;color:var(--ember);
+}
+.model-view{
+  background:var(--bg);border:1px solid var(--line);
+  padding:28px;min-height:280px;
+}
+.mv-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px;}
+.mv-name{
+  font-family:var(--serif);font-style:italic;font-size:24px;
+  color:var(--ink);letter-spacing:-0.01em;
+}
+.mv-name .winner-tag{
+  font-family:var(--mono);font-size:9px;
+  color:var(--bg);background:var(--ember);
+  padding:3px 8px;letter-spacing:0.1em;text-transform:uppercase;
+  margin-left:10px;vertical-align:middle;font-style:normal;font-weight:600;
+}
+.mv-avg{font-family:var(--mono);font-size:11px;color:var(--mute);letter-spacing:0.04em;}
+.mv-avg .v{color:var(--ink);font-weight:600;}
+.mv-note{
+  font-family:var(--sans);font-size:13px;
+  color:var(--ink-3);line-height:1.55;
+  margin:14px 0 20px;font-weight:400;
+}
+.mv-params{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:14px;}
+.mv-param{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:11px 14px;background:var(--bg-2);border:1px solid var(--line);
+}
+.mv-param.best{border-color:var(--ember);background:var(--ember-l);}
+.mv-param.worst{border-style:dashed;}
+.mvp-name{font-family:var(--sans);font-size:12px;color:var(--ink-2);font-weight:500;}
+.mvp-r2{font-family:var(--mono);font-size:13px;color:var(--ink);font-weight:600;}
+.mv-param.best .mvp-r2{color:var(--ember);}
+.mv-param.worst .mvp-r2{color:var(--ink-3);font-style:italic;}
+
+/* FACE — iteration stepper */
+.iter-bar{
+  display:flex;gap:0;margin-bottom:24px;
+  border:1px solid var(--line);background:var(--bg);
+}
+.iter-btn{
+  flex:1;font-family:var(--mono);
+  font-size:11px;letter-spacing:0.06em;
+  padding:14px 12px;background:transparent;border:none;
+  border-right:1px solid var(--line);color:var(--mute);
+  cursor:pointer;transition:all 0.25s;text-align:center;
+}
+.iter-btn:last-child{border-right:none;}
+.iter-btn:hover{color:var(--ink-2);background:var(--bg-2);}
+.iter-btn.active{color:var(--bg);background:var(--ink);font-weight:600;}
+.iter-btn.active.final{background:var(--ember);}
+.iter-btn-num{
+  font-family:var(--serif);font-style:italic;
+  font-size:13px;display:block;color:inherit;opacity:0.6;
+}
+.iter-btn.active .iter-btn-num{opacity:1;}
+.iter-view{background:var(--bg);border:1px solid var(--line);padding:28px;}
+.iter-grid{display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:center;}
+@media(max-width:780px){.iter-grid{grid-template-columns:1fr;}}
+.iter-accuracy{
+  font-family:var(--serif);font-size:80px;
+  line-height:1;letter-spacing:-0.04em;color:var(--ink);font-weight:400;
+}
+.iter-accuracy .pct{color:var(--ember);font-style:italic;}
+.iter-acc-label{
+  font-family:var(--mono);font-size:10px;
+  color:var(--mute);letter-spacing:0.12em;text-transform:uppercase;
+  margin-bottom:12px;
+}
+.iter-changed{
+  font-family:var(--serif);font-style:italic;
+  font-size:14px;color:var(--ink-3);
+  margin-top:14px;line-height:1.45;
+}
+.iter-changed strong{
+  color:var(--ember);font-style:normal;font-weight:600;
+  font-family:var(--mono);font-size:11px;letter-spacing:0.06em;
+}
+.iter-params{
+  display:flex;flex-direction:column;gap:0;
+  background:var(--bg-2);border:1px solid var(--line);
+}
+.iter-param{
+  display:flex;justify-content:space-between;
+  padding:12px 16px;border-bottom:1px solid var(--line);
+  font-family:var(--mono);font-size:11px;
+}
+.iter-param:last-child{border-bottom:none;}
+.iter-param .k{color:var(--mute);letter-spacing:0.06em;}
+.iter-param .v{color:var(--ink);font-weight:600;}
+
+/* TAKEAWAY */
+.takeaway{
+  padding:64px 56px 80px;
+  display:flex;flex-direction:column;align-items:center;
+  text-align:center;
+  border-top:1px solid var(--line);margin-top:32px;
+}
+.takeaway-mark{
+  font-family:var(--mono);font-size:11px;
+  color:var(--ember);letter-spacing:0.14em;text-transform:uppercase;
+  margin-bottom:32px;display:flex;align-items:center;gap:14px;font-weight:500;
+}
+.takeaway-mark::before,
+.takeaway-mark::after{
+  content:'';width:40px;height:1px;background:var(--ember);
+}
+.takeaway-quote{
+  font-family:var(--serif);font-style:italic;
+  font-size:clamp(24px,3vw,40px);
+  line-height:1.25;color:var(--ink);
+  max-width:900px;margin-bottom:24px;
+  letter-spacing:-0.02em;font-weight:300;
+}
+.takeaway-quote em{color:var(--ember);font-weight:400;}
+.takeaway-cite{
+  font-family:var(--mono);font-size:10px;
+  color:var(--mute);letter-spacing:0.14em;text-transform:uppercase;
+  margin-bottom:36px;
+}
+.takeaway-actions{display:flex;gap:14px;align-items:center;flex-wrap:wrap;justify-content:center;}
+.case-link{
+  font-family:var(--mono);font-size:11px;
+  padding:14px 24px;background:transparent;
+  border:1px solid var(--ink);color:var(--ink);
+  text-decoration:none;letter-spacing:0.08em;text-transform:lowercase;
+  transition:all 0.25s;
+  display:inline-flex;align-items:center;gap:10px;white-space:nowrap;
+}
+.case-link:hover{background:var(--ink);color:var(--bg);}
+.case-link.primary{background:var(--ember);border-color:var(--ember);color:var(--bg);}
+.case-link.primary:hover{background:var(--ink);border-color:var(--ink);color:var(--bg);}
+.case-link .arr{transition:transform 0.3s;}
+.case-link:hover .arr{transform:translate(3px,-3px);}
+
+/* SECTION DIVIDER */
+.section-divider{
+  display:flex;align-items:center;justify-content:center;
+  padding:48px 56px;gap:24px;
+}
+.section-divider::before,
+.section-divider::after{
+  content:'';flex:1;height:1px;max-width:240px;background:var(--line);
+}
+
+/* ═══ INDEX GRID ═══ */
+.index-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:0;
+  border-top:1px solid var(--line);
+}
+@media(max-width:900px){.index-grid{grid-template-columns:1fr 1fr;}}
+@media(max-width:600px){.index-grid{grid-template-columns:1fr;}}
+.idx{
+  display:block;text-decoration:none;
+  padding:36px 32px;
+  border-right:1px solid var(--line);
+  border-bottom:1px solid var(--line);
+  background:var(--bg);transition:all 0.3s;position:relative;
+}
+@media(max-width:900px){.idx:nth-child(2n){border-right:none;}.idx{border-right:1px solid var(--line);}}
+@media(max-width:600px){.idx,.idx:nth-child(2n){border-right:none;}}
+.idx:nth-child(3n){border-right:none;}
+.idx:hover{background:var(--bg-2);}
+.idx:hover .idx-title{color:var(--ember);}
+.idx-head{
+  display:flex;justify-content:space-between;align-items:baseline;
+  margin-bottom:18px;padding-bottom:14px;border-bottom:1px solid var(--line);
+}
+.idx-no{font-family:var(--mono);font-size:10px;color:var(--ember);letter-spacing:0.12em;font-weight:600;}
+.idx-year{font-family:var(--mono);font-size:10px;color:var(--mute);letter-spacing:0.04em;}
+.idx-title{
+  font-family:var(--serif);font-size:28px;
+  color:var(--ink);letter-spacing:-0.022em;line-height:1.06;
+  margin-bottom:12px;transition:color 0.25s;font-weight:500;
+}
+.idx-title .it{font-style:italic;font-weight:400;}
+.idx-desc{
+  font-family:var(--sans);font-size:13px;
+  color:var(--ink-3);line-height:1.6;font-weight:400;margin-bottom:18px;
+}
+.idx-tags{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:18px;}
+.idx-tag{
+  font-family:var(--mono);font-size:9px;
+  padding:3px 9px;background:var(--bg-2);
+  border:1px solid var(--line);color:var(--ink-3);letter-spacing:0.04em;
+}
+.idx-arrow{
+  font-family:var(--mono);font-size:11px;
+  color:var(--ember);letter-spacing:0.08em;text-transform:lowercase;
+  display:inline-flex;align-items:center;gap:8px;transition:gap 0.25s;font-weight:600;
+}
+.idx:hover .idx-arrow{gap:14px;}
+
+/* ═══ STACK ═══ */
+.stack-rows{display:flex;flex-direction:column;}
+.stack-row{
+  display:grid;grid-template-columns:280px 1fr;gap:48px;
+  padding:40px 0;border-bottom:1px solid var(--line);
+  align-items:start;
+  opacity:0;transform:translateY(16px);
+  transition:all 0.7s cubic-bezier(0.16,1,0.3,1);
+}
+.stack-row:last-child{border-bottom:none;}
+.stack-row.visible{opacity:1;transform:none;}
+.stack-num{
+  font-family:var(--mono);font-size:10px;
+  color:var(--ember);letter-spacing:0.14em;
+  margin-bottom:14px;font-weight:600;
+}
+.stack-name{
+  font-family:var(--serif);font-size:36px;
+  color:var(--ink);letter-spacing:-0.025em;line-height:1;font-weight:400;
+}
+.stack-name .it{font-style:italic;color:var(--ember);}
+.stack-count{
+  font-family:var(--mono);font-size:11px;
+  color:var(--mute);margin-top:10px;letter-spacing:0.04em;
+}
+.stack-row-r{display:flex;flex-wrap:wrap;gap:8px;align-items:flex-start;padding-top:10px;}
+.stack-pill{
+  font-family:var(--mono);font-size:11px;
+  padding:10px 16px;background:var(--bg-2);
+  border:1px solid var(--line);color:var(--ink-2);letter-spacing:0.02em;
+  opacity:0;transform:translateY(6px);
+  transition:all 0.4s cubic-bezier(0.16,1,0.3,1),background 0.2s,border-color 0.2s,color 0.2s;
+}
+.stack-row.visible .stack-pill{opacity:1;transform:none;}
+.stack-pill:hover{background:var(--ember);color:var(--bg);border-color:var(--ember);}
+@media(max-width:780px){.stack-row{grid-template-columns:1fr;gap:20px;}}
+
+/* ═══ EDUCATION ═══ */
+.edu-grid{display:grid;grid-template-columns:1.3fr 1fr;gap:32px;}
+@media(max-width:900px){.edu-grid{grid-template-columns:1fr;gap:24px;}}
+.edu-card,.cert-card{
+  background:var(--bg);border:1px solid var(--line);padding:40px;
+}
+.edu-period{
+  font-family:var(--mono);font-size:10px;
+  color:var(--ember);letter-spacing:0.14em;margin-bottom:18px;font-weight:600;
+}
+.edu-title{
+  font-family:var(--serif);font-size:32px;color:var(--ink);
+  letter-spacing:-0.022em;line-height:1.08;font-weight:400;margin-bottom:8px;
+}
+.edu-title .it{font-style:italic;color:var(--ember);}
+.edu-school{
+  font-family:var(--serif);font-size:18px;font-style:italic;
+  color:var(--ink-3);margin-bottom:24px;
+}
+.edu-chips{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:28px;}
+.edu-chip{
+  font-family:var(--mono);font-size:10px;
+  padding:6px 11px;background:var(--ember-l);
+  border:1px solid var(--ember);color:var(--ember);letter-spacing:0.04em;font-weight:500;
+}
+.edu-modtitle{
+  font-family:var(--mono);font-size:10px;
+  color:var(--mute);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:14px;
+}
+.edu-mods{display:flex;flex-wrap:wrap;gap:6px;}
+.edu-mod{
+  font-family:var(--sans);font-size:12px;padding:5px 11px;
+  background:var(--bg-2);border:1px solid var(--line);color:var(--ink-2);
+}
+.cert-title{
+  font-family:var(--serif);font-size:26px;color:var(--ink);
+  letter-spacing:-0.02em;margin-bottom:6px;font-weight:400;
+}
+.cert-title .it{font-style:italic;color:var(--ember);}
+.cert-count{
+  font-family:var(--mono);font-size:10px;color:var(--ember);
+  letter-spacing:0.12em;margin-bottom:24px;font-weight:600;
+}
+.cert-list{display:flex;flex-direction:column;}
+.cert-item{
+  padding:14px 0;border-bottom:1px solid var(--line);
+  display:flex;justify-content:space-between;align-items:center;gap:14px;
+}
+.cert-item:last-child{border-bottom:none;}
+.cert-item-name{font-family:var(--serif);font-size:15px;color:var(--ink);}
+.cert-item-issuer{font-family:var(--mono);font-size:9px;color:var(--mute);letter-spacing:0.1em;}
+
+/* ═══ FOOTER / COLOPHON ═══ */
+footer{
+  padding:96px 56px 48px;
+  border-top:1px solid var(--ink);
+  background:var(--bg-2);
+}
+.foot-mark{
+  display:flex;flex-direction:column;align-items:center;
+  margin-bottom:48px;padding-bottom:48px;
+  border-bottom:1px solid var(--line);gap:24px;
+}
+.foot-name{
+  font-family:var(--serif);
+  font-size:clamp(48px,8vw,128px);
+  line-height:0.9;font-weight:300;
+  color:var(--ink);letter-spacing:-0.04em;
+  text-align:center;
+}
+.foot-name .it{font-style:italic;color:var(--ember);}
+.foot-tag{
+  font-family:var(--mono);font-size:10px;
+  color:var(--mute);letter-spacing:0.16em;text-transform:uppercase;
+}
+.colo{
+  max-width:1400px;margin:0 auto;
+  display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:48px;
+}
+@media(max-width:780px){.colo{grid-template-columns:1fr;gap:32px;}}
+.colo-h{
+  font-family:var(--mono);font-size:10px;color:var(--ember);
+  letter-spacing:0.16em;text-transform:uppercase;
+  margin-bottom:18px;padding-bottom:10px;border-bottom:1px solid var(--line);
+  font-weight:600;
+}
+.colo-text{font-family:var(--serif);font-size:17px;font-style:italic;color:var(--ink-2);line-height:1.5;}
+.colo-list{display:flex;flex-direction:column;gap:10px;}
+.colo-list a{
+  font-family:var(--sans);font-size:14px;color:var(--ink-2);
+  text-decoration:none;
+  display:flex;justify-content:space-between;align-items:center;
+  padding:6px 0;border-bottom:1px solid transparent;transition:all 0.25s;
+}
+.colo-list a:hover{color:var(--ember);border-bottom-color:var(--ember);}
+.colo-list a .lbl{font-family:var(--mono);font-size:10px;color:var(--mute);letter-spacing:0.1em;}
+.colo-list a:hover .lbl{color:var(--ember);}
+.colo-foot{
+  max-width:1400px;margin:48px auto 0;
+  padding-top:24px;border-top:1px solid var(--line);
+  display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px;
+}
+.colo-foot p{font-family:var(--mono);font-size:10px;color:var(--mute);letter-spacing:0.1em;}
 
 /* REVEAL */
-.rv{opacity:0;transform:translateY(25px);transition:all 0.7s cubic-bezier(0.16,1,0.3,1);}.rv.visible{opacity:1;transform:none;}
-.rv-d1{transition-delay:0.1s}.rv-d2{transition-delay:0.2s}.rv-d3{transition-delay:0.3s}
+.rv{opacity:0;transform:translateY(28px);transition:all 0.8s cubic-bezier(0.16,1,0.3,1);}
+.rv.visible{opacity:1;transform:none;}
+.rv-d1{transition-delay:0.1s;}.rv-d2{transition-delay:0.2s;}.rv-d3{transition-delay:0.3s;}
 
-@media(max-width:900px){.p-grid{grid-template-columns:1fr !important;}.sk-stats{grid-template-columns:1fr 1fr !important;}.stats-row{grid-template-columns:1fr 1fr;}.ct-circles{gap:20px;}}
-@media(max-width:600px){nav{padding:16px 20px;}nav.scrolled{padding:12px 20px;}.hero-wrap,.sh,.sk-grid,.p-grid,.ct-wrap,#stats{padding-left:20px !important;padding-right:20px !important;}.hero-strip{flex-direction:column;}.strip-item{border-right:none;border-bottom:1px solid var(--border);padding:14px 0;}.strip-item:first-child{padding-left:0;}.strip-item:last-child{border-bottom:none;}.hero-bottom{flex-direction:column;gap:24px;}.hero-ctas{flex-direction:column;width:100%;}.cta{text-align:center;justify-content:center;}.ct-icons{grid-template-columns:1fr !important;}.ct-banner{padding:32px;}.sh-tag{display:none;}.nav-links{gap:16px;}.nav-link{font-size:10px;}footer{margin:0 20px;}}
+@media(max-width:780px){
+  nav,nav.scrolled{padding:14px 22px !important;}
+  #hero,#manifesto,#impact,.sec,footer,.case-masthead,.case-story,.takeaway{padding-left:22px;padding-right:22px;}
+  .case-hero-cap{padding:14px 22px;}
+  .typo-hero{padding:48px 22px;}
+  .nav-cta{display:none;}
+  .hero-coord{font-size:10px;}
+}
 </style>
 </head>
 <body>
 
-<!-- GLOBAL PARTICLES -->
-<canvas id="particles"></canvas>
+<!-- ═══════════════════════════════════════════════
+     NA MONOGRAM — defined once via SVG symbol
+     ═══════════════════════════════════════════════ -->
+<svg width="0" height="0" style="position:absolute;">
+  <defs>
+    <symbol id="na" viewBox="0 0 60 60">
+      <!-- Frame -->
+      <rect x="3" y="3" width="54" height="54" rx="0" fill="none" class="frame-stroke"/>
+      <!-- Geometric N path (top half) -->
+      <path d="M14 27 L14 12 L19 12 L34 24.5 L34 12 L40 12 L40 27 L35 27 L20 14.5 L20 27 Z" class="letter-fill"/>
+      <!-- Horizontal divider -->
+      <line x1="3" y1="32" x2="57" y2="32" class="frame-stroke"/>
+      <!-- Italic-serif A path (bottom half) -->
+      <path d="M19 49 L26 38 L31 38 L41 49 L38 49 L36 46.5 L25.5 46.5 L24 49 Z M26.5 44.5 L34.5 44.5 L31 39.5 Z" class="letter-fill"/>
+    </symbol>
+  </defs>
+</svg>
 
-<!-- INTRO -->
-<div id="intro">
-  <div class="i-name" id="iName">NAWAF <span>ALMUTAIRI</span></div>
-  <div class="i-sub" id="iSub">BSc Computer Science · Northumbria University</div>
-  <div class="i-roles" id="iRoles"><div class="i-role">Data Analyst</div><div class="i-role">Business Intelligence</div><div class="i-role">Machine Learning</div><div class="i-role">Software Architecture</div></div>
-  <div class="i-bar"><div class="i-bar-fill" id="iBar"></div></div>
+<style>
+  /* Monogram color classes — applied to use */
+  .monogram.ink svg .frame-stroke{stroke:var(--ember);stroke-width:2.5;fill:none;}
+  .monogram.ink svg .letter-fill{fill:var(--ink);}
+  .monogram.ember svg .frame-stroke{stroke:var(--ember);stroke-width:2.5;fill:none;}
+  .monogram.ember svg .letter-fill{fill:var(--ember);}
+  .monogram.outline svg .frame-stroke{stroke:var(--ink);stroke-width:2;fill:none;}
+  .monogram.outline svg .letter-fill{fill:var(--ink);}
+  .monogram.faded svg .frame-stroke{stroke:var(--ember);stroke-width:2.5;fill:none;opacity:0.3;}
+  .monogram.faded svg .letter-fill{fill:var(--ink);opacity:0.25;}
+</style>
+
+<!-- ═══ SIDE RAIL — Sticky name on the left edge ═══ -->
+<aside class="side-rail">
+  <div></div>
+  <div class="side-rail-text">Nawaf <span class="accent">Almutairi</span> · Portfolio · 2026</div>
+  <div class="side-rail-dot"></div>
+</aside>
+
+<!-- ═══ NAVIGATION ═══ -->
+<nav id="nav">
+  <a href="#" class="mark">
+    <span class="monogram sm ink"><svg><use href="#na"/></svg></span>
+    <span class="mark-text">
+      <span class="mark-name">Nawaf <em>Almutairi</em></span>
+      <span class="mark-role">Data · BI · ML</span>
+    </span>
+  </a>
+  <div class="nav-r">
+    <a href="#work" class="nav-link">work</a>
+    <a href="#index" class="nav-link">index</a>
+    <a href="#stack" class="nav-link">stack</a>
+    <a href="#foundation" class="nav-link">foundation</a>
+    <a href="mailto:NawafBAlmutairi@outlook.sa" class="nav-cta">say hello →</a>
+  </div>
+</nav>
+
+<main>
+
+<!-- ═══════════════════════════════════════════════
+     HERO — Name as the visual centerpiece
+     ═══════════════════════════════════════════════ -->
+<section id="hero">
+  <div class="hero-top">
+    <span class="hero-status">Open · August 2026 graduate roles</span>
+    <span class="hero-coord">
+      24.71°N · 46.67°E<br>
+      Riyadh, KSA · UTC+3
+    </span>
+  </div>
+
+  <div class="name-wrap">
+    <span class="name-line line-1" data-text="NAWAF"></span>
+    <span class="name-line line-2" data-text="ALMUTAIRI"></span>
+  </div>
+
+  <div class="name-bio">
+    <div class="bio-tag">— A short biography</div>
+    <p>I'm Nawaf — a recent <strong>BSc Computer Science</strong> graduate of Northumbria University in Newcastle, based in Riyadh. I work at the intersection of <em>data analysis</em>, <em>business intelligence</em>, and <em>machine learning</em> — with methodology at the centre of everything I build. Six Google Professional Certificates, fifteen-plus shipped projects, and one independent streetwear label on the side. Open to August 2026 graduate roles in data, BI, and consulting.</p>
+  </div>
+
+  <div class="hero-deck">
+    <div class="deck-monogram">
+      <span class="monogram lg ink"><svg><use href="#na"/></svg></span>
+    </div>
+    <p class="deck-statement">
+      Data analyst, BI developer, and machine-learning practitioner.
+      I build analytical systems with one throughline: <em>problem → system → outcome</em>.
+      Three case studies inside.
+    </p>
+    <a href="#work" class="deck-cta">View work <span class="arr">↘</span></a>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════
+     MARQUEE — Personality strip
+     ═══════════════════════════════════════════════ -->
+<div class="marquee">
+  <div class="marquee-track">
+    <div class="marquee-item"><em>Data analyst</em><span class="dot"></span>Power BI developer<span class="dot"></span><em>Machine-learning</em> practitioner<span class="dot"></span>BSc Computer Science, Northumbria<span class="dot"></span><em>First Class</em> target<span class="dot"></span>Open · August 2026<span class="dot"></span></div>
+    <div class="marquee-item"><em>Data analyst</em><span class="dot"></span>Power BI developer<span class="dot"></span><em>Machine-learning</em> practitioner<span class="dot"></span>BSc Computer Science, Northumbria<span class="dot"></span><em>First Class</em> target<span class="dot"></span>Open · August 2026<span class="dot"></span></div>
+  </div>
 </div>
 
-<!-- NAV -->
-<nav id="nav"><div class="nav-logo">NAWAF<span>.</span></div><div class="nav-links"><a href="#skills" class="nav-link">Skills</a><a href="#projects" class="nav-link">Projects</a><a href="#contact" class="nav-link">Contact</a></div></nav>
+<!-- ═══════════════════════════════════════════════
+     MANIFESTO — A short statement of intent
+     ═══════════════════════════════════════════════ -->
+<section id="manifesto">
+  <div class="man-wrap">
+    <div class="man-label">— Statement<br>of intent</div>
+    <div>
+      <h2 class="man-statement">
+        I'm Nawaf — and I don't believe in dashboards that just <span class="strike">report numbers</span>.
+        I build the <em>system</em> behind the numbers, so the dashboard is a decision tool, not wallpaper.
+        Every project here is structured the same way:
+        <em>read the problem</em>, design the system, then measure what changed.
+      </h2>
 
-<!-- HERO -->
-<section id="hero">
-  <div class="hero-wrap" id="heroWrap">
-    <div><div class="hero-hi" id="heroHi">Data Analyst &amp; BI Developer</div><div class="hero-name" id="heroName">NAWAF<br><span class="outline">ALMUTAIRI</span></div></div>
-    <div class="hero-strip" id="heroStrip">
-      <div class="strip-item"><div class="strip-label">Specialisation</div><div class="strip-val">Data Analysis <span>·</span> BI <span>·</span> ML</div></div>
-      <div class="strip-item"><div class="strip-label">Education</div><div class="strip-val">BSc Computer Science <span>·</span> First Class</div></div>
-      <div class="strip-item"><div class="strip-label">University</div><div class="strip-val">Northumbria University</div></div>
-      <div class="strip-item"><div class="strip-label">Portfolio</div><div class="strip-val"><a href="https://nawafbalmutairi.github.io" target="_blank">nawafbalmutairi.github.io</a></div></div>
-    </div>
-    <div class="hero-bottom" id="heroBottom">
-      <div class="hero-desc">Building <strong>analytical solutions</strong> that turn raw data into measurable business impact — from <strong>Power BI dashboards</strong> tracking £180K+ in cost savings to <strong>ML models</strong> achieving 86.7% accuracy.</div>
-      <div class="hero-ctas"><a href="#projects" class="cta green">Explore Work ↓</a><a href="https://github.com/nawafbalmutairi" target="_blank" class="cta">GitHub ⟶</a></div>
+      <div class="man-credits">
+        <div class="man-cred">
+          <div class="mc-label">What I work on</div>
+          <div class="mc-value">Data analysis,<br><span class="ac">BI &amp; ML systems</span></div>
+        </div>
+        <div class="man-cred">
+          <div class="mc-label">Who for</div>
+          <div class="mc-value">Consulting,<br><span class="ac">graduate programmes</span></div>
+        </div>
+        <div class="man-cred">
+          <div class="mc-label">Based</div>
+          <div class="mc-value">Riyadh,<br><span class="ac">Saudi Arabia</span></div>
+        </div>
+      </div>
     </div>
   </div>
 </section>
 
-<!-- STATS -->
-<section id="stats" class="sec">
-  <div class="stats-row">
-    <div class="stat rv"><div class="stat-num"><span class="counter" data-target="15">0</span><span class="plus">+</span></div><div class="stat-label">Projects</div></div>
-    <div class="stat rv rv-d1"><div class="stat-num"><span class="counter" data-target="7">0</span><span class="plus">+</span></div><div class="stat-label">Live Dashboards</div></div>
-    <div class="stat rv rv-d2"><div class="stat-num"><span class="counter" data-target="6">0</span><span class="plus"></span></div><div class="stat-label">Certifications</div></div>
-    <div class="stat rv rv-d3"><div class="stat-num"><span class="counter" data-target="28">0</span><span class="plus">+</span></div><div class="stat-label">Technologies</div></div>
-  </div>
-</section>
-
-<!-- SKILLS -->
-<section id="skills" class="sec">
-  <div class="sh"><div class="sh-title"><em>Skills</em></div><div class="sh-tag">&lt; 28+ Technologies /&gt;</div></div>
-  <div class="sk-rows">
-    <div class="sk-row">
-      <div class="sk-row-left"><div class="sk-row-icon">📊</div><div class="sk-row-name">Data & BI</div><div class="sk-row-count">9 tools</div></div>
-      <div class="sk-row-right"><span class="sk-pill">Python</span><span class="sk-pill">SQL</span><span class="sk-pill">Power BI</span><span class="sk-pill">DAX</span><span class="sk-pill">ETL</span><span class="sk-pill">Pandas</span><span class="sk-pill">NumPy</span><span class="sk-pill">Chart.js</span><span class="sk-pill">Excel</span></div>
+<!-- ═══════════════════════════════════════════════
+     IMPACT STRIP
+     ═══════════════════════════════════════════════ -->
+<section id="impact">
+  <div class="imp">
+    <div class="imp-cell rv">
+      <div class="imp-fn">01 / ML Dissertation</div>
+      <div class="imp-num"><span class="counter" data-target="8">0</span>.3<span class="sm">M</span></div>
+      <div class="imp-label">Samples benchmarked across four models.</div>
     </div>
-    <div class="sk-row">
-      <div class="sk-row-left"><div class="sk-row-icon">🧠</div><div class="sk-row-name">AI & ML</div><div class="sk-row-count">6 tools</div></div>
-      <div class="sk-row-right"><span class="sk-pill">Azure ML</span><span class="sk-pill">PyTorch</span><span class="sk-pill">DenseNet</span><span class="sk-pill">ResNet</span><span class="sk-pill">CNN</span><span class="sk-pill">Computer Vision</span></div>
+    <div class="imp-cell rv rv-d1">
+      <div class="imp-fn">02 / NVIDIA BI Dashboard</div>
+      <div class="imp-num"><span class="counter" data-target="96">0</span>.<span class="counter" data-target="4">0</span><span class="ac">%</span></div>
+      <div class="imp-label">Forecast accuracy, AI-GPU supply chain.</div>
     </div>
-    <div class="sk-row">
-      <div class="sk-row-left"><div class="sk-row-icon">⚙️</div><div class="sk-row-name">Architecture</div><div class="sk-row-count">8 tools</div></div>
-      <div class="sk-row-right"><span class="sk-pill">PHP</span><span class="sk-pill">REST API</span><span class="sk-pill">SQLite</span><span class="sk-pill">Microservices</span><span class="sk-pill">Kubernetes</span><span class="sk-pill">AWS</span><span class="sk-pill">Docker</span><span class="sk-pill">CI/CD</span></div>
+    <div class="imp-cell rv rv-d2">
+      <div class="imp-fn">03 / Face Classifier</div>
+      <div class="imp-num"><span class="counter" data-target="86">0</span>.<span class="counter" data-target="7">0</span><span class="ac">%</span></div>
+      <div class="imp-label">DenseNet test accuracy, four iterations.</div>
     </div>
-    <div class="sk-row">
-      <div class="sk-row-left"><div class="sk-row-icon">🎨</div><div class="sk-row-name">Design & Tools</div><div class="sk-row-count">8 tools</div></div>
-      <div class="sk-row-right"><span class="sk-pill">Figma</span><span class="sk-pill">Unity</span><span class="sk-pill">UCD</span><span class="sk-pill">ITIL 4</span><span class="sk-pill">CMDB</span><span class="sk-pill">Git/GitHub</span><span class="sk-pill">Agile/Scrum</span><span class="sk-pill">Linux</span></div>
+    <div class="imp-cell rv rv-d3">
+      <div class="imp-fn">Cumulative</div>
+      <div class="imp-num"><span class="counter" data-target="15">0</span><span class="ac">+</span></div>
+      <div class="imp-label">Projects shipped — data, ML, BI, software.</div>
     </div>
   </div>
 </section>
 
-<!-- PROJECTS -->
-<section id="projects" class="sec">
-  <div class="sh"><div class="sh-title"><em>Projects</em></div><div class="sh-tag">&lt; Data Transformed into Decisions. /&gt;</div></div>
-  <div class="p-grid">
-    <div class="p-card"><div class="p-frame"><div class="p-thumb"><div class="p-thumb-text">NVIDIA BI</div><div class="p-overlay"><a href="https://nawafbalmutairi.github.io/nvidia-bi-dashboard" target="_blank">VIEW LIVE →</a></div></div><div class="p-bl"></div><div class="p-br"></div></div><div class="p-head"><div class="p-title">NVIDIA Supply Chain BI</div><div class="p-year">2025</div></div><div class="p-desc">Power BI dashboard with 15+ DAX measures tracking 8 KPIs. Identified £180K+ in projected cost savings.</div><div class="p-tags"><span class="p-tag">Power BI</span><span class="p-tag">DAX</span><span class="p-tag">ETL</span><span class="p-tag">Star-Schema</span></div></div>
-    <div class="p-card"><div class="p-frame"><div class="p-thumb"><div class="p-thumb-text">AI / ML</div><div class="p-overlay"><a href="https://nawafbalmutairi.github.io/AI-Face-Recognition-Gender-Classification/index.html" target="_blank">VIEW LIVE →</a></div></div><div class="p-bl"></div><div class="p-br"></div></div><div class="p-head"><div class="p-title">AI Face Recognition</div><div class="p-year">2024</div></div><div class="p-desc">DenseNet &amp; ResNet CNNs on Azure ML. 86.7% accuracy. PyTorch GPU training across 4 iterations.</div><div class="p-tags"><span class="p-tag">Azure ML</span><span class="p-tag">PyTorch</span><span class="p-tag">CNN</span></div></div>
-    <div class="p-card"><div class="p-frame"><div class="p-thumb"><div class="p-thumb-text">REST API</div><div class="p-overlay"><a href="https://nawafbalmutairi.github.io/Conference-Info-Platform" target="_blank">VIEW LIVE →</a></div></div><div class="p-bl"></div><div class="p-br"></div></div><div class="p-head"><div class="p-title">Conference Microservices</div><div class="p-year">2025</div></div><div class="p-desc">PHP REST API, 5 endpoints, Kruchten 4+1 with Kubernetes on AWS. Scored 86%.</div><div class="p-tags"><span class="p-tag">PHP</span><span class="p-tag">REST API</span><span class="p-tag">AWS</span><span class="p-tag">K8s</span></div></div>
-    <div class="p-card"><div class="p-frame"><div class="p-thumb"><div class="p-thumb-text">ANALYTICS</div><div class="p-overlay"><a href="https://nawafbalmutairi.github.io/furniture-sales-dashboard/" target="_blank">VIEW LIVE →</a></div></div><div class="p-bl"></div><div class="p-br"></div></div><div class="p-head"><div class="p-title">US Retail Sales Analysis</div><div class="p-year">2024</div></div><div class="p-desc">2,121 transactions, Python/Pandas. ETL, time series, discount-profit correlation.</div><div class="p-tags"><span class="p-tag">Python</span><span class="p-tag">Pandas</span><span class="p-tag">ETL</span><span class="p-tag">Chart.js</span></div></div>
-    <div class="p-card"><div class="p-frame"><div class="p-thumb"><div class="p-thumb-text">ITIL</div><div class="p-overlay"><a href="https://nawafbalmutairi.github.io/ITIL-Configuratio-Management-Abona-Tarn-PLC/index.html" target="_blank">VIEW LIVE →</a></div></div><div class="p-bl"></div><div class="p-br"></div></div><div class="p-head"><div class="p-title">ITIL Config Management</div><div class="p-year">2025</div></div><div class="p-desc">CMDB strategy for 87-store retailer. 7 KPIs, CI accuracy >95%.</div><div class="p-tags"><span class="p-tag">ITIL 4</span><span class="p-tag">CMDB</span><span class="p-tag">ITSM</span></div></div>
-    <div class="p-card"><div class="p-frame"><div class="p-thumb"><div class="p-thumb-text">UI / UX</div><div class="p-overlay"><a href="https://nawafbalmutairi.github.io/UCD-Practical-Work-Work-Life-Balance-App/index.html" target="_blank">VIEW LIVE →</a></div></div><div class="p-bl"></div><div class="p-br"></div></div><div class="p-head"><div class="p-title">UCD Work-Life App</div><div class="p-year">2025</div></div><div class="p-desc">Personas, MoSCoW, Figma prototype, cognitive walkthrough. Design thinking.</div><div class="p-tags"><span class="p-tag">Figma</span><span class="p-tag">UCD</span><span class="p-tag">Prototyping</span></div></div>
+<!-- ═══════════════════════════════════════════════
+     SELECTED WORK
+     ═══════════════════════════════════════════════ -->
+<section id="work">
+  <div class="sec" style="padding-bottom:32px;">
+    <div class="sec-wrap">
+      <div class="sec-head">
+        <div>
+          <div class="sec-mark">Selected Work</div>
+          <h2 class="sec-title">Three studies,<br><span class="it">one method.</span></h2>
+        </div>
+        <div class="sec-deck">Each case tells the same story in three movements — <em>Brief, Method, Outcome</em> — followed by what it taught me.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════
+       CASE 01 — DISSERTATION (Water Quality ML)
+       ═══════════════════════════════════════════════ -->
+  <article class="case" id="case-dissertation">
+
+    <div class="case-masthead">
+      <div class="case-num-row">
+        <div class="case-num">01</div>
+        <div class="case-num-meta">
+          <div class="case-kind">Machine Learning · Dissertation</div>
+          <h3 class="case-title">Benchmarking four ML models on<br><span class="it">8.3 million water-quality samples.</span></h3>
+          <div class="case-date">KV6013 · 2026 · Final-year project</div>
+        </div>
+      </div>
+      <p class="case-deck">
+        UK Environment Agency dataset, 2000–2025, five water-quality parameters.
+        Mid-project, the upstream API was <em>deprecated</em> — so I rebuilt ingestion in Colab,
+        batch-renamed 364 CSVs across 14 regions, and ran a chronological train/test split
+        to benchmark Ridge, Random Forest, MLP, and XGBoost. The break became a system-design problem.
+      </p>
+      <div class="case-tags">
+        <span class="case-tag">Python</span>
+        <span class="case-tag">XGBoost</span>
+        <span class="case-tag">scikit-learn</span>
+        <span class="case-tag">PyTorch</span>
+        <span class="case-tag">Pandas</span>
+        <span class="case-tag">Power BI</span>
+      </div>
+    </div>
+
+    <!-- HERO — Real BI dashboard -->
+    <div class="case-hero">
+      <div class="case-hero-cap">
+        <span><span class="figure">Fig. 01</span> — WQ_ML_Benchmark_Dashboard.pbix · Summary view</span>
+        <span>2026 · Live artefact</span>
+      </div>
+      <div class="case-hero-frame">
+        <img src="assets/projects/dissertation/dashboard-summary.webp" alt="Water Quality ML model Benchmark dashboard — 27M training rows, 6M test rows, 0.79 best R², R² by Target and Model chart, Avg R² by Model breakdown">
+      </div>
+    </div>
+
+    <div class="case-story">
+
+      <!-- i. BRIEF -->
+      <div class="story-slab">
+        <div>
+          <div class="story-mark"><span class="num">i.</span>The Brief</div>
+          <h4 class="story-title">26 years of data,<br><span class="it">one API outage.</span></h4>
+          <p class="story-body">
+            Predict five water-quality parameters across 14 EA regions using 26 years of
+            historical samples. Mid-build, the upstream <strong>Environment Agency API was
+            deprecated</strong> (December 2025). Two choices: descope, or rebuild ingestion.
+            <em>I rebuilt it.</em>
+          </p>
+          <ul class="story-points">
+            <li data-n="01">~8.3M samples to ingest, partitioned by 14 EA areas × 26 years.</li>
+            <li data-n="02">Five target parameters: Nitrate, BOD, Water Temp, Dissolved O₂, pH.</li>
+            <li data-n="03">API deprecation cut the original Colab pipeline mid-flight.</li>
+            <li data-n="04">Required a chronological train/test split — no peeking at the future.</li>
+          </ul>
+        </div>
+        <div class="fig">
+          <div class="fig-inner">
+            <img src="assets/projects/dissertation/r2-heatmap.png" alt="R² Score heatmap matrix — all 20 model × target combinations. XGBoost on Water Temp leads at +0.785 (highlighted); MLP on Water Temp worst at −3.611.">
+          </div>
+          <div class="fig-cap">
+            <span class="label">Fig. 02</span>
+            <span class="title">R² heatmap · 4 models × 5 targets · XGBoost on Water Temp leads at +0.785.</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ii. METHOD -->
+      <div class="story-slab reverse">
+        <div>
+          <div class="story-mark"><span class="num">ii.</span>The Method</div>
+          <h4 class="story-title">Treat the break<br><span class="it">as system design.</span></h4>
+          <p class="story-body">
+            Rebuilt ingestion in Colab using the new beta endpoint, automated 364 CSV
+            downloads, batch-renamed with PowerShell, and verified with a script that
+            caught a swapped year in the Thames data. Then a <strong>chronological train/test
+            split</strong> (train 2000–2017, test 2018–2025) — not a random split, because
+            real forecasting can't see the future.
+          </p>
+          <ul class="story-points">
+            <li data-n="01">Chronological split avoids data leakage common in time-series ML.</li>
+            <li data-n="02">Verification script flagged a year-number mismatch before training.</li>
+            <li data-n="03">Same preprocessing pipeline across all four models for fair comparison.</li>
+            <li data-n="04">Ridge / Random Forest / MLP / XGBoost — linear to non-linear coverage.</li>
+          </ul>
+        </div>
+        <div class="fig">
+          <div class="fig-inner">
+            <img src="assets/projects/dissertation/dashboard-detail.webp" alt="Water Quality ML model Benchmark dashboard — detailed view showing RMSE by model bar chart, MAE by Model bar chart, and a colour-coded comparison table with R², RMSE, and MAE values for all four models across all five targets.">
+          </div>
+          <div class="fig-cap">
+            <span class="label">Fig. 03</span>
+            <span class="title">RMSE &amp; MAE benchmark · Detailed numeric comparison across all 20 model-target pairs.</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- OUTCOME — Model switcher -->
+      <div class="outcome-block">
+        <div class="outcome-head">
+          <div class="outcome-mark"><span class="num">iii.</span>The Outcome · Model explorer</div>
+          <div class="outcome-instr">↓ Select a model to inspect its per-parameter R²</div>
+        </div>
+        <div class="model-switcher" id="wqMS">
+          <button class="ms-btn" data-model="ridge"><span>Ridge</span><span class="ms-r2">0.094</span></button>
+          <button class="ms-btn" data-model="rf"><span>Random Forest</span><span class="ms-r2">0.211</span></button>
+          <button class="ms-btn" data-model="mlp"><span>MLP</span><span class="ms-r2">0.156</span></button>
+          <button class="ms-btn winner active" data-model="xgb"><span>XGBoost</span><span class="ms-r2">0.253</span></button>
+        </div>
+        <div class="model-view" id="wqMV"></div>
+      </div>
+
+      <!-- TAKEAWAY -->
+      <div class="takeaway">
+        <div class="takeaway-mark">The Takeaway</div>
+        <p class="takeaway-quote">
+          "When an API breaks halfway through, you have two options:
+          <em>descope</em>, or treat the break as system design.<br>
+          The second answer is almost always better."
+        </p>
+        <p class="takeaway-cite">— Lesson from Study 01</p>
+        <div class="takeaway-actions">
+          <a href="https://github.com/nawafbalmutairi" target="_blank" class="case-link primary">View dissertation <span class="arr">↗</span></a>
+          <a href="#case-nvidia" class="case-link">Next study <span class="arr">↓</span></a>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <div class="section-divider">
+    <span class="monogram md outline"><svg><use href="#na"/></svg></span>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════
+       CASE 02 — NVIDIA BI
+       ═══════════════════════════════════════════════ -->
+  <article class="case" id="case-nvidia">
+
+    <div class="case-masthead">
+      <div class="case-num-row">
+        <div class="case-num">02</div>
+        <div class="case-num-meta">
+          <div class="case-kind">Business Intelligence · KV6011</div>
+          <h3 class="case-title">NVIDIA AI-GPU<br><span class="it">supply chain dashboard.</span></h3>
+          <div class="case-date">2025 · Power BI · Word count 3,632</div>
+        </div>
+      </div>
+      <p class="case-deck">
+        An integrated BI solution for one of the world's most volatile supply chains.
+        Using <em>Soft Systems Methodology</em>, <em>CATWOE</em>, and the
+        <em>Balanced Scorecard</em>, I structured NVIDIA's AI-GPU forecasting problem
+        from rich picture to KPI to live dashboard.
+      </p>
+      <div class="case-tags">
+        <span class="case-tag">Power BI</span>
+        <span class="case-tag">DAX</span>
+        <span class="case-tag">Star Schema</span>
+        <span class="case-tag">Soft Systems Methodology</span>
+        <span class="case-tag">CATWOE</span>
+        <span class="case-tag">Balanced Scorecard</span>
+      </div>
+    </div>
+
+    <!-- HERO — Real Power BI dashboard -->
+    <div class="case-hero">
+      <div class="case-hero-cap">
+        <span><span class="figure">Fig. 01</span> — Power BI dashboard · Production-ready artefact</span>
+        <span>2025</span>
+      </div>
+      <div class="case-hero-frame">
+        <img src="assets/projects/nvidia/dashboard.png" alt="NVIDIA AI-GPU Supply Chain Power BI Dashboard">
+      </div>
+    </div>
+
+    <div class="case-story">
+
+      <!-- BRIEF -->
+      <div class="story-slab">
+        <div>
+          <div class="story-mark"><span class="num">i.</span>The Brief</div>
+          <h4 class="story-title">A supply chain<br><span class="it">running on fragments.</span></h4>
+          <p class="story-body">
+            NVIDIA dominates AI-grade GPUs, but its supply chain is not the strength its P&amp;L is.
+            The H100, H200, and B-series depend on a single advanced-node foundry (TSMC), a
+            bottlenecked CoWoS packaging step, and a demand signal that swings violently with
+            every generative-AI release cycle.
+          </p>
+          <p class="story-body">
+            Backorders accumulate. Forecasts misfire. The problem is <strong>structural</strong>, not
+            local — a single dashboard cannot just <em>report</em> KPIs; it has to make the system visible.
+          </p>
+          <ul class="story-points">
+            <li data-n="01">Long supplier lead times — advanced-node + CoWoS packaging constraints.</li>
+            <li data-n="02">Demand volatility — hyperscalers and AI startups order in waves.</li>
+            <li data-n="03">Backorder accumulation directly threatens revenue predictability.</li>
+            <li data-n="04">Data fragmented across orders, supply, inventory, and logistics systems.</li>
+          </ul>
+        </div>
+        <div class="fig">
+          <div class="fig-inner">
+            <img src="assets/projects/nvidia/rich-picture.png" alt="Rich Picture diagram showing NVIDIA's AI-GPU supply chain ecosystem">
+          </div>
+          <div class="fig-cap">
+            <span class="label">Fig. 02</span>
+            <span class="title">Rich picture · Soft Systems Methodology applied to the ecosystem.</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- METHOD I -->
+      <div class="story-slab reverse">
+        <div>
+          <div class="story-mark"><span class="num">ii.</span>System Dynamics</div>
+          <h4 class="story-title">Why production<br><span class="it">won't fix this alone.</span></h4>
+          <p class="story-body">
+            SSM tells you <em>what</em> is connected. A causal loop diagram tells you
+            <em>how</em> those connections feed on themselves. High demand → backorders → pressure
+            → production push → strain → lead times → <strong>more backorders</strong>.
+          </p>
+          <p class="story-body">
+            Two reinforcing loops, two balancing loops. The conclusion: NVIDIA cannot fix this
+            with manufacturing expansion — it needs an <em>information-driven</em> intervention.
+          </p>
+          <ul class="story-points">
+            <li data-n="R1">Demand Surge — demand ↑ → backorders ↑ → pressure ↑ → strain ↑.</li>
+            <li data-n="R2">Forecast Volatility — volatile orders → forecast error → unstable inventory.</li>
+            <li data-n="B1">Capacity Constraint — limits force forecast revisions.</li>
+            <li data-n="B2">Lead Time Adjustment — delays force re-planning.</li>
+          </ul>
+        </div>
+        <div class="fig">
+          <div class="fig-inner">
+            <img src="assets/projects/nvidia/causal-loop.png" alt="Causal loop diagram">
+          </div>
+          <div class="fig-cap">
+            <span class="label">Fig. 03</span>
+            <span class="title">Causal loop diagram — reinforcing (R) and balancing (B) feedback.</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- METHOD II — Strategy -->
+      <div class="story-slab">
+        <div>
+          <div class="story-mark"><span class="num">iii.</span>Strategy</div>
+          <h4 class="story-title">From insight to<br><span class="it">scorecard.</span></h4>
+          <p class="story-body">
+            CATWOE clarified ownership and worldview. The Balanced Scorecard translated insight
+            into strategy: <strong>Learning &amp; Growth</strong> capabilities feed
+            <strong>Internal Processes</strong>, which improve <strong>Customer</strong> outcomes,
+            which protect <strong>Financial</strong> performance.
+          </p>
+          <p class="story-body">
+            Every KPI on the dashboard now has a place in the strategy. <em>Nothing reports for
+            its own sake.</em>
+          </p>
+        </div>
+        <div class="fig">
+          <div class="fig-inner">
+            <img src="assets/projects/nvidia/strategy-map.png" alt="Strategy map">
+          </div>
+          <div class="fig-cap">
+            <span class="label">Fig. 04</span>
+            <span class="title">Strategy map — Balanced Scorecard linking capabilities to outcomes.</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- OUTCOME — Interactive dashboard with clickable KPI hotspots -->
+      <div class="outcome-block">
+        <div class="outcome-head">
+          <div class="outcome-mark"><span class="num">iv.</span>The Outcome · Live dashboard explorer</div>
+          <div class="outcome-instr">↓ Click any KPI on the dashboard itself</div>
+        </div>
+
+        <div class="dash-hint">
+          <span class="dash-hint-l">
+            <span class="dot"></span>
+            <span>NVIDIA_Supply_Chain.pbix · Six KPIs · Numbered hotspots are clickable</span>
+          </span>
+          <span class="dash-hint-r">↘ Try it</span>
+        </div>
+
+        <div class="interactive-dash">
+          <img src="assets/projects/nvidia/dashboard.png" alt="NVIDIA AI-GPU Supply Chain Power BI Dashboard — interactive">
+
+          <button class="dash-hotspot active" data-kpi="accuracy" style="left:15.7%;top:0.5%;width:11%;height:13%;" aria-label="Forecast Accuracy">
+            <span class="dash-num">1</span>
+          </button>
+          <button class="dash-hotspot" data-kpi="mape" style="left:26.5%;top:0.5%;width:7.5%;height:13%;" aria-label="MAPE">
+            <span class="dash-num">2</span>
+          </button>
+          <button class="dash-hotspot" data-kpi="backorders" style="left:33.4%;top:0.5%;width:10.5%;height:13%;" aria-label="Total Backorders">
+            <span class="dash-num">3</span>
+          </button>
+          <button class="dash-hotspot" data-kpi="capacity" style="left:42.8%;top:0.5%;width:12.5%;height:13%;" aria-label="Capacity Utilisation">
+            <span class="dash-num">4</span>
+          </button>
+          <button class="dash-hotspot" data-kpi="leadtime" style="left:54.5%;top:0.5%;width:9.5%;height:13%;" aria-label="Avg Lead Time">
+            <span class="dash-num">5</span>
+          </button>
+          <button class="dash-hotspot" data-kpi="otd" style="left:63.5%;top:0.5%;width:16.5%;height:13%;" aria-label="On-time Delivery Rate">
+            <span class="dash-num">6</span>
+          </button>
+        </div>
+
+        <div class="dash-detail" id="nv-detail">
+          ↳ <strong>FORECAST ACCURACY · 96.4%</strong> — The headline. Computed in DAX as <em>1 − MAPE</em>
+          across product (H100, H200) × region (EMEA, NA) pairs. A 3-month moving-average overlay on
+          the Forecast vs Actual chart smooths short-term noise so the underlying trend is visible.
+        </div>
+      </div>
+
+      <!-- TAKEAWAY -->
+      <div class="takeaway">
+        <div class="takeaway-mark">The Takeaway</div>
+        <p class="takeaway-quote">
+          "A dashboard is not a report. <em>It is the visible shape of a decision system</em> —
+          and if the system isn't right, the dashboard just reports the wrong thing faster."
+        </p>
+        <p class="takeaway-cite">— Lesson from Study 02</p>
+        <div class="takeaway-actions">
+          <a href="https://nawafbalmutairi.github.io/nvidia-bi-dashboard" target="_blank" class="case-link primary">View artefact <span class="arr">↗</span></a>
+          <a href="#case-face" class="case-link">Next study <span class="arr">↓</span></a>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <div class="section-divider">
+    <span class="monogram md outline"><svg><use href="#na"/></svg></span>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════
+       CASE 03 — FACE RECOGNITION
+       ═══════════════════════════════════════════════ -->
+  <article class="case" id="case-face">
+
+    <div class="case-masthead">
+      <div class="case-num-row">
+        <div class="case-num">03</div>
+        <div class="case-num-meta">
+          <div class="case-kind">Deep Learning · Azure ML</div>
+          <h3 class="case-title">CNN benchmark for<br><span class="it">gender classification.</span></h3>
+          <div class="case-date">2024 · Computer Vision · 4 iterations</div>
+        </div>
+      </div>
+      <p class="case-deck">
+        Benchmarked <em>DenseNet121</em> against <em>ResNet50</em> on Azure ML across four
+        training iterations — tuning batch size, learning rate, and augmentation in isolated
+        steps. PyTorch on GPU. Every iteration documented so the reasoning is reproducible,
+        not just the final number.
+      </p>
+      <div class="case-tags">
+        <span class="case-tag">PyTorch</span>
+        <span class="case-tag">Azure ML</span>
+        <span class="case-tag">DenseNet</span>
+        <span class="case-tag">ResNet</span>
+        <span class="case-tag">Computer Vision</span>
+        <span class="case-tag">GPU Training</span>
+      </div>
+    </div>
+
+    <!-- TYPOGRAPHIC HERO -->
+    <div class="case-hero">
+      <div class="case-hero-cap">
+        <span><span class="figure">Fig. 01</span> — Iteration progression · Awaiting full visualisations</span>
+        <span>2024</span>
+      </div>
+      <div class="typo-hero">
+        <div class="typo-hero-l">
+          <div class="typo-stat-grid">
+            <div class="typo-stat-cell">
+              <div class="tsc-label">Final accuracy</div>
+              <div class="tsc-val">86.<span class="ac">7</span><span class="sm">%</span></div>
+              <div class="tsc-sub">DenseNet · iter 4</div>
+            </div>
+            <div class="typo-stat-cell">
+              <div class="tsc-label">Lift iter 1→4</div>
+              <div class="tsc-val">+1<span class="ac">4.3</span><span class="sm">pts</span></div>
+              <div class="tsc-sub">across 4 controlled changes</div>
+            </div>
+            <div class="typo-stat-cell">
+              <div class="tsc-label">Over baseline</div>
+              <div class="tsc-val">+<span class="ac">7.3</span><span class="sm">pts</span></div>
+              <div class="tsc-sub">DenseNet vs ResNet50</div>
+            </div>
+            <div class="typo-stat-cell">
+              <div class="tsc-label">Iterations</div>
+              <div class="tsc-val"><span class="ac">4</span></div>
+              <div class="tsc-sub">each documented</div>
+            </div>
+          </div>
+        </div>
+        <div class="typo-hero-r">
+          <div class="typo-viz">
+            <div class="typo-viz-title">Iteration progression</div>
+            <div class="typo-viz-sub">Test accuracy · controlled changes</div>
+            <div class="model-bars">
+              <div class="model-bar"><div class="model-bar-name">Iter 1</div><div class="model-bar-track"><div class="model-bar-fill" data-w="64"></div></div><div class="model-bar-val">72.4%</div></div>
+              <div class="model-bar"><div class="model-bar-name">Iter 2</div><div class="model-bar-track"><div class="model-bar-fill" data-w="73"></div></div><div class="model-bar-val">79.1%</div></div>
+              <div class="model-bar"><div class="model-bar-name">Iter 3</div><div class="model-bar-track"><div class="model-bar-fill" data-w="83"></div></div><div class="model-bar-val">83.5%</div></div>
+              <div class="model-bar winner"><div class="model-bar-name">Iter 4</div><div class="model-bar-track"><div class="model-bar-fill" data-w="100"></div></div><div class="model-bar-val">86.7%</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="case-story">
+
+      <div class="story-slab">
+        <div>
+          <div class="story-mark"><span class="num">i.</span>The Brief</div>
+          <h4 class="story-title">Two architectures,<br><span class="it">one budget.</span></h4>
+          <p class="story-body">
+            Build a binary classifier on facial images with a strict Azure ML GPU budget,
+            two candidate architectures (<strong>DenseNet121</strong> and <strong>ResNet50</strong>),
+            and the requirement to <em>justify every hyperparameter choice</em> — not just
+            report the final number.
+          </p>
+        </div>
+        <div class="fig">
+          <div class="fig-inner">
+            <div class="hero-placeholder" style="aspect-ratio:4/3;">
+              <span class="monogram md faded hp-mono"><svg><use href="#na"/></svg></span>
+              <div class="hp-title">Training samples / pipeline</div>
+              <div class="hp-label">Awaiting upload</div>
+            </div>
+          </div>
+          <div class="fig-cap">
+            <span class="label">Fig. 02</span>
+            <span class="title">Pipeline: dataset → augment → train → evaluate.</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="story-slab reverse">
+        <div>
+          <div class="story-mark"><span class="num">ii.</span>The Method</div>
+          <h4 class="story-title">Change one thing,<br><span class="it">measure the delta.</span></h4>
+          <p class="story-body">
+            Identical preprocessing across both architectures, then a <strong>controlled
+            iteration loop</strong>: hold all variables fixed except one, measure the delta,
+            document the change. By iteration four, the dataset, augmentation, LR schedule,
+            and batch size had each been independently stressed and tuned.
+          </p>
+          <ul class="story-points">
+            <li data-n="01">Same preprocessing for both models → architectural comparison is fair.</li>
+            <li data-n="02">One change per iteration → effect of each hyperparameter is isolated.</li>
+            <li data-n="03">All iterations versioned in Azure ML, so any run is reproducible.</li>
+          </ul>
+        </div>
+        <div class="fig">
+          <div class="fig-inner">
+            <div class="hero-placeholder" style="aspect-ratio:4/3;">
+              <span class="monogram md faded hp-mono"><svg><use href="#na"/></svg></span>
+              <div class="hp-title">Confusion matrix / curve</div>
+              <div class="hp-label">Awaiting upload</div>
+            </div>
+          </div>
+          <div class="fig-cap">
+            <span class="label">Fig. 03</span>
+            <span class="title">DenseNet vs ResNet — final iteration comparison.</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="outcome-block">
+        <div class="outcome-head">
+          <div class="outcome-mark"><span class="num">iii.</span>The Outcome · Iteration explorer</div>
+          <div class="outcome-instr">↓ Click an iteration to see what changed</div>
+        </div>
+        <div class="iter-bar" id="afIB">
+          <button class="iter-btn" data-iter="1"><span class="iter-btn-num">i.</span>72.4%</button>
+          <button class="iter-btn" data-iter="2"><span class="iter-btn-num">ii.</span>79.1%</button>
+          <button class="iter-btn" data-iter="3"><span class="iter-btn-num">iii.</span>83.5%</button>
+          <button class="iter-btn final active" data-iter="4"><span class="iter-btn-num">iv.</span>86.7%</button>
+        </div>
+        <div class="iter-view" id="afIV"></div>
+      </div>
+
+      <div class="takeaway">
+        <div class="takeaway-mark">The Takeaway</div>
+        <p class="takeaway-quote">
+          "The final accuracy is the headline; the four iterations behind it are the story.
+          <em>Show your work</em> and the result becomes evidence rather than luck."
+        </p>
+        <p class="takeaway-cite">— Lesson from Study 03</p>
+        <div class="takeaway-actions">
+          <a href="https://nawafbalmutairi.github.io/AI-Face-Recognition-Gender-Classification/index.html" target="_blank" class="case-link primary">View artefact <span class="arr">↗</span></a>
+          <a href="#index" class="case-link">Browse index <span class="arr">↓</span></a>
+        </div>
+      </div>
+    </div>
+  </article>
+
+</section>
+
+<div class="section-divider">
+  <span class="monogram md outline"><svg><use href="#na"/></svg></span>
+</div>
+
+<!-- ═══ INDEX ═══ -->
+<section id="index" class="sec" style="padding-top:48px;">
+  <div class="sec-wrap">
+    <div class="sec-head">
+      <div>
+        <div class="sec-mark">Further Work</div>
+        <h2 class="sec-title">More <span class="it">studies.</span></h2>
+      </div>
+      <div class="sec-deck">Six additional projects spanning architecture, analytics, ITSM, and design.</div>
+    </div>
+
+    <div class="index-grid">
+      <a class="idx" href="https://nawafbalmutairi.github.io/Conference-Info-Platform" target="_blank">
+        <div class="idx-head"><div class="idx-no">04 /</div><div class="idx-year">2025</div></div>
+        <div class="idx-title">Conference <span class="it">Microservices</span></div>
+        <div class="idx-desc">PHP REST API · 5 endpoints. Kruchten 4+1 architecture, Kubernetes on AWS. Final score: 86%.</div>
+        <div class="idx-tags"><span class="idx-tag">PHP</span><span class="idx-tag">REST</span><span class="idx-tag">AWS</span><span class="idx-tag">K8s</span></div>
+        <div class="idx-arrow">read study <span>↗</span></div>
+      </a>
+      <a class="idx" href="https://nawafbalmutairi.github.io/furniture-sales-dashboard/" target="_blank">
+        <div class="idx-head"><div class="idx-no">05 /</div><div class="idx-year">2024</div></div>
+        <div class="idx-title">US Retail <span class="it">Sales Analysis</span></div>
+        <div class="idx-desc">2,121 transactions in Python/Pandas. ETL pipeline, time-series breakdown, discount-profit correlation surfaced.</div>
+        <div class="idx-tags"><span class="idx-tag">Python</span><span class="idx-tag">Pandas</span><span class="idx-tag">Chart.js</span></div>
+        <div class="idx-arrow">read study <span>↗</span></div>
+      </a>
+      <a class="idx" href="https://nawafbalmutairi.github.io/ITIL-Configuratio-Management-Abona-Tarn-PLC/index.html" target="_blank">
+        <div class="idx-head"><div class="idx-no">06 /</div><div class="idx-year">2025</div></div>
+        <div class="idx-title">ITIL Config <span class="it">Management</span></div>
+        <div class="idx-desc">CMDB strategy for an 87-store retailer. 7 KPIs designed, CI accuracy maintained above 95%.</div>
+        <div class="idx-tags"><span class="idx-tag">ITIL 4</span><span class="idx-tag">CMDB</span><span class="idx-tag">ITSM</span></div>
+        <div class="idx-arrow">read study <span>↗</span></div>
+      </a>
+      <a class="idx" href="https://nawafbalmutairi.github.io/UCD-Practical-Work-Work-Life-Balance-App/index.html" target="_blank">
+        <div class="idx-head"><div class="idx-no">07 /</div><div class="idx-year">2025</div></div>
+        <div class="idx-title">UCD <span class="it">Work-Life App</span></div>
+        <div class="idx-desc">Personas, MoSCoW prioritisation, Figma prototype, cognitive walkthrough — full UCD methodology applied end-to-end.</div>
+        <div class="idx-tags"><span class="idx-tag">Figma</span><span class="idx-tag">UCD</span><span class="idx-tag">Prototyping</span></div>
+        <div class="idx-arrow">read study <span>↗</span></div>
+      </a>
+      <a class="idx" href="https://github.com/nawafbalmutairi" target="_blank">
+        <div class="idx-head"><div class="idx-no">08 /</div><div class="idx-year">2025</div></div>
+        <div class="idx-title">Vision 2030 <span class="it">KPI Tracker</span></div>
+        <div class="idx-desc">Saudi Vision 2030 indicators visualised in an interactive Power BI dashboard. Published on LinkedIn.</div>
+        <div class="idx-tags"><span class="idx-tag">Power BI</span><span class="idx-tag">DAX</span><span class="idx-tag">Public Sector</span></div>
+        <div class="idx-arrow">read study <span>↗</span></div>
+      </a>
+      <a class="idx" href="https://github.com/nawafbalmutairi" target="_blank">
+        <div class="idx-head"><div class="idx-no">09 /</div><div class="idx-year">Ongoing</div></div>
+        <div class="idx-title">GitHub <span class="it">Portfolio</span></div>
+        <div class="idx-desc">15+ public repositories spanning data analysis, ML, BI, software architecture, ITSM frameworks. All sources open.</div>
+        <div class="idx-tags"><span class="idx-tag">All Projects</span><span class="idx-tag">Source + Docs</span></div>
+        <div class="idx-arrow">visit repo <span>↗</span></div>
+      </a>
+    </div>
   </div>
 </section>
 
-<!-- CONTACT -->
-<section id="contact" class="sec">
-  <div class="sh"><div class="sh-title"><em>Get In Touch</em></div></div>
-  <div class="ct-split">
-    <div class="ct-message rv">
-      <div class="ct-avail">Available for opportunities</div>
-      <div class="ct-hello">Got a <span>data challenge</span> or a <span>role</span> in mind?</div>
-      <div class="ct-body">I'm looking for Data Analyst, Business Intelligence, or Machine Learning roles where I can turn messy datasets into clear business outcomes. Whether it's a graduate position, an internship, or a project collaboration — I'd love to hear from you.</div>
-      <div class="ct-interests"><span class="ct-int">Data Analytics</span><span class="ct-int">Power BI</span><span class="ct-int">Python</span><span class="ct-int">Machine Learning</span><span class="ct-int">SQL</span><span class="ct-int">Consulting</span></div>
+<div class="section-divider">
+  <span class="monogram md outline"><svg><use href="#na"/></svg></span>
+</div>
+
+<!-- ═══ STACK ═══ -->
+<section id="stack" class="sec">
+  <div class="sec-wrap">
+    <div class="sec-head">
+      <div>
+        <div class="sec-mark">Technical Stack</div>
+        <h2 class="sec-title">Tools, <span class="it">in practice.</span></h2>
+      </div>
+      <div class="sec-deck">Twenty-eight technologies — all used in shipped projects, none for show.</div>
     </div>
-    <div class="ct-card rv rv-d2">
-      <div class="ct-card-title">Reach out</div>
-      <a href="mailto:NawafBAlmutairi@outlook.sa" class="ct-row"><div class="ct-row-dot"></div><div class="ct-row-info"><div class="ct-row-label">Email</div><div class="ct-row-val">NawafBAlmutairi@outlook.sa</div></div></a>
-      <a href="tel:+966501649447" class="ct-row"><div class="ct-row-dot"></div><div class="ct-row-info"><div class="ct-row-label">Phone</div><div class="ct-row-val">+966 50 164 9447</div></div></a>
-      <a href="https://www.linkedin.com/in/nawaf-almutairi-907766290/" target="_blank" class="ct-row"><div class="ct-row-dot"></div><div class="ct-row-info"><div class="ct-row-label">LinkedIn</div><div class="ct-row-val">linkedin.com/in/nawafbalmutairi</div></div></a>
-      <a href="https://github.com/nawafbalmutairi" target="_blank" class="ct-row"><div class="ct-row-dot"></div><div class="ct-row-info"><div class="ct-row-label">GitHub</div><div class="ct-row-val">github.com/nawafbalmutairi</div></div></a>
+
+    <div class="stack-rows">
+      <div class="stack-row">
+        <div>
+          <div class="stack-num">01 / Data &amp; BI</div>
+          <div class="stack-name">Data &amp; <span class="it">Business Intelligence</span></div>
+          <div class="stack-count">— 9 tools, daily use</div>
+        </div>
+        <div class="stack-row-r">
+          <span class="stack-pill">Python</span><span class="stack-pill">SQL</span><span class="stack-pill">Power BI</span><span class="stack-pill">DAX</span><span class="stack-pill">ETL</span><span class="stack-pill">Pandas</span><span class="stack-pill">NumPy</span><span class="stack-pill">Chart.js</span><span class="stack-pill">Excel</span>
+        </div>
+      </div>
+      <div class="stack-row">
+        <div>
+          <div class="stack-num">02 / AI / ML</div>
+          <div class="stack-name">Machine <span class="it">Learning</span></div>
+          <div class="stack-count">— 7 tools, project-led</div>
+        </div>
+        <div class="stack-row-r">
+          <span class="stack-pill">XGBoost</span><span class="stack-pill">scikit-learn</span><span class="stack-pill">PyTorch</span><span class="stack-pill">Azure ML</span><span class="stack-pill">DenseNet</span><span class="stack-pill">ResNet</span><span class="stack-pill">Computer Vision</span>
+        </div>
+      </div>
+      <div class="stack-row">
+        <div>
+          <div class="stack-num">03 / Architecture</div>
+          <div class="stack-name">Software <span class="it">Architecture</span></div>
+          <div class="stack-count">— 8 tools, applied in coursework</div>
+        </div>
+        <div class="stack-row-r">
+          <span class="stack-pill">PHP</span><span class="stack-pill">REST API</span><span class="stack-pill">SQLite</span><span class="stack-pill">Microservices</span><span class="stack-pill">Kubernetes</span><span class="stack-pill">AWS</span><span class="stack-pill">Docker</span><span class="stack-pill">CI / CD</span>
+        </div>
+      </div>
+      <div class="stack-row">
+        <div>
+          <div class="stack-num">04 / Process &amp; Design</div>
+          <div class="stack-name">Process &amp; <span class="it">Design</span></div>
+          <div class="stack-count">— 8 tools, methodology layer</div>
+        </div>
+        <div class="stack-row-r">
+          <span class="stack-pill">Figma</span><span class="stack-pill">Unity</span><span class="stack-pill">UCD</span><span class="stack-pill">ITIL 4</span><span class="stack-pill">CMDB</span><span class="stack-pill">Git / GitHub</span><span class="stack-pill">Agile / Scrum</span><span class="stack-pill">Linux</span>
+        </div>
+      </div>
     </div>
   </div>
 </section>
 
-<footer><div class="ft-l">Designed &amp; built by Nawaf Almutairi</div><div class="ft-r">BSc Computer Science · <a href="https://nawafbalmutairi.github.io">nawafbalmutairi.github.io</a></div></footer>
+<div class="section-divider">
+  <span class="monogram md outline"><svg><use href="#na"/></svg></span>
+</div>
+
+<!-- ═══ FOUNDATION ═══ -->
+<section id="foundation" class="sec">
+  <div class="sec-wrap">
+    <div class="sec-head">
+      <div>
+        <div class="sec-mark">Foundation</div>
+        <h2 class="sec-title">Education &amp; <span class="it">certifications.</span></h2>
+      </div>
+      <div class="sec-deck">A formal degree on one side, six Google Professional Certificates on the other.</div>
+    </div>
+
+    <div class="edu-grid">
+      <div class="edu-card rv">
+        <div class="edu-period">SEP 2023 → JUL 2026 · Graduated</div>
+        <h3 class="edu-title">BSc (Hons) <span class="it">Computer Science</span></h3>
+        <div class="edu-school">Northumbria University, Newcastle upon Tyne</div>
+        <div class="edu-chips">
+          <span class="edu-chip">Class of 2026</span>
+          <span class="edu-chip">Dissertation: ML model benchmark</span>
+        </div>
+        <div class="edu-modtitle">Selected modules</div>
+        <div class="edu-mods">
+          <span class="edu-mod">Machine Learning</span>
+          <span class="edu-mod">Business Intelligence</span>
+          <span class="edu-mod">Software Architecture</span>
+          <span class="edu-mod">User-Centred Design</span>
+          <span class="edu-mod">ITSM &amp; ITIL 4</span>
+          <span class="edu-mod">Database Systems</span>
+          <span class="edu-mod">Data Science</span>
+          <span class="edu-mod">Cloud Computing</span>
+        </div>
+      </div>
+
+      <div class="cert-card rv rv-d1">
+        <h3 class="cert-title">Google <span class="it">Professional Certificates</span></h3>
+        <div class="cert-count">SIX ISSUED · COURSERA</div>
+        <div class="cert-list">
+          <div class="cert-item"><div class="cert-item-name">Data Analytics</div><div class="cert-item-issuer">GOOGLE</div></div>
+          <div class="cert-item"><div class="cert-item-name">Advanced Data Analytics</div><div class="cert-item-issuer">GOOGLE</div></div>
+          <div class="cert-item"><div class="cert-item-name">Business Intelligence</div><div class="cert-item-issuer">GOOGLE</div></div>
+          <div class="cert-item"><div class="cert-item-name">Project Management</div><div class="cert-item-issuer">GOOGLE</div></div>
+          <div class="cert-item"><div class="cert-item-name">Cybersecurity</div><div class="cert-item-issuer">GOOGLE</div></div>
+          <div class="cert-item"><div class="cert-item-name">IT Support</div><div class="cert-item-issuer">GOOGLE</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ═══ FOOTER / COLOPHON — Name as the last word ═══ -->
+<footer>
+  <div class="foot-mark">
+    <h2 class="foot-name">Nawaf <span class="it">Almutairi.</span></h2>
+    <span class="foot-tag">— end of portfolio —</span>
+  </div>
+  <div class="colo">
+    <div>
+      <div class="colo-h">Colophon</div>
+      <p class="colo-text">
+        This portfolio was designed and built from scratch by Nawaf Almutairi. Set in
+        <em>Newsreader</em> &amp; <em>Inter</em>. The NA monogram pairs a geometric N
+        with an italic-serif A — methodology and craft.
+      </p>
+    </div>
+    <div>
+      <div class="colo-h">Reach</div>
+      <div class="colo-list">
+        <a href="mailto:NawafBAlmutairi@outlook.sa"><span>NawafBAlmutairi@outlook.sa</span><span class="lbl">EMAIL</span></a>
+        <a href="tel:+966501649447"><span>+966 50 164 9447</span><span class="lbl">PHONE</span></a>
+      </div>
+    </div>
+    <div>
+      <div class="colo-h">Elsewhere</div>
+      <div class="colo-list">
+        <a href="https://www.linkedin.com/in/nawaf-almutairi-907766290/" target="_blank"><span>linkedin.com/in/nawafbalmutairi</span><span class="lbl">LINKEDIN</span></a>
+        <a href="https://github.com/nawafbalmutairi" target="_blank"><span>github.com/nawafbalmutairi</span><span class="lbl">GITHUB</span></a>
+      </div>
+    </div>
+  </div>
+  <div class="colo-foot">
+    <p>© 2026 · Nawaf Almutairi · All rights reserved</p>
+    <p>Designed &amp; built in Newcastle</p>
+  </div>
+</footer>
 
 <script>
-// INTRO
-var intro=document.getElementById('intro'),iBar=document.getElementById('iBar');
-setTimeout(function(){var n=document.getElementById('iName');n.style.transition='opacity 0.6s,transform 0.6s';n.style.opacity='1';n.style.transform='none'},300);
-setTimeout(function(){var s=document.getElementById('iSub');s.style.transition='opacity 0.5s,transform 0.5s';s.style.opacity='1';s.style.transform='none'},900);
-document.querySelectorAll('.i-role').forEach(function(r,i){setTimeout(function(){r.style.transition='opacity 0.4s,transform 0.4s';r.style.opacity='1';r.style.transform='scale(1)'},1400+i*180)});
-setTimeout(function(){var p=0;var iv=setInterval(function(){p+=2;iBar.style.width=p+'%';if(p>=100){clearInterval(iv);setTimeout(function(){intro.classList.add('done');startHero()},400)}},18)},2300);
-
-// HERO STAGGER
-function startHero(){
-  var hi=document.getElementById('heroHi'),nm=document.getElementById('heroName'),st=document.getElementById('heroStrip'),bt=document.getElementById('heroBottom');
-  setTimeout(function(){hi.style.transition='opacity 0.6s,transform 0.6s';hi.style.opacity='1';hi.style.transform='none'},200);
-  setTimeout(function(){nm.style.transition='opacity 0.7s,transform 0.7s';nm.style.opacity='1';nm.style.transform='none'},500);
-  setTimeout(function(){st.style.transition='opacity 0.6s,transform 0.6s';st.style.opacity='1';st.style.transform='none'},900);
-  setTimeout(function(){bt.style.transition='opacity 0.6s,transform 0.6s';bt.style.opacity='1';bt.style.transform='none'},1200);
-}
-
-// PARTICLES — FULL PAGE
-var cvs=document.getElementById('particles'),ctx=cvs.getContext('2d');
-var W,H;
-function resize(){W=cvs.width=window.innerWidth;H=cvs.height=document.documentElement.scrollHeight}
-resize();window.addEventListener('resize',resize);
-var dots=[];for(var i=0;i<80;i++)dots.push({x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-0.5)*0.3,vy:(Math.random()-0.5)*0.3,r:Math.random()*1.5+0.5});
-function draw(){
-  resize();ctx.clearRect(0,0,W,H);
-  var scrollY=window.scrollY;
-  dots.forEach(function(d){
-    d.x+=d.vx;d.y+=d.vy;
-    if(d.x<0||d.x>W)d.vx*=-1;
-    if(d.y<0||d.y>H)d.vy*=-1;
-    var screenY=d.y-scrollY;
-    if(screenY>-50&&screenY<window.innerHeight+50){
-      ctx.beginPath();ctx.arc(d.x,d.y,d.r,0,Math.PI*2);ctx.fillStyle='rgba(74,222,128,0.25)';ctx.fill();
+// ═══ HERO NAME LETTER REVEAL ═══
+function splitName(){
+  document.querySelectorAll('.name-line').forEach(function(line,lineIdx){
+    var text=line.dataset.text;
+    var html='';
+    for(var i=0;i<text.length;i++){
+      var ch=text[i];
+      if(ch===' ')html+='<span style="display:inline-block;width:0.4em;"></span>';
+      else html+='<span class="letter" style="animation-delay:'+(lineIdx*0.3+i*0.06)+'s;">'+ch+'</span>';
     }
+    line.innerHTML=html;
   });
-  for(var i=0;i<dots.length;i++){
-    var screenYi=dots[i].y-scrollY;
-    if(screenYi<-50||screenYi>window.innerHeight+50)continue;
-    for(var j=i+1;j<dots.length;j++){
-      var dx=dots[i].x-dots[j].x,dy=dots[i].y-dots[j].y,dist=Math.sqrt(dx*dx+dy*dy);
-      if(dist<130){ctx.beginPath();ctx.moveTo(dots[i].x,dots[i].y);ctx.lineTo(dots[j].x,dots[j].y);ctx.strokeStyle='rgba(74,222,128,'+(0.06*(1-dist/130))+')';ctx.lineWidth=0.5;ctx.stroke()}
-    }
-  }
-  requestAnimationFrame(draw);
 }
-draw();
+splitName();
 
-// PARALLAX
-var heroWrap=document.getElementById('heroWrap');
+// ═══ NAV SCROLL ═══
 window.addEventListener('scroll',function(){
-  var y=window.scrollY,vh=window.innerHeight;
-  if(y<vh){var p=y/vh;heroWrap.style.transform='translateY('+y*0.25+'px) scale('+(1-p*0.06)+')';heroWrap.style.opacity=1-p*1.1}
+  document.getElementById('nav').classList.toggle('scrolled',window.scrollY>60);
 });
 
-// NAV
-window.addEventListener('scroll',function(){document.getElementById('nav').classList.toggle('scrolled',window.scrollY>80)});
+// ═══ REVEAL ═══
+var rvObs=new IntersectionObserver(function(e){
+  e.forEach(function(en){if(en.isIntersecting){en.target.classList.add('visible');rvObs.unobserve(en.target);}});
+},{threshold:0.12});
+document.querySelectorAll('.rv').forEach(function(el){rvObs.observe(el);});
 
-// SCROLL REVEAL
-var rvObs=new IntersectionObserver(function(e){e.forEach(function(en){if(en.isIntersecting)en.target.classList.add('visible')})},{threshold:0.1});
-document.querySelectorAll('.rv').forEach(function(el){rvObs.observe(el)});
+// ═══ STACK PILLS ═══
+var skObs=new IntersectionObserver(function(e){
+  e.forEach(function(en){if(en.isIntersecting){
+    en.target.classList.add('visible');
+    en.target.querySelectorAll('.stack-pill').forEach(function(p,i){p.style.transitionDelay=(i*0.05)+'s';});
+    skObs.unobserve(en.target);
+  }});
+},{threshold:0.15});
+document.querySelectorAll('.stack-row').forEach(function(r){skObs.observe(r);});
 
-// SKILL ROW REVEAL + PILL STAGGER
-var skObs=new IntersectionObserver(function(e){e.forEach(function(en){if(en.isIntersecting){en.target.classList.add('visible');var pills=en.target.querySelectorAll('.sk-pill');pills.forEach(function(p,i){p.style.transitionDelay=(i*0.06)+'s'});skObs.unobserve(en.target)}})},{threshold:0.15});
-document.querySelectorAll('.sk-row').forEach(function(r){skObs.observe(r)});
+// ═══ COUNTERS ═══
+var ctObs=new IntersectionObserver(function(e){
+  e.forEach(function(en){if(en.isIntersecting){
+    var el=en.target,t=parseInt(el.dataset.target),c=0,s=Math.max(1,Math.ceil(t/50));
+    var tm=setInterval(function(){c+=s;if(c>=t){c=t;clearInterval(tm);}el.textContent=c;},22);
+    ctObs.unobserve(el);
+  }});
+},{threshold:0.5});
+document.querySelectorAll('.counter').forEach(function(c){ctObs.observe(c);});
 
-// PROJECT STAGGER
-var pCards=document.querySelectorAll('.p-card');
-var pcObs=new IntersectionObserver(function(e){e.forEach(function(en){if(en.isIntersecting){var i=Array.from(pCards).indexOf(en.target);setTimeout(function(){en.target.classList.add('visible')},i*100);pcObs.unobserve(en.target)}})},{threshold:0.05});
-pCards.forEach(function(c){pcObs.observe(c)});
+// ═══ MODEL BAR ANIMATIONS ═══
+var barObs=new IntersectionObserver(function(e){
+  e.forEach(function(en){if(en.isIntersecting){
+    en.target.querySelectorAll('.model-bar-fill').forEach(function(b,i){
+      setTimeout(function(){b.style.width=b.dataset.w+'%';},i*150);
+    });
+    barObs.unobserve(en.target);
+  }});
+},{threshold:0.25});
+document.querySelectorAll('.model-bars').forEach(function(g){barObs.observe(g);});
 
-// COUNTERS
-var ctObs=new IntersectionObserver(function(e){e.forEach(function(en){if(en.isIntersecting){var el=en.target,t=parseInt(el.dataset.target);var c=0,s=Math.ceil(t/45);var tm=setInterval(function(){c+=s;if(c>=t){c=t;clearInterval(tm)}el.textContent=c},25);ctObs.unobserve(el)}})},{threshold:0.5});
-document.querySelectorAll('.counter').forEach(function(c){ctObs.observe(c)});
+// ═══ NVIDIA KPI EXPLORER ═══
+var nvKpiData={
+  accuracy:'↳ <strong>FORECAST ACCURACY · 96.4%</strong> — The headline. Computed in DAX as <em>1 − MAPE</em> across product (H100, H200) × region (EMEA, NA) pairs. A 3-month moving-average overlay on the Forecast vs Actual chart smooths short-term noise so the underlying trend is visible.',
+  mape:'↳ <strong>MAPE · 24.3%</strong> — Mean Absolute Percentage Error. Even at 96.4% directional accuracy, the absolute error per period is still ~24% — a reminder that high accuracy can hide volatile demand pockets, especially for new product lines like the H200 in EMEA.',
+  backorders:'↳ <strong>TOTAL BACKORDERS · 42.3K units</strong> — Split roughly even between EMEA (21,137) and NA (21,137). This is the operational pain made visible: every backordered unit is delayed revenue and reputational risk with hyperscale customers.',
+  capacity:'↳ <strong>CAPACITY UTILISATION · 57.0%</strong> — Lower than expected for a constrained market. Indicates the bottleneck is <em>downstream packaging</em> (CoWoS), not foundry capacity. Investment in packaging partners has higher marginal return than additional wafer slots.',
+  leadtime:'↳ <strong>AVG SUPPLIER LEAD TIME · 59 days</strong> — H100 and H200 sit close to each other (~57 and ~60 days). The dashboard surfaces lead-time stability by product family, which feeds the strategic decision of whether to diversify suppliers or renegotiate priority allocation.',
+  otd:'↳ <strong>ON-TIME DELIVERY · 95.92%</strong> — Customer-facing metric, downstream consequence of forecast accuracy and lead-time stability. The 4-point gap between accuracy (96.4%) and on-time delivery (95.92%) is the operational slippage between "we predicted right" and "we delivered right".'
+};
+document.querySelectorAll('#case-nvidia .dash-hotspot').forEach(function(k){
+  k.addEventListener('click',function(){
+    document.querySelectorAll('#case-nvidia .dash-hotspot').forEach(function(x){
+      x.classList.remove('active');
+    });
+    k.classList.add('active');
+    document.getElementById('nv-detail').innerHTML=nvKpiData[k.dataset.kpi]||'';
+  });
+});
+
+// ═══ DISSERTATION MODEL SWITCHER ═══
+var wqData={
+  ridge:{name:'Ridge Regression',avg:'0.094',note:'Linear baseline. Underfits the non-linear seasonal patterns in temperature and dissolved oxygen — useful as a floor, not a ceiling.',
+    params:[{name:'Water Temp',v:'0.412'},{name:'Dissolved O₂',v:'0.118'},{name:'Nitrate',v:'0.087'},{name:'pH',v:'0.054'},{name:'BOD',v:'−0.201',worst:true}]},
+  rf:{name:'Random Forest',avg:'0.211',note:'Captures non-linearity well, but plateaus on long-tail rare events. A strong middle-tier performer.',
+    params:[{name:'Water Temp',v:'0.701'},{name:'Dissolved O₂',v:'0.198'},{name:'Nitrate',v:'0.142'},{name:'pH',v:'0.115'},{name:'BOD',v:'−0.101',worst:true}]},
+  mlp:{name:'Multi-Layer Perceptron',avg:'0.156',note:'Mid-pack. Trains fine but is data-hungry — the chronological split punishes it more than tree-based methods.',
+    params:[{name:'Water Temp',v:'0.598'},{name:'Dissolved O₂',v:'0.167'},{name:'Nitrate',v:'0.104'},{name:'pH',v:'0.082'},{name:'BOD',v:'−0.171',worst:true}]},
+  xgb:{name:'XGBoost',avg:'0.253',winner:true,note:'Best overall. Wins every parameter except BOD, where every model struggles — BOD reflects acute, unpredictable events that aren\'t encoded in the lag features.',
+    params:[{name:'Water Temp',v:'0.785',best:true},{name:'Dissolved O₂',v:'0.241'},{name:'Nitrate',v:'0.189'},{name:'pH',v:'0.142'},{name:'BOD',v:'−0.089',worst:true}]}
+};
+function renderWQ(model){
+  var d=wqData[model];if(!d)return;
+  var html='<div class="mv-head"><div class="mv-name">'+d.name+(d.winner?'<span class="winner-tag">Winner</span>':'')+'</div>';
+  html+='<div class="mv-avg">avg R² · <span class="v">'+d.avg+'</span></div></div>';
+  html+='<div class="mv-note">'+d.note+'</div><div class="mv-params">';
+  d.params.forEach(function(p){
+    var cls='mv-param'+(p.best?' best':'')+(p.worst?' worst':'');
+    html+='<div class="'+cls+'"><div class="mvp-name">'+p.name+'</div><div class="mvp-r2">'+p.v+'</div></div>';
+  });
+  html+='</div>';
+  document.getElementById('wqMV').innerHTML=html;
+}
+document.querySelectorAll('#wqMS .ms-btn').forEach(function(b){
+  b.addEventListener('click',function(){
+    document.querySelectorAll('#wqMS .ms-btn').forEach(function(x){x.classList.remove('active');});
+    b.classList.add('active');renderWQ(b.dataset.model);
+  });
+});
+renderWQ('xgb');
+
+// ═══ FACE ITERATION STEPPER ═══
+var afData={
+  '1':{acc:'72.4',changed:'<strong>Baseline.</strong> DenseNet121 pretrained on ImageNet, default hyperparameters, no augmentation. The starting point — deliberately unoptimised, to give every later iteration something to beat.',
+    params:[{k:'Batch size',v:'32'},{k:'Learning rate',v:'1e-3'},{k:'Augmentation',v:'None'},{k:'Epochs',v:'10'},{k:'Optimiser',v:'SGD'}]},
+  '2':{acc:'79.1',changed:'<strong>Added augmentation.</strong> Random horizontal flips and ±15° rotations. The +6.7 pt lift confirmed that the training set under-represents real-world face orientations.',
+    params:[{k:'Batch size',v:'32'},{k:'Learning rate',v:'1e-3'},{k:'Augmentation',v:'Flip + rotate'},{k:'Epochs',v:'10'},{k:'Optimiser',v:'SGD'}]},
+  '3':{acc:'83.5',changed:'<strong>Switched optimiser to Adam + LR schedule.</strong> Cosine annealing from 1e-3 to 1e-5. Smoother convergence, +4.4 pts. Validation loss curve stopped oscillating.',
+    params:[{k:'Batch size',v:'32'},{k:'Learning rate',v:'1e-3 → 1e-5'},{k:'Augmentation',v:'Flip + rotate'},{k:'Epochs',v:'15'},{k:'Optimiser',v:'Adam · cosine'}]},
+  '4':{acc:'86.7',final:true,changed:'<strong>Final run.</strong> Larger batch, normalisation tuned for the dataset mean, longer training under the new LR schedule. +3.2 pts. Beats ResNet50 (79.4%) by 7.3 pts at matched compute.',
+    params:[{k:'Batch size',v:'64'},{k:'Learning rate',v:'1e-3 → 1e-5'},{k:'Augmentation',v:'Flip + rotate + norm'},{k:'Epochs',v:'25'},{k:'Optimiser',v:'Adam · cosine'}]}
+};
+function renderAF(iter){
+  var d=afData[iter];if(!d)return;
+  var html='<div class="iter-grid"><div>';
+  html+='<div class="iter-acc-label">Test accuracy · iter '+iter+'</div>';
+  html+='<div class="iter-accuracy">'+d.acc+'<span class="pct">%</span></div>';
+  html+='<div class="iter-changed">'+d.changed+'</div></div>';
+  html+='<div class="iter-params">';
+  d.params.forEach(function(p){html+='<div class="iter-param"><span class="k">'+p.k+'</span><span class="v">'+p.v+'</span></div>';});
+  html+='</div></div>';
+  document.getElementById('afIV').innerHTML=html;
+}
+document.querySelectorAll('#afIB .iter-btn').forEach(function(b){
+  b.addEventListener('click',function(){
+    document.querySelectorAll('#afIB .iter-btn').forEach(function(x){x.classList.remove('active');});
+    b.classList.add('active');renderAF(b.dataset.iter);
+  });
+});
+renderAF('4');
 </script>
 </body>
 </html>
