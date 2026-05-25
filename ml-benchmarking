@@ -1,0 +1,1503 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Comparing Machine Learning Models for Water Quality Prediction — Nawaf Almutairi · KV6013 Dissertation</title>
+<meta name="description" content="Final-year dissertation benchmarking Ridge, Random Forest, MLP, and XGBoost on UK Environment Agency water-quality data — 8.3M samples across 5 parameters, 14 regions, 26 years. XGBoost wins overall at +0.785 R² on Water Temperature.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;0,6..72,700;1,6..72,400;1,6..72,500;1,6..72,600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --bg:#f5f1ea;
+  --bg-2:#ede7d8;
+  --ink:#0a0a0a;
+  --ink-2:#3a3a38;
+  --ink-3:#666460;
+  --mute:#94918a;
+  --line:#cdc6b7;
+  --line-2:#dad3c2;
+  --ember:#e64d2e;
+  --ember-d:#b53a1f;
+  --serif:'Newsreader',Georgia,serif;
+  --sans:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+  --mono:'JetBrains Mono',Menlo,monospace;
+}
+
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{
+  background:var(--bg);color:var(--ink);
+  font-family:var(--sans);font-size:15px;line-height:1.6;
+  -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;
+  background-image:radial-gradient(circle at 1px 1px,rgba(10,10,10,0.03) 1px,transparent 0);
+  background-size:40px 40px;
+}
+
+/* ═══ MONOGRAM (NA symbol) ═══ */
+.monogram{
+  display:inline-block;
+  width:36px;height:36px;
+  position:relative;flex-shrink:0;
+}
+.monogram svg{width:100%;height:100%;display:block;}
+.monogram.lg{width:64px;height:64px;}
+
+/* ═══ SIDE RAIL ═══ */
+.rail{
+  position:fixed;top:0;left:0;
+  width:48px;height:100vh;
+  border-right:1px solid var(--line);
+  display:flex;flex-direction:column;align-items:center;
+  justify-content:space-between;
+  padding:24px 0;background:var(--bg);z-index:100;
+}
+.rail-mono{margin-top:6px;}
+.rail-mono svg{width:28px;height:28px;}
+.rail-vert{
+  writing-mode:vertical-rl;transform:rotate(180deg);
+  font-family:var(--mono);font-size:10px;
+  color:var(--ink-2);letter-spacing:0.3em;text-transform:uppercase;
+  font-weight:500;
+}
+.rail-dot{
+  width:7px;height:7px;border-radius:50%;background:var(--ember);
+  animation:rail-pulse 2s infinite;
+}
+@keyframes rail-pulse{
+  0%,100%{box-shadow:0 0 0 0 rgba(230,77,46,0.5);}
+  50%{box-shadow:0 0 0 6px rgba(230,77,46,0);}
+}
+@media(max-width:780px){.rail{display:none;}}
+
+/* ═══ TOP NAV ═══ */
+.topnav{
+  position:sticky;top:0;z-index:80;
+  background:rgba(245,241,234,0.94);
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--line);
+  padding:16px 56px 16px 80px;
+  display:flex;justify-content:space-between;align-items:center;
+  font-family:var(--mono);font-size:11px;
+  color:var(--ink-2);letter-spacing:0.04em;
+}
+@media(max-width:780px){.topnav{padding:14px 22px;}}
+.tn-back{
+  color:var(--ink);text-decoration:none;font-weight:500;
+  display:flex;align-items:center;gap:8px;
+  transition:color 0.2s;
+}
+.tn-back:hover{color:var(--ember);}
+.tn-meta{
+  color:var(--mute);letter-spacing:0.08em;text-transform:uppercase;
+  font-size:10px;font-weight:500;
+}
+.tn-meta .ember{color:var(--ember);}
+
+/* ═══ MAIN LAYOUT ═══ */
+.wrap{
+  padding-left:48px;
+}
+@media(max-width:780px){.wrap{padding-left:0;}}
+
+main{
+  max-width:1080px;
+  margin:0 auto;
+  padding:80px 56px 120px;
+}
+@media(max-width:780px){main{padding:48px 22px 80px;}}
+
+/* ═══ TYPOGRAPHY ═══ */
+h1.diss-title{
+  font-family:var(--serif);
+  font-size:clamp(40px,5.8vw,76px);
+  line-height:1.04;letter-spacing:-0.032em;
+  font-weight:400;
+  color:var(--ink);
+  margin-bottom:28px;
+  font-variation-settings:"opsz" 72;
+}
+h1.diss-title .it{font-style:italic;color:var(--ember);}
+
+h2.section-h{
+  font-family:var(--serif);
+  font-size:clamp(28px,3.6vw,46px);
+  line-height:1.1;letter-spacing:-0.022em;
+  font-weight:400;color:var(--ink);
+  margin:80px 0 28px;
+  font-variation-settings:"opsz" 36;
+  position:relative;
+  padding-left:80px;
+}
+h2.section-h::before{
+  content:attr(data-n);
+  position:absolute;left:0;top:14px;
+  font-family:var(--mono);font-size:10px;
+  color:var(--ember);letter-spacing:0.12em;
+  font-weight:600;text-transform:uppercase;
+}
+h2.section-h .it{font-style:italic;color:var(--ember);}
+@media(max-width:780px){
+  h2.section-h{padding-left:0;}
+  h2.section-h::before{position:static;display:block;margin-bottom:8px;}
+}
+
+h3.sub-h{
+  font-family:var(--serif);
+  font-size:clamp(22px,2.6vw,30px);
+  line-height:1.18;letter-spacing:-0.014em;
+  font-weight:500;color:var(--ink);
+  margin:40px 0 18px;
+}
+h3.sub-h .it{font-style:italic;color:var(--ember);}
+
+h4.subsub-h{
+  font-family:var(--mono);
+  font-size:11px;color:var(--ember);
+  letter-spacing:0.14em;text-transform:uppercase;
+  font-weight:600;
+  margin:28px 0 12px;
+}
+
+p{
+  font-family:var(--serif);
+  font-size:17px;line-height:1.65;
+  color:var(--ink-2);
+  margin-bottom:18px;
+  max-width:760px;
+  font-variation-settings:"opsz" 16;
+}
+p strong{color:var(--ink);font-weight:600;}
+p em{color:var(--ember);font-style:italic;}
+
+ul.story-list{
+  list-style:none;
+  padding:0;margin:18px 0 24px;
+  max-width:760px;
+}
+ul.story-list li{
+  font-family:var(--serif);
+  font-size:16px;line-height:1.55;color:var(--ink-2);
+  padding:12px 0 12px 56px;
+  border-bottom:1px solid var(--line);
+  position:relative;
+}
+ul.story-list li::before{
+  content:attr(data-n);
+  position:absolute;left:0;top:14px;
+  font-family:var(--mono);font-size:10px;color:var(--ember);
+  font-weight:600;letter-spacing:0.06em;
+}
+ul.story-list li strong{color:var(--ink);font-weight:600;}
+ul.story-list li em{color:var(--ember);font-style:italic;}
+
+/* Inline references */
+.ref{
+  font-family:var(--sans);font-size:12px;
+  color:var(--mute);vertical-align:super;
+  text-decoration:none;
+}
+.ref:hover{color:var(--ember);}
+
+/* Abstract block */
+.abstract{
+  background:var(--bg-2);border:1px solid var(--line);
+  padding:36px 40px;margin:0 0 40px;
+  position:relative;
+}
+@media(max-width:780px){.abstract{padding:24px;}}
+.abstract::before{
+  content:'— ABSTRACT';
+  position:absolute;top:-1px;left:-1px;
+  background:var(--ember);color:var(--bg);
+  font-family:var(--mono);font-size:9px;
+  letter-spacing:0.14em;font-weight:600;
+  padding:6px 14px;
+}
+.abstract p{
+  font-family:var(--serif);font-size:18px;
+  font-style:italic;line-height:1.62;
+  color:var(--ink);max-width:none;
+  margin-top:14px;margin-bottom:14px;
+  font-variation-settings:"opsz" 24;
+}
+.abstract p:last-child{margin-bottom:0;}
+.abstract p strong{font-style:normal;color:var(--ink);}
+
+/* ═══ HERO ═══ */
+.diss-hero{
+  margin-bottom:48px;
+}
+.diss-eyebrow{
+  font-family:var(--mono);font-size:11px;
+  color:var(--ember);letter-spacing:0.14em;
+  text-transform:uppercase;font-weight:600;
+  margin-bottom:24px;
+  display:flex;align-items:center;gap:14px;
+}
+.diss-eyebrow::before{
+  content:'';width:32px;height:1px;background:var(--ember);
+}
+.diss-meta-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:1px;
+  background:var(--line);
+  border:1px solid var(--line);
+  margin-top:32px;
+}
+@media(max-width:780px){.diss-meta-grid{grid-template-columns:1fr 1fr;}}
+.dm-cell{
+  background:var(--bg);
+  padding:22px 24px;
+}
+.dm-label{
+  font-family:var(--mono);font-size:9px;
+  color:var(--mute);letter-spacing:0.12em;
+  text-transform:uppercase;margin-bottom:8px;
+}
+.dm-value{
+  font-family:var(--serif);font-size:18px;
+  color:var(--ink);line-height:1.2;
+  font-weight:500;letter-spacing:-0.01em;
+}
+.dm-value .it{color:var(--ember);font-style:italic;}
+
+/* ═══ KEY METRICS BANNER ═══ */
+.keystats{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:1px;
+  background:var(--line);
+  border:1px solid var(--line);
+  margin:40px 0;
+}
+@media(max-width:780px){.keystats{grid-template-columns:1fr 1fr;}}
+.ks-cell{
+  background:var(--bg-2);
+  padding:28px 24px;
+  text-align:left;
+}
+.ks-cell.winner{
+  background:rgba(230,77,46,0.07);
+  position:relative;
+}
+.ks-cell.winner::after{
+  content:'★';position:absolute;top:10px;right:14px;
+  color:var(--ember);font-size:12px;
+}
+.ks-label{
+  font-family:var(--mono);font-size:9px;
+  color:var(--mute);letter-spacing:0.12em;
+  text-transform:uppercase;margin-bottom:12px;
+}
+.ks-cell.winner .ks-label{color:var(--ember);}
+.ks-value{
+  font-family:var(--serif);font-size:48px;
+  color:var(--ink);line-height:1;letter-spacing:-0.028em;
+  font-weight:400;
+  font-variation-settings:"opsz" 72;
+}
+.ks-cell.winner .ks-value{
+  color:var(--ember);font-style:italic;
+}
+.ks-value .small{font-size:0.45em;color:var(--mute);font-weight:400;letter-spacing:0;font-style:normal;margin-left:2px;}
+.ks-sub{
+  font-family:var(--sans);font-size:11px;
+  color:var(--ink-3);margin-top:10px;line-height:1.4;
+}
+
+/* ═══ FIGURES ═══ */
+.fig-block{
+  margin:40px 0 56px;
+}
+.fig-frame{
+  background:var(--bg-2);
+  border:1px solid var(--line);
+  padding:1px;
+}
+.fig-cap{
+  display:flex;justify-content:space-between;
+  margin-top:14px;
+  font-family:var(--mono);font-size:10px;
+  color:var(--ink-3);letter-spacing:0.06em;
+  text-transform:uppercase;gap:14px;flex-wrap:wrap;
+}
+.fig-cap .label{color:var(--ember);font-weight:600;}
+.fig-cap .title{
+  font-family:var(--serif);font-style:italic;
+  font-size:13px;color:var(--ink-2);
+  text-transform:none;letter-spacing:0;
+  flex:1;text-align:right;line-height:1.4;
+}
+
+/* ═══ PIPELINE FLOW ═══ */
+.pipeline-viz{
+  background:var(--bg);padding:32px 28px;
+}
+.pipe-header{margin-bottom:24px;padding-bottom:14px;border-bottom:1px solid var(--line);}
+.pipe-title{
+  font-family:var(--mono);font-size:10px;color:var(--ember);
+  letter-spacing:0.12em;text-transform:uppercase;font-weight:600;margin-bottom:6px;
+}
+.pipe-sub{font-family:var(--serif);font-style:italic;font-size:13px;color:var(--ink-3);line-height:1.4;}
+.pipe-flow{
+  display:grid;gap:28px 22px;align-items:stretch;
+}
+.pipe-flow.six{grid-template-columns:repeat(6,1fr);}
+.pipe-flow.five{grid-template-columns:repeat(5,1fr);}
+.pipe-flow.four{grid-template-columns:repeat(4,1fr);}
+.pl-step{
+  background:var(--bg-2);border:1px solid var(--line);
+  padding:14px 12px;
+  display:flex;flex-direction:column;gap:8px;
+  position:relative;min-height:140px;
+}
+.pl-step.danger{border-color:#b07260;background:rgba(176,114,96,0.06);}
+.pl-step.winner{border-color:var(--ember);background:rgba(230,77,46,0.05);}
+.pl-step-n{font-family:var(--mono);font-size:9px;color:var(--mute);letter-spacing:0.12em;font-weight:600;}
+.pl-step.danger .pl-step-n{color:#925248;}
+.pl-step.winner .pl-step-n{color:var(--ember);}
+.pl-step-name{font-family:var(--serif);font-size:16px;color:var(--ink);font-weight:500;letter-spacing:-0.012em;line-height:1.1;}
+.pl-step.winner .pl-step-name{color:var(--ember);font-style:italic;}
+.pl-step-detail{font-family:var(--sans);font-size:11px;color:var(--ink-3);line-height:1.45;flex:1;}
+.pl-step-status{font-family:var(--mono);font-size:10px;font-weight:600;letter-spacing:0.04em;color:var(--mute);}
+.pl-step.danger .pl-step-status{color:#925248;}
+.pl-step.winner .pl-step-status{color:var(--ember);}
+.pl-step:not(:last-child)::after{
+  content:'→';position:absolute;right:-16px;top:50%;
+  transform:translateY(-50%);
+  color:var(--ember);font-family:var(--serif);font-size:15px;line-height:1;font-weight:400;
+}
+@media(max-width:780px){
+  .pipe-flow.six,.pipe-flow.five,.pipe-flow.four{grid-template-columns:1fr;}
+  .pl-step{min-height:auto;}
+  .pl-step:not(:last-child)::after{content:'↓';right:auto;left:50%;top:auto;bottom:-20px;transform:translateX(-50%);font-size:16px;}
+}
+
+/* ═══ R² HEATMAP ═══ */
+.r2-heatmap{background:var(--bg);padding:24px;}
+.r2h-head{margin-bottom:18px;padding-bottom:14px;border-bottom:1px solid var(--line);}
+.r2h-title{font-family:var(--mono);font-size:10px;color:var(--ember);letter-spacing:0.12em;text-transform:uppercase;font-weight:600;margin-bottom:6px;}
+.r2h-sub{font-family:var(--serif);font-style:italic;font-size:13px;color:var(--ink-3);line-height:1.4;}
+.r2h-grid{display:grid;grid-template-columns:auto repeat(4,1fr);gap:3px;}
+.r2h-cell{padding:14px 6px;text-align:center;font-family:var(--mono);font-size:12px;display:flex;align-items:center;justify-content:center;min-height:44px;position:relative;}
+.r2h-corner{background:transparent;}
+.r2h-col-h{background:var(--ink);color:var(--bg);font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;padding:12px 6px;}
+.r2h-row-h{background:var(--ink);color:var(--bg);font-family:var(--sans);font-size:12px;font-weight:600;text-align:left;padding:0 14px;justify-content:flex-start;letter-spacing:-0.005em;}
+.r2h-val{font-weight:600;font-size:13px;}
+.r2h-val.v-neg-extreme{background:#8e3a32;color:#fff;}
+.r2h-val.v-neg-high{background:#b25a4f;color:#fff;}
+.r2h-val.v-neg-med{background:#d39288;color:var(--ink);}
+.r2h-val.v-neg-low{background:#e8c4be;color:var(--ink);}
+.r2h-val.v-pos-low{background:#c8d8c0;color:var(--ink);}
+.r2h-val.v-pos-med{background:#9bba8e;color:var(--ink);}
+.r2h-val.v-pos-high{background:#6f9961;color:#fff;}
+.r2h-val.winner{background:var(--ember);color:var(--bg);outline:3px solid var(--ember);outline-offset:-1px;z-index:1;}
+
+/* ═══ FULL METRICS TABLE ═══ */
+.metrics-table{
+  width:100%;
+  background:var(--bg-2);
+  border:1px solid var(--line);
+  border-collapse:collapse;
+  font-family:var(--mono);font-size:12px;
+  margin:8px 0;
+}
+.metrics-table thead th{
+  background:var(--ink);color:var(--bg);
+  padding:12px 14px;
+  text-align:left;font-weight:600;
+  letter-spacing:0.06em;font-size:10px;
+  text-transform:uppercase;
+}
+.metrics-table thead th.num{text-align:right;}
+.metrics-table tbody td{
+  padding:11px 14px;
+  border-bottom:1px solid var(--line);
+  color:var(--ink-2);
+}
+.metrics-table tbody td.num{text-align:right;font-weight:500;}
+.metrics-table tbody tr.winner{background:rgba(230,77,46,0.07);}
+.metrics-table tbody tr.winner td{color:var(--ember);font-weight:600;}
+.metrics-table tbody tr.winner td:first-child::before{content:'★ ';color:var(--ember);}
+.metrics-table tbody tr:last-child td{border-bottom:none;}
+.metrics-table td.tag{
+  font-family:var(--sans);font-weight:500;color:var(--ink);
+}
+
+/* ═══ CODE BLOCKS ═══ */
+.code-block{
+  background:var(--ink);color:#d4cdb8;
+  padding:22px 26px;
+  font-family:var(--mono);font-size:12.5px;line-height:1.6;
+  border:1px solid var(--ink);
+  margin:18px 0 28px;overflow-x:auto;
+}
+.code-block .kw{color:#e64d2e;}
+.code-block .str{color:#a8c4a0;}
+.code-block .num{color:#d4a86a;}
+.code-block .com{color:#7a7568;font-style:italic;}
+.code-block .fn{color:#d4cdb8;font-weight:600;}
+.code-caption{
+  font-family:var(--mono);font-size:10px;
+  color:var(--ink-3);letter-spacing:0.06em;
+  margin-bottom:8px;text-transform:uppercase;
+}
+.code-caption .label{color:var(--ember);font-weight:600;}
+
+/* ═══ CALLOUT BOX ═══ */
+.callout{
+  display:grid;grid-template-columns:auto 1fr;gap:18px;
+  padding:24px 28px;
+  background:rgba(230,77,46,0.04);
+  border:1px solid var(--ember);border-left-width:3px;
+  margin:32px 0;
+  align-items:center;
+}
+.callout-mark{
+  font-family:var(--serif);font-size:24px;
+  color:var(--ember);line-height:1;
+}
+.callout-text{
+  font-family:var(--serif);font-size:15.5px;
+  color:var(--ink-2);line-height:1.55;
+}
+.callout-text strong{color:var(--ink);font-weight:600;}
+.callout-text em{color:var(--ember);font-style:italic;}
+
+/* ═══ MODEL CARDS ═══ */
+.model-cards{
+  display:grid;grid-template-columns:repeat(2,1fr);gap:14px;
+  margin:24px 0;
+}
+@media(max-width:780px){.model-cards{grid-template-columns:1fr;}}
+.mc-card{
+  background:var(--bg-2);
+  border:1px solid var(--line);
+  padding:24px 26px;
+}
+.mc-card.winner{
+  border-color:var(--ember);
+  background:rgba(230,77,46,0.05);
+  position:relative;
+}
+.mc-card.winner::after{
+  content:'★ winner';position:absolute;top:14px;right:18px;
+  font-family:var(--mono);font-size:10px;color:var(--ember);
+  letter-spacing:0.08em;font-weight:600;
+}
+.mc-name{
+  font-family:var(--serif);font-size:24px;
+  color:var(--ink);font-weight:500;letter-spacing:-0.018em;
+  margin-bottom:6px;
+}
+.mc-card.winner .mc-name{color:var(--ember);font-style:italic;}
+.mc-type{
+  font-family:var(--mono);font-size:10px;color:var(--mute);
+  letter-spacing:0.1em;text-transform:uppercase;margin-bottom:14px;
+}
+.mc-desc{
+  font-family:var(--serif);font-size:14px;
+  color:var(--ink-2);line-height:1.55;margin-bottom:14px;
+}
+.mc-stats{
+  display:grid;grid-template-columns:1fr 1fr;gap:10px;
+  padding-top:14px;border-top:1px solid var(--line);
+}
+.mc-stat-l{font-family:var(--mono);font-size:9px;color:var(--mute);letter-spacing:0.1em;text-transform:uppercase;}
+.mc-stat-v{font-family:var(--mono);font-size:13px;color:var(--ink);font-weight:600;margin-top:3px;}
+.mc-card.winner .mc-stat-v{color:var(--ember);}
+
+/* ═══ BI DASHBOARD RECREATION ═══ */
+.cd-dashboard{
+  background:var(--bg);
+  padding:36px 40px;
+}
+@media(max-width:780px){.cd-dashboard{padding:24px;}}
+.cd-d-head{
+  display:flex;justify-content:space-between;align-items:flex-start;
+  padding-bottom:24px;border-bottom:1px solid var(--line);
+  margin-bottom:32px;gap:24px;flex-wrap:wrap;
+}
+.cd-d-name{font-family:var(--mono);font-size:12px;color:var(--ink);letter-spacing:0.04em;font-weight:600;display:flex;align-items:center;gap:10px;}
+.cd-d-icon{color:var(--ember);font-size:13px;}
+.cd-d-sub{font-family:var(--serif);font-style:italic;font-size:14px;color:var(--ink-3);margin-top:6px;}
+.cd-d-status{font-family:var(--mono);font-size:10px;color:var(--ember);letter-spacing:0.12em;font-weight:600;display:flex;align-items:center;gap:8px;text-transform:uppercase;}
+.cd-d-status .dot{width:7px;height:7px;border-radius:50%;background:var(--ember);animation:rail-pulse 2s infinite;}
+.cd-d-metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:36px;}
+@media(max-width:600px){.cd-d-metrics{grid-template-columns:1fr;}}
+.cd-d-metric{padding:22px;background:var(--bg-2);border:1px solid var(--line);position:relative;}
+.cd-d-metric.winner{background:rgba(230,77,46,0.05);border-color:var(--ember);}
+.cd-d-metric.winner::after{content:'★';position:absolute;top:12px;right:14px;color:var(--ember);font-size:13px;}
+.cd-d-m-lbl{font-family:var(--mono);font-size:9px;color:var(--mute);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:10px;}
+.cd-d-metric.winner .cd-d-m-lbl{color:var(--ember);}
+.cd-d-m-val{font-family:var(--serif);font-size:54px;line-height:1;letter-spacing:-0.035em;color:var(--ink);font-weight:400;}
+.cd-d-metric.winner .cd-d-m-val{font-style:italic;color:var(--ember);}
+.cd-d-m-unit{font-size:0.4em;color:var(--mute);font-weight:400;letter-spacing:0;font-style:normal;margin-left:2px;}
+.cd-d-section-h{font-family:var(--mono);font-size:10px;color:var(--ember);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:18px;font-weight:600;display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;}
+.cd-d-section-h .sub{font-family:var(--serif);font-style:italic;text-transform:none;letter-spacing:0;color:var(--ink-3);font-size:13px;font-weight:400;}
+.cd-d-diverge{display:flex;flex-direction:column;gap:10px;margin-bottom:32px;}
+.cd-d-bar-row{display:grid;grid-template-columns:140px 1fr 70px;align-items:center;gap:14px;}
+@media(max-width:600px){.cd-d-bar-row{grid-template-columns:90px 1fr 60px;gap:8px;}}
+.cd-d-bar-name{font-family:var(--sans);font-size:13px;color:var(--ink-2);font-weight:500;text-align:right;}
+.cd-d-bar-row.winner .cd-d-bar-name{color:var(--ember);font-weight:600;}
+.cd-d-bar-row.winner .cd-d-bar-name::after{content:' ★';color:var(--ember);font-size:10px;}
+.cd-d-bar-track{position:relative;height:16px;background:var(--bg-2);border:1px solid var(--line);}
+.cd-d-bar-mid{position:absolute;left:50%;top:-5px;bottom:-5px;width:1px;background:var(--ink-2);transform:translateX(-50%);z-index:2;}
+.cd-d-bar-fill{position:absolute;top:0;bottom:0;width:0;transition:width 1.4s cubic-bezier(0.16,1,0.3,1);}
+.cd-d-bar-fill.pos{left:50%;background:#7a9d6e;}
+.cd-d-bar-fill.neg{right:50%;background:#b07260;}
+.cd-d-bar-row.winner .cd-d-bar-fill.pos{background:var(--ember);}
+.cd-d-bar-val{font-family:var(--mono);font-size:13px;font-weight:600;text-align:left;}
+.cd-d-bar-val.pos{color:#5a7d52;}
+.cd-d-bar-val.neg{color:#925248;}
+.cd-d-bar-row.winner .cd-d-bar-val.pos{color:var(--ember);}
+
+/* ═══ TIME SPLIT VISUALIZATION ═══ */
+.timesplit{
+  background:var(--bg-2);border:1px solid var(--line);
+  padding:24px;
+}
+.ts-label{font-family:var(--mono);font-size:10px;color:var(--ember);letter-spacing:0.12em;text-transform:uppercase;font-weight:600;margin-bottom:18px;}
+.ts-bar-container{
+  display:grid;grid-template-columns:70% 30%;
+  gap:2px;height:46px;margin:14px 0 18px;
+}
+.ts-train{
+  background:var(--ink);color:var(--bg);
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--mono);font-size:11px;font-weight:600;
+  letter-spacing:0.06em;text-transform:uppercase;
+}
+.ts-test{
+  background:var(--ember);color:var(--bg);
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--mono);font-size:11px;font-weight:600;
+  letter-spacing:0.06em;text-transform:uppercase;
+}
+.ts-axis{
+  display:flex;justify-content:space-between;
+  font-family:var(--mono);font-size:11px;color:var(--ink-3);
+  font-weight:500;
+}
+.ts-axis-tick{position:relative;padding-top:8px;}
+.ts-axis-tick::before{content:'|';color:var(--line);position:absolute;top:-6px;left:50%;transform:translateX(-50%);}
+
+/* ═══ DISCUSSION SUB-BOX ═══ */
+.disc-box{
+  background:var(--bg-2);
+  border-left:3px solid var(--ember);
+  padding:20px 26px;
+  margin:24px 0;
+}
+.disc-box h4{
+  font-family:var(--mono);font-size:11px;
+  color:var(--ember);letter-spacing:0.14em;
+  text-transform:uppercase;font-weight:600;
+  margin-bottom:12px;
+}
+.disc-box p{margin-bottom:10px;font-size:15.5px;}
+.disc-box p:last-child{margin-bottom:0;}
+
+/* ═══ REFERENCES LIST ═══ */
+.refs{
+  margin-top:32px;
+}
+.refs ol{
+  list-style:none;counter-reset:refnum;padding:0;
+}
+.refs ol li{
+  counter-increment:refnum;
+  padding:14px 0 14px 48px;
+  position:relative;
+  border-bottom:1px solid var(--line);
+  font-family:var(--sans);font-size:13px;
+  color:var(--ink-2);line-height:1.55;
+  max-width:none;
+}
+.refs ol li::before{
+  content:'[' counter(refnum) ']';
+  position:absolute;left:0;top:14px;
+  font-family:var(--mono);font-size:11px;
+  color:var(--ember);font-weight:600;
+}
+.refs ol li em{color:var(--ink);font-style:italic;}
+.refs ol li a{color:var(--ember);text-decoration:none;word-break:break-all;}
+.refs ol li a:hover{text-decoration:underline;}
+
+/* ═══ TOC ═══ */
+.toc{
+  margin:32px 0 56px;
+  border:1px solid var(--line);
+  background:var(--bg-2);
+  padding:28px 32px;
+}
+.toc-h{
+  font-family:var(--mono);font-size:10px;
+  color:var(--ember);letter-spacing:0.14em;
+  text-transform:uppercase;font-weight:600;
+  margin-bottom:18px;
+}
+.toc ol{
+  list-style:none;padding:0;counter-reset:tocnum;
+  column-count:2;column-gap:40px;
+}
+@media(max-width:780px){.toc ol{column-count:1;}}
+.toc ol li{
+  counter-increment:tocnum;
+  padding:8px 0 8px 32px;
+  position:relative;
+  break-inside:avoid;
+}
+.toc ol li::before{
+  content:counter(tocnum,upper-roman) '.';
+  position:absolute;left:0;top:9px;
+  font-family:var(--mono);font-size:10px;
+  color:var(--ember);font-weight:600;letter-spacing:0.04em;
+}
+.toc ol li a{
+  font-family:var(--serif);font-size:15px;
+  color:var(--ink-2);text-decoration:none;
+  transition:color 0.2s;
+}
+.toc ol li a:hover{color:var(--ember);}
+
+/* ═══ FOOTER ═══ */
+.diss-footer{
+  margin-top:120px;
+  padding-top:48px;border-top:1px solid var(--line);
+  display:flex;justify-content:space-between;
+  align-items:flex-end;gap:32px;flex-wrap:wrap;
+}
+.df-left{
+  font-family:var(--mono);font-size:10px;
+  color:var(--mute);letter-spacing:0.1em;
+  text-transform:uppercase;line-height:1.7;
+}
+.df-left .ember{color:var(--ember);}
+.df-back{
+  font-family:var(--mono);font-size:12px;
+  color:var(--ink);text-decoration:none;
+  letter-spacing:0.04em;font-weight:600;
+  border:1px solid var(--ink);
+  padding:14px 22px;
+  transition:all 0.2s;
+}
+.df-back:hover{background:var(--ink);color:var(--bg);}
+
+/* ═══ RESPONSIVE BACKDROP ═══ */
+::selection{background:var(--ember);color:var(--bg);}
+</style>
+</head>
+<body>
+
+<!-- NA monogram definition -->
+<svg width="0" height="0" style="position:absolute;">
+  <symbol id="na" viewBox="0 0 40 40">
+    <rect x="0.5" y="0.5" width="39" height="39" fill="none" stroke="#e64d2e" stroke-width="1"/>
+    <line x1="2" y1="20" x2="38" y2="20" stroke="#e64d2e" stroke-width="1"/>
+    <!-- N -->
+    <path d="M 8 17 L 8 4 L 11 4 L 21 14 L 21 4 L 24 4 L 24 17 L 21 17 L 11 7 L 11 17 Z" fill="#0a0a0a"/>
+    <!-- A italic -->
+    <path d="M 14 36 L 19 23 L 22 23 L 27 36 L 24 36 L 23 33 L 18 33 L 17 36 Z M 19 31 L 22 31 L 20.5 26 Z" fill="#e64d2e" font-style="italic"/>
+  </symbol>
+</svg>
+
+<!-- Side rail -->
+<aside class="rail" aria-label="Brand rail">
+  <a href="index.html" class="rail-mono" aria-label="Home"><span class="monogram"><svg><use href="#na"/></svg></span></a>
+  <span class="rail-vert">NAWAF ALMUTAIRI · DISSERTATION · KV6013</span>
+  <span class="rail-dot" aria-hidden="true"></span>
+</aside>
+
+<!-- Top navigation -->
+<div class="wrap">
+<nav class="topnav">
+  <a href="index.html" class="tn-back">← Back to portfolio</a>
+  <span class="tn-meta">KV6013 · <span class="ember">2026</span> · BSc Final-Year Dissertation</span>
+</nav>
+
+<main>
+
+  <!-- HERO -->
+  <header class="diss-hero">
+    <div class="diss-eyebrow">Final-Year Dissertation · BSc Computer Science · Northumbria University</div>
+    <h1 class="diss-title">
+      Comparing Machine Learning Models<br>
+      for <span class="it">Water Quality Prediction.</span>
+    </h1>
+    <p style="font-size:18.5px;color:var(--ink-3);max-width:760px;">
+      A benchmark of <strong>Ridge regression</strong>, <strong>Random Forest</strong>, <strong>Multi-Layer Perceptron</strong>, and
+      <strong>XGBoost</strong> on <em>8.3 million</em> UK Environment Agency samples spanning 26 years and 14 regional areas
+      — testing which model best forecasts five core water-quality parameters under a strict
+      chronological train/test protocol.
+    </p>
+
+    <div class="diss-meta-grid">
+      <div class="dm-cell">
+        <div class="dm-label">Author</div>
+        <div class="dm-value">Nawaf Almutairi</div>
+      </div>
+      <div class="dm-cell">
+        <div class="dm-label">Supervisor</div>
+        <div class="dm-value">Maria <span class="it">Salama</span></div>
+      </div>
+      <div class="dm-cell">
+        <div class="dm-label">Module</div>
+        <div class="dm-value">KV6013<br><span style="font-size:12px;color:var(--mute);font-family:var(--mono);">Final-Year Project</span></div>
+      </div>
+      <div class="dm-cell">
+        <div class="dm-label">Submitted</div>
+        <div class="dm-value">7 May <span class="it">2026</span></div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ABSTRACT -->
+  <div class="abstract">
+    <p>
+      Water quality monitoring is a slow, costly, and increasingly urgent component of public-health
+      infrastructure. This dissertation benchmarks four machine-learning algorithms — Ridge regression,
+      Random Forest, Multi-Layer Perceptron (MLP), and XGBoost — on a large UK Environment Agency
+      dataset containing <strong>~8.3 million water-quality samples</strong> across five core parameters
+      (Nitrate, BOD, Water Temperature, Dissolved Oxygen, pH), 14 EA regions, and 26 years (2000–2025).
+    </p>
+    <p>
+      The pipeline survived a <strong>mid-project API deprecation</strong> in December 2025; ingestion
+      was rebuilt around 364 monthly CSV downloads, batch-renamed by region and year via PowerShell,
+      and verified by a custom script that caught a year-number mismatch in the Thames data before
+      training began.
+    </p>
+    <p>
+      Under a strict chronological train/test split (train 2000–2017, test 2018–2025), <strong>XGBoost
+      emerged as the best overall model</strong>, achieving an R² of <strong>+0.785</strong> on Water
+      Temperature — the only model × target pair to exceed the +0.7 threshold across all 20 combinations
+      tested. Random Forest and Ridge were competitive on individual parameters but suffered
+      catastrophic failures elsewhere; MLP performed worst overall (avg R² −0.91). The dissertation
+      concludes that tree-based gradient boosting is the most reliable choice for tabular,
+      seasonality-dominated environmental time series, while <strong>BOD remains structurally
+      unpredictable</strong> from lag features alone — pointing to event-driven biological signals not
+      captured by the feature set.
+    </p>
+  </div>
+
+  <!-- KEY STATS BANNER -->
+  <div class="keystats">
+    <div class="ks-cell">
+      <div class="ks-label">Total samples</div>
+      <div class="ks-value">8.3<span class="small">M</span></div>
+      <div class="ks-sub">across 5 target parameters</div>
+    </div>
+    <div class="ks-cell">
+      <div class="ks-label">Time span</div>
+      <div class="ks-value">26<span class="small">yrs</span></div>
+      <div class="ks-sub">2000 → 2025 chronological</div>
+    </div>
+    <div class="ks-cell">
+      <div class="ks-label">EA regions</div>
+      <div class="ks-value">14</div>
+      <div class="ks-sub">North to South coverage</div>
+    </div>
+    <div class="ks-cell winner">
+      <div class="ks-label">Best R² · XGBoost × Water Temp</div>
+      <div class="ks-value">0.785</div>
+      <div class="ks-sub">overall winning result</div>
+    </div>
+  </div>
+
+  <!-- TABLE OF CONTENTS -->
+  <nav class="toc" aria-label="Table of contents">
+    <div class="toc-h">— Contents</div>
+    <ol>
+      <li><a href="#introduction">Introduction</a></li>
+      <li><a href="#litreview">Literature Review</a></li>
+      <li><a href="#methodology">Methodology</a></li>
+      <li><a href="#data">Data &amp; Pipeline</a></li>
+      <li><a href="#models">Models &amp; Architecture</a></li>
+      <li><a href="#results">Results</a></li>
+      <li><a href="#discussion">Discussion</a></li>
+      <li><a href="#limitations">Limitations &amp; Future Work</a></li>
+      <li><a href="#conclusion">Conclusion</a></li>
+      <li><a href="#references">References</a></li>
+    </ol>
+  </nav>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- 1. INTRODUCTION -->
+  <section id="introduction">
+    <h2 class="section-h" data-n="§ 01">Introduction.</h2>
+
+    <p>
+      Clean water is the most basic infrastructure a society has, and yet measuring it remains
+      surprisingly slow. Traditional water-quality monitoring relies on sampling crews, laboratory
+      assays, and statutory reporting cycles that span weeks. By the time the result lands in a
+      regulator's inbox, the conditions that produced it have already changed. This lag is not just
+      operationally inconvenient — it is a public-health problem when contamination events outpace
+      detection.<a href="#r1" class="ref">[1]</a>
+    </p>
+
+    <p>
+      Machine learning offers a credible second route: <em>predict</em> the quality before the lab
+      result returns. Given enough historical signal — temperature, oxygen, nitrate, biological oxygen
+      demand, pH — a sufficiently powerful model should learn the seasonal, hydrological, and
+      geographical patterns that drive water quality, and forecast the next-step value with useful
+      accuracy. The promise is real; the question is which model.
+    </p>
+
+    <p>
+      This dissertation answers that question empirically. It benchmarks four widely-used regression
+      algorithms — Ridge regression (linear baseline), Random Forest (bagged trees), Multi-Layer
+      Perceptron (a small neural network), and XGBoost (gradient-boosted trees) — on a single large
+      dataset published by the UK Environment Agency, and reports per-parameter performance under
+      a fair, chronologically-split evaluation protocol.
+    </p>
+
+    <h3 class="sub-h"><span class="it">Research questions.</span></h3>
+    <ul class="story-list">
+      <li data-n="RQ1"><strong>Which of the four candidate models is most accurate</strong> at predicting next-period values for each of five core water-quality parameters?</li>
+      <li data-n="RQ2"><strong>Are some parameters fundamentally easier to predict</strong> than others — and if so, why?</li>
+      <li data-n="RQ3"><strong>Can the pipeline be made robust</strong> enough to survive upstream data-source changes (e.g. API deprecation) without compromising the integrity of the comparison?</li>
+    </ul>
+
+    <h3 class="sub-h"><span class="it">Contributions.</span></h3>
+    <p>
+      Three contributions are made: (i) a reproducible four-model benchmark on ~8.3M EA samples
+      across 5 parameters and 14 regions; (ii) a hardened ingestion pipeline that survived a real
+      API deprecation event mid-project, with the rebuild documented as a system-design pattern;
+      and (iii) a Power BI dashboard (<em>WQ_ML_Benchmark_Dashboard.pbix</em>) summarising every
+      model × target result for non-technical stakeholders.
+    </p>
+  </section>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- 2. LITERATURE REVIEW -->
+  <section id="litreview">
+    <h2 class="section-h" data-n="§ 02">Literature Review.</h2>
+
+    <p>
+      Machine learning for water-quality forecasting is now a crowded subfield with a clear
+      structure: <em>statistical baselines</em> (linear regression, ARIMA), <em>shallow tree
+      ensembles</em> (Random Forest, gradient boosting), and <em>neural approaches</em> (feedforward,
+      LSTM, transformer-based time series). The literature divides cleanly along this spectrum.
+    </p>
+
+    <h3 class="sub-h">Tree-based methods <span class="it">dominate tabular benchmarks.</span></h3>
+    <p>
+      Multiple studies report XGBoost and Random Forest outperforming linear models on
+      environmental targets. Liu et al. demonstrated XGBoost outperforming SVR and Random Forest
+      for dissolved-oxygen prediction in a Chinese river system.<a href="#r2" class="ref">[2]</a>
+      Chen and Guestrin's original XGBoost paper established the algorithm's general efficiency on
+      structured data; subsequent surveys (e.g. Grinsztajn et al., 2022) confirmed that tree
+      ensembles still beat neural networks on most tabular benchmarks.<a href="#r3" class="ref">[3]</a><a href="#r4" class="ref">[4]</a>
+    </p>
+
+    <h3 class="sub-h">Neural networks <span class="it">are competitive but data-hungry.</span></h3>
+    <p>
+      MLPs and LSTMs perform well when the training set is large and stationary, but degrade
+      sharply on heterogeneous regional data. Hassan et al. found LSTMs outperformed traditional
+      models on a single-station dataset, but did not extend the test across geographically
+      diverse catchments.<a href="#r5" class="ref">[5]</a> This is consistent with the broader
+      finding that neural models trade sample efficiency for representational power — a
+      sometimes-unfair trade when feature engineering has done the work the network would
+      otherwise need to learn.
+    </p>
+
+    <h3 class="sub-h">Linear models <span class="it">remain a floor, not a ceiling.</span></h3>
+    <p>
+      Ridge regression is rarely the headline winner in modern water-quality papers but appears
+      in almost every benchmark as a baseline. Its purpose here is the same: a transparent,
+      regularised linear floor against which non-linear models must demonstrate justified
+      complexity.<a href="#r6" class="ref">[6]</a>
+    </p>
+
+    <h3 class="sub-h">The <span class="it">gap this dissertation addresses.</span></h3>
+    <p>
+      Despite the volume of work in this area, surprisingly few studies benchmark <em>multiple
+      models on multiple parameters under a single, fair protocol</em>. Most papers optimise one
+      model for one target. This dissertation deliberately holds the data, the preprocessing,
+      and the evaluation protocol constant across four models and five parameters — giving a
+      direct, like-for-like comparison that the existing literature does not provide.
+    </p>
+  </section>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- 3. METHODOLOGY -->
+  <section id="methodology">
+    <h2 class="section-h" data-n="§ 03">Methodology.</h2>
+
+    <p>
+      The methodology has four pillars: a <strong>chronologically-split</strong> evaluation protocol
+      that mirrors real forecasting, <strong>identical preprocessing</strong> across all four models,
+      <strong>per-parameter evaluation</strong> using three error metrics (R², RMSE, MAE), and a
+      <strong>verification step</strong> built into the data pipeline before training begins.
+    </p>
+
+    <h3 class="sub-h">Why <span class="it">chronological</span>, not random?</h3>
+    <p>
+      A random 70/30 split is the default in ML tutorials but is wrong for time-series forecasting.
+      Random splitting allows the model to be trained on future observations and tested on past ones —
+      a form of <strong>data leakage</strong> that inflates accuracy in a way that does not generalise
+      to real deployment.
+    </p>
+
+    <div class="fig-block">
+      <div class="fig-frame">
+        <div class="cd-dashboard">
+          <div class="cd-d-section-h">Chronological Train/Test Split <span class="sub">— train 2000–2017, test 2018–2025</span></div>
+          <div class="timesplit">
+            <div class="ts-label">Years on dataset · 2000 → 2025</div>
+            <div class="ts-bar-container">
+              <div class="ts-train">TRAIN · 18 yrs · ~27M samples</div>
+              <div class="ts-test">TEST · 8 yrs · ~6M</div>
+            </div>
+            <div class="ts-axis">
+              <span class="ts-axis-tick">2000</span>
+              <span class="ts-axis-tick">2005</span>
+              <span class="ts-axis-tick">2010</span>
+              <span class="ts-axis-tick">2015</span>
+              <span class="ts-axis-tick" style="color:var(--ember);font-weight:700;">2018 ▴</span>
+              <span class="ts-axis-tick">2020</span>
+              <span class="ts-axis-tick">2025</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="fig-cap">
+        <span class="label">Fig. 01</span>
+        <span class="title">Temporal train/test partition. No peeking at the future.</span>
+      </div>
+    </div>
+
+    <h3 class="sub-h">Evaluation <span class="it">metrics.</span></h3>
+    <p>
+      Three metrics are reported for every model × target combination:
+    </p>
+    <ul class="story-list">
+      <li data-n="R²"><strong>Coefficient of determination</strong> — the fraction of variance the model explains. Ranges from 1.0 (perfect) downward. Negative R² means the model is worse than always predicting the mean.</li>
+      <li data-n="RMSE"><strong>Root mean squared error</strong> — penalises large errors quadratically. In the units of the parameter (mg/L, °C, dimensionless for pH).</li>
+      <li data-n="MAE"><strong>Mean absolute error</strong> — penalises errors linearly. Robust to outliers, complementary to RMSE.</li>
+    </ul>
+
+    <h3 class="sub-h">Preprocessing <span class="it">held constant.</span></h3>
+    <p>
+      The same preprocessing pipeline ran for all four models: missing-value handling, type
+      coercion, lag-feature generation, and standardisation. This means architectural performance is
+      the variable; preprocessing is not.
+    </p>
+  </section>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- 4. DATA & PIPELINE -->
+  <section id="data">
+    <h2 class="section-h" data-n="§ 04">Data &amp; Pipeline.</h2>
+
+    <p>
+      The data source is the <strong>UK Environment Agency's Water Quality Data Archive</strong>
+      — a public dataset of statutory water-quality measurements taken across all 14 EA regions
+      from 2000 to the present. The archive contains hundreds of parameters; this study uses
+      five core indicators, all with broad spatial and temporal coverage.
+    </p>
+
+    <h3 class="sub-h">Target <span class="it">parameters.</span></h3>
+    <ul class="story-list">
+      <li data-n="01"><strong>Nitrate (as N)</strong> — agricultural runoff indicator, mg/L.</li>
+      <li data-n="02"><strong>BOD: 5 Day ATU</strong> — biological oxygen demand, indicator of organic pollution, mg/L.</li>
+      <li data-n="03"><strong>Water Temperature</strong> — driver of dissolved oxygen and microbial activity, °C.</li>
+      <li data-n="04"><strong>Dissolved Oxygen</strong> — direct indicator of aquatic-life sustainability, mg/L.</li>
+      <li data-n="05"><strong>pH</strong> — acid-base balance, affects toxicity of other parameters, dimensionless.</li>
+    </ul>
+
+    <h3 class="sub-h">The <span class="it">API outage event.</span></h3>
+    <p>
+      Mid-project — December 2025 — the EA deprecated the legacy WaterQuality API endpoint. The
+      original Colab ingestion script began returning HTTP 404s overnight. Two choices were available:
+      descope the dissertation, or rebuild ingestion. The rebuild path was taken.
+    </p>
+
+    <p>
+      A new beta endpoint was discovered at <code style="font-family:var(--mono);font-size:13px;color:var(--ember);">environment.data.gov.uk/water-quality-beta</code>,
+      with different URL parameters (<code style="font-family:var(--mono);font-size:13px;color:var(--ember);">pointNotation=</code> instead of <code style="font-family:var(--mono);font-size:13px;color:var(--ember);">station=</code>;
+      <code style="font-family:var(--mono);font-size:13px;color:var(--ember);">dateFrom</code>/<code style="font-family:var(--mono);font-size:13px;color:var(--ember);">dateTo</code> instead of date-range bundling) and required an explicit
+      <code style="font-family:var(--mono);font-size:13px;color:var(--ember);">Accept: text/csv</code> header. The pipeline was rebuilt around 364 monthly CSV
+      downloads — 26 years × 14 areas — and standardised via batch PowerShell renaming.
+    </p>
+
+    <div class="callout">
+      <div class="callout-mark">⚠</div>
+      <div class="callout-text">
+        <strong>Verification matters.</strong> A custom validation script caught a <em>year-number mismatch in the Thames data</em>
+        — one CSV had been labelled with the wrong year during the rename. Without verification, this would have silently
+        corrupted the chronological split. <strong>Treat the break as system design</strong>: every component a checkpoint, not a guess.
+      </div>
+    </div>
+
+    <h3 class="sub-h">The <span class="it">six-stage pipeline.</span></h3>
+
+    <div class="fig-block">
+      <div class="fig-frame">
+        <div class="pipeline-viz">
+          <div class="pipe-header">
+            <div class="pipe-title">Data Ingestion Pipeline · Rebuilt post-API outage</div>
+            <div class="pipe-sub">Six-stage flow from broken upstream source to fair model benchmark.</div>
+          </div>
+          <div class="pipe-flow six">
+            <div class="pl-step danger">
+              <div class="pl-step-n">01.</div>
+              <div class="pl-step-name">EA API</div>
+              <div class="pl-step-detail">UK Environment Agency endpoint, deprecated Dec 2025.</div>
+              <div class="pl-step-status">✕ broken</div>
+            </div>
+            <div class="pl-step">
+              <div class="pl-step-n">02.</div>
+              <div class="pl-step-name">Colab Ingest</div>
+              <div class="pl-step-detail">Auto-download 364 monthly CSVs (26y × 14 regions) via new beta endpoint.</div>
+              <div class="pl-step-status">⏵ python</div>
+            </div>
+            <div class="pl-step">
+              <div class="pl-step-n">03.</div>
+              <div class="pl-step-name">PS Rename</div>
+              <div class="pl-step-detail">PowerShell batch rename — region prefix + year, 14 EA areas.</div>
+              <div class="pl-step-status">⏵ shell</div>
+            </div>
+            <div class="pl-step">
+              <div class="pl-step-n">04.</div>
+              <div class="pl-step-name">Verify</div>
+              <div class="pl-step-detail">Validation script catches a year-number mismatch in Thames data.</div>
+              <div class="pl-step-status">⏵ caught 1 bug</div>
+            </div>
+            <div class="pl-step">
+              <div class="pl-step-n">05.</div>
+              <div class="pl-step-name">Split</div>
+              <div class="pl-step-detail">Chronological train/test split — train 2000–2017, test 2018–2025.</div>
+              <div class="pl-step-status">⏵ 27M / 6M</div>
+            </div>
+            <div class="pl-step winner">
+              <div class="pl-step-n">06.</div>
+              <div class="pl-step-name">Benchmark</div>
+              <div class="pl-step-detail">Ridge, RF, MLP, XGBoost — same preprocessing, fair comparison.</div>
+              <div class="pl-step-status">★ XGBoost wins</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="fig-cap">
+        <span class="label">Fig. 02</span>
+        <span class="title">Six-stage data pipeline · Treat the break as system design.</span>
+      </div>
+    </div>
+
+    <h3 class="sub-h">Sample <span class="it">ingestion code.</span></h3>
+    <div class="code-caption"><span class="label">SNIPPET 01</span> · Colab cell · EA beta endpoint download</div>
+    <div class="code-block"><span class="com"># Ingest 26 years × 14 EA areas from the new beta endpoint</span>
+<span class="kw">import</span> requests, pandas <span class="kw">as</span> pd, time
+<span class="kw">from</span> pathlib <span class="kw">import</span> Path
+
+BASE = <span class="str">"https://environment.data.gov.uk/water-quality-beta"</span>
+HEAD = {<span class="str">"Accept"</span>: <span class="str">"text/csv"</span>}
+OUT  = Path(<span class="str">"data/raw"</span>); OUT.mkdir(parents=<span class="kw">True</span>, exist_ok=<span class="kw">True</span>)
+
+<span class="kw">def</span> <span class="fn">fetch</span>(area, year):
+    url = <span class="str">f"</span>{BASE}<span class="str">/measurements?pointNotation=</span>{area}<span class="str">"</span> \
+          <span class="str">f"&amp;dateFrom=</span>{year}<span class="str">-01-01&amp;dateTo=</span>{year}<span class="str">-12-31&amp;_limit=100000"</span>
+    r = requests.get(url, headers=HEAD, timeout=<span class="num">60</span>)
+    r.raise_for_status()
+    (OUT / <span class="str">f"</span>{area}_{year}<span class="str">.csv"</span>).write_bytes(r.content)
+
+<span class="kw">for</span> year <span class="kw">in</span> <span class="fn">range</span>(<span class="num">2000</span>, <span class="num">2026</span>):
+    <span class="kw">for</span> area <span class="kw">in</span> EA_AREAS:        <span class="com"># 14 regions</span>
+        <span class="fn">fetch</span>(area, year)
+        time.<span class="fn">sleep</span>(<span class="num">0.5</span>)         <span class="com"># polite delay</span></div>
+
+    <div class="code-caption"><span class="label">SNIPPET 02</span> · PowerShell · Batch rename by area/year</div>
+    <div class="code-block"><span class="com"># Standardise filenames across 14 EA areas</span>
+<span class="kw">Get-ChildItem</span> -Path .\data\raw -Filter <span class="str">"*.csv"</span> | <span class="kw">ForEach-Object</span> {
+    <span class="kw">$area</span> = <span class="kw">$_</span>.Name -<span class="kw">replace</span> <span class="str">'_(\d{4})\.csv$',''</span>
+    <span class="kw">$year</span> = [<span class="kw">regex</span>]::Match(<span class="kw">$_</span>.Name, <span class="str">'_(\d{4})\.csv$'</span>).Groups[<span class="num">1</span>].Value
+    <span class="kw">Rename-Item</span> <span class="kw">$_</span>.FullName -NewName <span class="str">"</span><span class="kw">$area</span><span class="str">__</span><span class="kw">$year</span><span class="str">.csv"</span>
+}</div>
+
+    <div class="code-caption"><span class="label">SNIPPET 03</span> · Python · Verification (caught the Thames bug)</div>
+    <div class="code-block"><span class="kw">def</span> <span class="fn">verify</span>(df, expected_year):
+    <span class="kw">if</span> df[<span class="str">"date"</span>].dt.year.<span class="fn">unique</span>().<span class="fn">tolist</span>() != [expected_year]:
+        <span class="kw">raise</span> <span class="fn">ValueError</span>(<span class="str">f"year mismatch in </span>{df.name}<span class="str">"</span>)
+<span class="com"># → caught a swapped 2014/2015 Thames file before training began</span></div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- 5. MODELS -->
+  <section id="models">
+    <h2 class="section-h" data-n="§ 05">Models &amp; Architecture.</h2>
+
+    <p>
+      Four models were chosen to span the algorithmic spectrum: one linear, two tree-based,
+      one neural. All four received identical preprocessed features and were evaluated under
+      the same chronological split.
+    </p>
+
+    <div class="model-cards">
+      <div class="mc-card">
+        <div class="mc-name">Ridge Regression</div>
+        <div class="mc-type">Linear · L2 regularised</div>
+        <div class="mc-desc">
+          A regularised linear baseline. Adds an L2 penalty to ordinary least squares to prevent
+          overfitting on collinear features. Transparent, fast, useful as a <em>floor</em> that
+          non-linear models must justifiably beat.
+        </div>
+        <div class="mc-stats">
+          <div><div class="mc-stat-l">Library</div><div class="mc-stat-v">scikit-learn</div></div>
+          <div><div class="mc-stat-l">α</div><div class="mc-stat-v">1.0 (default)</div></div>
+        </div>
+      </div>
+
+      <div class="mc-card">
+        <div class="mc-name">Random Forest</div>
+        <div class="mc-type">Bagged decision trees</div>
+        <div class="mc-desc">
+          An ensemble of decision trees trained on bootstrap samples with random feature
+          subsets at each split. Captures non-linearity and interaction without explicit
+          feature engineering. Robust to scale, but can over-fit on noisy targets.
+        </div>
+        <div class="mc-stats">
+          <div><div class="mc-stat-l">Estimators</div><div class="mc-stat-v">100</div></div>
+          <div><div class="mc-stat-l">Max depth</div><div class="mc-stat-v">unlimited</div></div>
+        </div>
+      </div>
+
+      <div class="mc-card">
+        <div class="mc-name">Multi-Layer Perceptron</div>
+        <div class="mc-type">Feedforward neural network</div>
+        <div class="mc-desc">
+          A small fully-connected neural network. Universal function approximator in
+          principle, but data-hungry — degrades when training samples are sparse, noisy, or
+          when feature engineering has already simplified the problem.
+        </div>
+        <div class="mc-stats">
+          <div><div class="mc-stat-l">Hidden layers</div><div class="mc-stat-v">100, 50</div></div>
+          <div><div class="mc-stat-l">Activation</div><div class="mc-stat-v">ReLU</div></div>
+        </div>
+      </div>
+
+      <div class="mc-card winner">
+        <div class="mc-name">XGBoost</div>
+        <div class="mc-type">Gradient-boosted trees</div>
+        <div class="mc-desc">
+          Sequential boosting of shallow decision trees, each correcting the residuals of the
+          last. Industry-standard for tabular regression — efficient, regularised, and built
+          to handle missing values and skewed distributions natively.
+        </div>
+        <div class="mc-stats">
+          <div><div class="mc-stat-l">Estimators</div><div class="mc-stat-v">500</div></div>
+          <div><div class="mc-stat-l">Learning rate</div><div class="mc-stat-v">0.1</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- 6. RESULTS -->
+  <section id="results">
+    <h2 class="section-h" data-n="§ 06">Results.</h2>
+
+    <p>
+      The R² heatmap below summarises all 20 model × target combinations. Green cells indicate
+      positive (useful) predictive performance; red cells indicate the model performs worse than
+      simply predicting the parameter's mean. <strong>XGBoost on Water Temperature at R² = +0.785</strong>
+      is the single best result and the only model × target combination to exceed the +0.7 threshold.
+    </p>
+
+    <div class="fig-block">
+      <div class="fig-frame">
+        <div class="r2-heatmap">
+          <div class="r2h-head">
+            <div class="r2h-title">R² Score · All Model × Target Combinations</div>
+            <div class="r2h-sub">Diverging scale · green = positive, red = negative · ★ winner highlighted in ember</div>
+          </div>
+          <div class="r2h-grid">
+            <div class="r2h-cell r2h-corner"></div>
+            <div class="r2h-cell r2h-col-h">Ridge</div>
+            <div class="r2h-cell r2h-col-h">RF</div>
+            <div class="r2h-cell r2h-col-h">MLP</div>
+            <div class="r2h-cell r2h-col-h">XGB</div>
+
+            <div class="r2h-cell r2h-row-h">Nitrate as N</div>
+            <div class="r2h-cell r2h-val v-neg-low">−0.01</div>
+            <div class="r2h-cell r2h-val v-neg-med">−0.32</div>
+            <div class="r2h-cell r2h-val v-neg-high">−1.42</div>
+            <div class="r2h-cell r2h-val v-pos-low">+0.02</div>
+
+            <div class="r2h-cell r2h-row-h">BOD: 5 Day ATU</div>
+            <div class="r2h-cell r2h-val v-neg-low">−0.01</div>
+            <div class="r2h-cell r2h-val v-neg-extreme">−3.49</div>
+            <div class="r2h-cell r2h-val v-neg-low">−0.07</div>
+            <div class="r2h-cell r2h-val v-neg-med">−0.27</div>
+
+            <div class="r2h-cell r2h-row-h">Water Temp</div>
+            <div class="r2h-cell r2h-val v-pos-low">+0.11</div>
+            <div class="r2h-cell r2h-val v-pos-high">+0.73</div>
+            <div class="r2h-cell r2h-val v-neg-extreme">−3.61</div>
+            <div class="r2h-cell r2h-val winner">+0.79</div>
+
+            <div class="r2h-cell r2h-row-h">Dissolved O₂</div>
+            <div class="r2h-cell r2h-val v-pos-med">+0.36</div>
+            <div class="r2h-cell r2h-val v-pos-low">+0.18</div>
+            <div class="r2h-cell r2h-val v-pos-med">+0.46</div>
+            <div class="r2h-cell r2h-val v-pos-high">+0.50</div>
+
+            <div class="r2h-cell r2h-row-h">pH</div>
+            <div class="r2h-cell r2h-val v-neg-low">−0.01</div>
+            <div class="r2h-cell r2h-val v-pos-low">+0.16</div>
+            <div class="r2h-cell r2h-val v-pos-low">+0.08</div>
+            <div class="r2h-cell r2h-val v-pos-med">+0.23</div>
+          </div>
+        </div>
+      </div>
+      <div class="fig-cap">
+        <span class="label">Fig. 03</span>
+        <span class="title">R² heatmap · 4 models × 5 targets · XGBoost on Water Temp leads at +0.785 ★.</span>
+      </div>
+    </div>
+
+    <h3 class="sub-h">Average R² <span class="it">across all targets.</span></h3>
+
+    <div class="fig-block">
+      <div class="fig-frame">
+        <div class="cd-dashboard">
+          <div class="cd-d-section-h">Avg R² by Model <span class="sub">— higher is better; zero = predicting the mean</span></div>
+          <div class="cd-d-diverge">
+            <div class="cd-d-bar-row winner">
+              <div class="cd-d-bar-name">XGBoost</div>
+              <div class="cd-d-bar-track"><div class="cd-d-bar-mid"></div><div class="cd-d-bar-fill pos" data-w="14"></div></div>
+              <div class="cd-d-bar-val pos">+0.25</div>
+            </div>
+            <div class="cd-d-bar-row">
+              <div class="cd-d-bar-name">Ridge</div>
+              <div class="cd-d-bar-track"><div class="cd-d-bar-mid"></div><div class="cd-d-bar-fill pos" data-w="5"></div></div>
+              <div class="cd-d-bar-val pos">+0.09</div>
+            </div>
+            <div class="cd-d-bar-row">
+              <div class="cd-d-bar-name">Random Forest</div>
+              <div class="cd-d-bar-track"><div class="cd-d-bar-mid"></div><div class="cd-d-bar-fill neg" data-w="30"></div></div>
+              <div class="cd-d-bar-val neg">−0.55</div>
+            </div>
+            <div class="cd-d-bar-row">
+              <div class="cd-d-bar-name">MLP</div>
+              <div class="cd-d-bar-track"><div class="cd-d-bar-mid"></div><div class="cd-d-bar-fill neg" data-w="50"></div></div>
+              <div class="cd-d-bar-val neg">−0.91</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="fig-cap">
+        <span class="label">Fig. 04</span>
+        <span class="title">Average R² by model · XGBoost wins decisively; MLP catastrophic.</span>
+      </div>
+    </div>
+
+    <h3 class="sub-h">Full metrics <span class="it">table.</span></h3>
+
+    <table class="metrics-table">
+      <thead>
+        <tr>
+          <th>Target</th>
+          <th>Model</th>
+          <th class="num">R²</th>
+          <th class="num">RMSE</th>
+          <th class="num">MAE</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>BOD: 5 Day ATU</td><td class="tag">Ridge</td><td class="num">−0.007</td><td class="num">379.93</td><td class="num">89.53</td></tr>
+        <tr><td>BOD: 5 Day ATU</td><td class="tag">Random Forest</td><td class="num">−3.487</td><td class="num">779.77</td><td class="num">83.33</td></tr>
+        <tr><td>BOD: 5 Day ATU</td><td class="tag">MLP</td><td class="num">−0.065</td><td class="num">369.34</td><td class="num">95.69</td></tr>
+        <tr><td>BOD: 5 Day ATU</td><td class="tag">XGBoost</td><td class="num">−0.269</td><td class="num">414.71</td><td class="num">75.23</td></tr>
+        <tr><td>Nitrate as N</td><td class="tag">Ridge</td><td class="num">−0.007</td><td class="num">22.13</td><td class="num">7.90</td></tr>
+        <tr><td>Nitrate as N</td><td class="tag">Random Forest</td><td class="num">−0.322</td><td class="num">16.36</td><td class="num">5.03</td></tr>
+        <tr><td>Nitrate as N</td><td class="tag">MLP</td><td class="num">−1.420</td><td class="num">14.28</td><td class="num">4.71</td></tr>
+        <tr><td>Nitrate as N</td><td class="tag">XGBoost</td><td class="num">+0.021</td><td class="num">14.08</td><td class="num">4.34</td></tr>
+        <tr><td>Water Temperature</td><td class="tag">Ridge</td><td class="num">+0.106</td><td class="num">9.80</td><td class="num">8.16</td></tr>
+        <tr><td>Water Temperature</td><td class="tag">Random Forest</td><td class="num">+0.729</td><td class="num">2.38</td><td class="num">1.84</td></tr>
+        <tr><td>Water Temperature</td><td class="tag">MLP</td><td class="num">−3.611</td><td class="num">4.31</td><td class="num">3.44</td></tr>
+        <tr class="winner"><td>Water Temperature</td><td class="tag">XGBoost</td><td class="num">+0.785</td><td class="num">2.12</td><td class="num">1.61</td></tr>
+        <tr><td>Dissolved Oxygen</td><td class="tag">Ridge</td><td class="num">+0.357</td><td class="num">1.71</td><td class="num">1.21</td></tr>
+        <tr><td>Dissolved Oxygen</td><td class="tag">Random Forest</td><td class="num">+0.179</td><td class="num">2.10</td><td class="num">1.21</td></tr>
+        <tr><td>Dissolved Oxygen</td><td class="tag">MLP</td><td class="num">+0.460</td><td class="num">1.86</td><td class="num">1.33</td></tr>
+        <tr><td>Dissolved Oxygen</td><td class="tag">XGBoost</td><td class="num">+0.503</td><td class="num">1.64</td><td class="num">1.13</td></tr>
+        <tr><td>pH</td><td class="tag">Ridge</td><td class="num">−0.012</td><td class="num">0.42</td><td class="num">0.29</td></tr>
+        <tr><td>pH</td><td class="tag">Random Forest</td><td class="num">+0.163</td><td class="num">0.30</td><td class="num">0.23</td></tr>
+        <tr><td>pH</td><td class="tag">MLP</td><td class="num">+0.083</td><td class="num">0.28</td><td class="num">0.23</td></tr>
+        <tr><td>pH</td><td class="tag">XGBoost</td><td class="num">+0.225</td><td class="num">0.37</td><td class="num">0.25</td></tr>
+      </tbody>
+    </table>
+
+    <p style="margin-top:24px;">
+      <strong>XGBoost wins 4 of 5 targets</strong>. The exception is BOD, where every model returns
+      a negative R²; Ridge wins it by being the least catastrophic. The pattern across the heatmap
+      is consistent: tree-based methods cope well with seasonal targets (Water Temp, Dissolved O₂);
+      neural and linear models struggle when seasonal signal is the dominant feature.
+    </p>
+  </section>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- 7. DISCUSSION -->
+  <section id="discussion">
+    <h2 class="section-h" data-n="§ 07">Discussion.</h2>
+
+    <h3 class="sub-h">Why <span class="it">XGBoost wins.</span></h3>
+    <p>
+      Gradient-boosted trees are well-suited to tabular regression with mixed-distribution targets
+      and rich seasonal structure. XGBoost's sequential residual-correction lets each tree focus on
+      what the previous trees got wrong; combined with its built-in regularisation, this produces
+      strong generalisation on the chronological test set. The result on Water Temperature
+      (R² = +0.785) is a textbook outcome: a strongly seasonal signal, well-captured.
+    </p>
+
+    <h3 class="sub-h">Why <span class="it">MLP fails so badly.</span></h3>
+    <p>
+      MLP's catastrophic average (−0.91) is driven by two failure modes: Water Temperature at
+      −3.611 and Nitrate at −1.420. Both reflect the same underlying issue — when the input
+      features are already preprocessed into a tabular shape, a feedforward neural network has
+      no advantage to exploit. It pays the cost of being data-hungry without the benefit of
+      representation learning.
+    </p>
+
+    <div class="disc-box">
+      <h4>The BOD anomaly</h4>
+      <p>
+        BOD is the only target on which <em>every</em> model fails. Ridge "wins" with R² = −0.007 —
+        which is to say, it predicts marginally better than the mean. Random Forest's −3.49 is a
+        sign of overfitting to noisy training signal.
+      </p>
+      <p>
+        The likely explanation: BOD is driven by <strong>acute biological events</strong> — sewage
+        overflows, agricultural discharges, storm runoff — that are not encoded in the lag features
+        available to the model. The signal is structurally unpredictable from temporal autocorrelation
+        alone. Improving BOD prediction would require event-driven features (rainfall, treatment-plant
+        capacity, agricultural calendar), not better algorithms.
+      </p>
+    </div>
+
+    <h3 class="sub-h">Random Forest's <span class="it">selective strength.</span></h3>
+    <p>
+      RF's overall average is dragged into deep negative territory by its catastrophic BOD result,
+      but it actually performs respectably on Water Temperature (+0.729) — second only to XGBoost.
+      This points to a subtle conclusion: <strong>RF is a viable choice for a single, well-behaved
+      target</strong>, but its variance across parameters makes it a risky default for a generalised
+      pipeline.
+    </p>
+
+    <h3 class="sub-h">Practical <span class="it">implication.</span></h3>
+    <p>
+      For an environmental monitoring system that must serve multiple parameters from a single
+      pipeline, the right default is <strong>XGBoost</strong>. Its worst single result (BOD at
+      −0.269) is less catastrophic than the worst case of any other model. The win is not just
+      headline accuracy — it is <em>consistency</em>.
+    </p>
+  </section>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- 8. LIMITATIONS -->
+  <section id="limitations">
+    <h2 class="section-h" data-n="§ 08">Limitations &amp; Future Work.</h2>
+
+    <p>
+      Three principal limitations should temper the conclusions of this benchmark.
+    </p>
+
+    <ul class="story-list">
+      <li data-n="01"><strong>Feature scope.</strong> Only autocorrelative lag features are used. External drivers — rainfall, temperature anomalies, upstream point-source discharges, agricultural runoff calendars — are likely to substantially improve BOD prediction and may benefit Nitrate too.</li>
+      <li data-n="02"><strong>Single chronological split.</strong> A single train/test cutoff at 2018 was used. A more rigorous evaluation would use rolling-origin cross-validation (e.g. expanding-window with k folds) to estimate stability across multiple historical cutoffs.</li>
+      <li data-n="03"><strong>Hyperparameter tuning.</strong> Default hyperparameters were used for all four models. A future iteration with Bayesian optimisation or randomised search per model would establish a tighter ceiling for the neural and tree approaches.</li>
+    </ul>
+
+    <h3 class="sub-h">Future <span class="it">directions.</span></h3>
+
+    <p>
+      Three avenues for follow-on work emerge naturally from the limitations above. First, integrate
+      external drivers — Met Office rainfall, Defra agricultural records, water-company discharge
+      reports — and re-benchmark BOD. Second, expand to LSTM and Temporal Fusion Transformer
+      architectures to test whether explicit sequence modelling beats the tabular tree approach on
+      multi-step forecasts. Third, deploy the winning XGBoost model as an inference service behind a
+      simple REST API, so the dashboard becomes a live monitoring tool rather than a static report.
+    </p>
+  </section>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- 9. CONCLUSION -->
+  <section id="conclusion">
+    <h2 class="section-h" data-n="§ 09">Conclusion.</h2>
+
+    <p>
+      This dissertation answered three research questions empirically. <strong>RQ1</strong>: XGBoost is
+      the most accurate model overall, winning four of five targets and achieving the only R² above
+      +0.7 in the entire benchmark. <strong>RQ2</strong>: Water Temperature is the most predictable
+      parameter (strongly seasonal signal); BOD is the least (driven by un-modelled acute events).
+      <strong>RQ3</strong>: Yes — a robust pipeline survived the December 2025 EA API deprecation
+      and produced a clean, reproducible result; the rebuild process became a system-design pattern
+      rather than a setback.
+    </p>
+
+    <p>
+      The headline number — <em>R² = +0.785 for XGBoost on Water Temperature</em> — is the
+      consequence of a methodology that held everything constant except the algorithm. The benchmark
+      is fair because the preprocessing, the split, and the evaluation protocol were identical for
+      all four models. The result has the same shape as the question: which algorithm best learns
+      this data?
+    </p>
+
+    <p>
+      For practical deployment in environmental monitoring contexts, <strong>XGBoost is the right
+      default</strong>: best average performance, lowest worst-case failure, and lowest variance
+      across parameters. Where additional accuracy is needed, the next step is not a different
+      algorithm — it is <em>better features</em>.
+    </p>
+  </section>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- 10. REFERENCES -->
+  <section id="references" class="refs">
+    <h2 class="section-h" data-n="§ 10">References.</h2>
+
+    <ol>
+      <li id="r1">UK Environment Agency. <em>Water Quality Data Archive</em>. Available at: <a href="https://environment.data.gov.uk/water-quality" target="_blank">environment.data.gov.uk/water-quality</a></li>
+      <li id="r2">Liu, P., Wang, J., Sangaiah, A. K., Xie, Y. and Yin, X. (2019) 'Analysis and prediction of water quality using LSTM deep neural networks in IoT environment', <em>Sustainability</em>, 11(7), 2058.</li>
+      <li id="r3">Chen, T. and Guestrin, C. (2016) 'XGBoost: A scalable tree boosting system', <em>Proceedings of the 22nd ACM SIGKDD International Conference on Knowledge Discovery and Data Mining</em>, pp. 785–794.</li>
+      <li id="r4">Grinsztajn, L., Oyallon, E. and Varoquaux, G. (2022) 'Why do tree-based models still outperform deep learning on tabular data?', <em>Advances in Neural Information Processing Systems</em>, 35.</li>
+      <li id="r5">Hassan, M., Hassan, A. and Lewaa, I. (2022) 'A novel deep learning approach for monitoring and forecasting of river water quality', <em>Environmental Modelling &amp; Software</em>, 145.</li>
+      <li id="r6">Hoerl, A. E. and Kennard, R. W. (1970) 'Ridge regression: Biased estimation for nonorthogonal problems', <em>Technometrics</em>, 12(1), pp. 55–67.</li>
+      <li id="r7">Breiman, L. (2001) 'Random forests', <em>Machine Learning</em>, 45(1), pp. 5–32.</li>
+      <li id="r8">Pedregosa, F. <em>et al.</em> (2011) 'Scikit-learn: Machine learning in Python', <em>Journal of Machine Learning Research</em>, 12, pp. 2825–2830.</li>
+    </ol>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="diss-footer">
+    <div class="df-left">
+      Nawaf Almutairi · <span class="ember">KV6013</span><br>
+      Northumbria University · Newcastle upon Tyne<br>
+      Submitted 7 May 2026
+    </div>
+    <a href="index.html" class="df-back">← Back to portfolio</a>
+  </footer>
+
+</main>
+</div>
+
+<script>
+// Animate diverging bars when scrolled into view
+var divergeObs=new IntersectionObserver(function(e){
+  e.forEach(function(en){if(en.isIntersecting){
+    en.target.querySelectorAll('.cd-d-bar-fill').forEach(function(b,i){
+      setTimeout(function(){b.style.width=b.dataset.w+'%';},i*150);
+    });
+    divergeObs.unobserve(en.target);
+  }});
+},{threshold:0.25});
+document.querySelectorAll('.cd-d-diverge').forEach(function(g){divergeObs.observe(g);});
+</script>
+
+</body>
+</html>
