@@ -659,6 +659,261 @@ nav.scrolled{
   color:var(--ink);text-align:right;font-weight:600;
 }
 
+/* ═══════════════════════════════════════════════
+   DISSERTATION — Custom Dashboard Hero
+   ═══════════════════════════════════════════════ */
+.cd-dashboard{
+  background:var(--bg);
+  padding:40px 44px;width:100%;
+}
+@media(max-width:780px){.cd-dashboard{padding:24px;}}
+
+.cd-d-head{
+  display:flex;justify-content:space-between;align-items:flex-start;
+  padding-bottom:24px;border-bottom:1px solid var(--line);
+  margin-bottom:32px;gap:24px;flex-wrap:wrap;
+}
+.cd-d-name{
+  font-family:var(--mono);font-size:12px;
+  color:var(--ink);letter-spacing:0.04em;font-weight:600;
+  display:flex;align-items:center;gap:10px;
+}
+.cd-d-name .cd-d-icon{color:var(--ember);font-size:13px;}
+.cd-d-sub{
+  font-family:var(--serif);font-style:italic;
+  font-size:14px;color:var(--ink-3);margin-top:6px;
+}
+.cd-d-status{
+  font-family:var(--mono);font-size:10px;
+  color:var(--ember);letter-spacing:0.12em;font-weight:600;
+  display:flex;align-items:center;gap:8px;
+  text-transform:uppercase;
+}
+.cd-d-status .dot{
+  width:7px;height:7px;border-radius:50%;
+  background:var(--ember);animation:rail-pulse 2s infinite;
+}
+
+.cd-d-metrics{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:14px;
+  margin-bottom:36px;
+}
+@media(max-width:600px){.cd-d-metrics{grid-template-columns:1fr;}}
+.cd-d-metric{
+  padding:22px;background:var(--bg-2);
+  border:1px solid var(--line);position:relative;
+}
+.cd-d-metric.winner{
+  background:rgba(230,77,46,0.05);border-color:var(--ember);
+}
+.cd-d-metric.winner::after{
+  content:'★';position:absolute;top:12px;right:14px;
+  color:var(--ember);font-size:13px;
+}
+.cd-d-m-lbl{
+  font-family:var(--mono);font-size:9px;
+  color:var(--mute);letter-spacing:0.12em;text-transform:uppercase;
+  margin-bottom:10px;
+}
+.cd-d-metric.winner .cd-d-m-lbl{color:var(--ember);}
+.cd-d-m-val{
+  font-family:var(--serif);font-size:54px;
+  line-height:1;letter-spacing:-0.035em;
+  color:var(--ink);font-weight:400;
+}
+.cd-d-metric.winner .cd-d-m-val{font-style:italic;color:var(--ember);}
+.cd-d-m-unit{font-size:0.4em;color:var(--mute);font-weight:400;letter-spacing:0;font-style:normal;margin-left:2px;}
+
+.cd-d-section-h{
+  font-family:var(--mono);font-size:10px;
+  color:var(--ember);letter-spacing:0.12em;text-transform:uppercase;
+  margin-bottom:18px;font-weight:600;
+  display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;
+}
+.cd-d-section-h .sub{
+  font-family:var(--serif);font-style:italic;
+  text-transform:none;letter-spacing:0;
+  color:var(--ink-3);font-size:13px;font-weight:400;
+}
+
+.cd-d-diverge{display:flex;flex-direction:column;gap:10px;margin-bottom:32px;}
+.cd-d-bar-row{
+  display:grid;grid-template-columns:140px 1fr 70px;
+  align-items:center;gap:14px;
+}
+@media(max-width:600px){.cd-d-bar-row{grid-template-columns:90px 1fr 60px;gap:8px;}}
+.cd-d-bar-name{
+  font-family:var(--sans);font-size:13px;
+  color:var(--ink-2);font-weight:500;text-align:right;
+}
+.cd-d-bar-row.winner .cd-d-bar-name{color:var(--ember);font-weight:600;}
+.cd-d-bar-row.winner .cd-d-bar-name::after{content:' ★';color:var(--ember);font-size:10px;}
+.cd-d-bar-track{
+  position:relative;height:16px;
+  background:var(--bg-2);
+  border:1px solid var(--line);
+}
+.cd-d-bar-mid{
+  position:absolute;left:50%;top:-5px;bottom:-5px;
+  width:1px;background:var(--ink-2);
+  transform:translateX(-50%);z-index:2;
+}
+.cd-d-bar-fill{
+  position:absolute;top:0;bottom:0;width:0;
+  transition:width 1.4s cubic-bezier(0.16,1,0.3,1);
+}
+.cd-d-bar-fill.pos{left:50%;background:#7a9d6e;}
+.cd-d-bar-fill.neg{right:50%;background:#b07260;}
+.cd-d-bar-row.winner .cd-d-bar-fill.pos{background:var(--ember);}
+.cd-d-bar-val{
+  font-family:var(--mono);font-size:13px;
+  font-weight:600;text-align:left;
+}
+.cd-d-bar-val.pos{color:#5a7d52;}
+.cd-d-bar-val.neg{color:#925248;}
+.cd-d-bar-row.winner .cd-d-bar-val.pos{color:var(--ember);}
+
+.cd-d-callout{
+  display:grid;grid-template-columns:auto 1fr;gap:16px;
+  padding:20px 22px;
+  background:rgba(230,77,46,0.04);
+  border:1px solid var(--ember);border-left-width:3px;
+  align-items:center;
+}
+.cd-d-callout-mark{
+  font-family:var(--serif);font-size:22px;
+  color:var(--ember);line-height:1;
+}
+.cd-d-callout-text{
+  font-family:var(--serif);font-size:15px;
+  color:var(--ink-2);line-height:1.55;
+}
+.cd-d-callout-text strong{color:var(--ink);font-weight:600;}
+.cd-d-callout-text em{color:var(--ember);font-style:italic;}
+
+/* ═══════════════════════════════════════════════
+   DISSERTATION — R² Heatmap Matrix
+   ═══════════════════════════════════════════════ */
+.r2-heatmap{
+  background:var(--bg);
+  padding:24px;width:100%;
+}
+.r2h-head{
+  margin-bottom:18px;padding-bottom:14px;
+  border-bottom:1px solid var(--line);
+}
+.r2h-title{
+  font-family:var(--mono);font-size:10px;
+  color:var(--ember);letter-spacing:0.12em;text-transform:uppercase;
+  margin-bottom:6px;font-weight:600;
+}
+.r2h-sub{
+  font-family:var(--serif);font-style:italic;
+  font-size:13px;color:var(--ink-3);line-height:1.4;
+}
+.r2h-grid{
+  display:grid;grid-template-columns:auto repeat(4,1fr);gap:3px;
+}
+.r2h-cell{
+  padding:14px 6px;text-align:center;
+  font-family:var(--mono);font-size:12px;
+  display:flex;align-items:center;justify-content:center;
+  min-height:44px;position:relative;
+}
+.r2h-corner{background:transparent;}
+.r2h-col-h{
+  background:var(--ink);color:var(--bg);
+  font-family:var(--mono);font-size:11px;font-weight:600;
+  letter-spacing:0.06em;text-transform:uppercase;
+  padding:12px 6px;
+}
+.r2h-row-h{
+  background:var(--ink);color:var(--bg);
+  font-family:var(--sans);font-size:12px;font-weight:600;
+  text-align:left;padding:0 14px;
+  justify-content:flex-start;letter-spacing:-0.005em;
+}
+.r2h-val{font-weight:600;font-size:13px;}
+.r2h-val.v-neg-extreme{background:#8e3a32;color:#fff;}
+.r2h-val.v-neg-high{background:#b25a4f;color:#fff;}
+.r2h-val.v-neg-med{background:#d39288;color:var(--ink);}
+.r2h-val.v-neg-low{background:#e8c4be;color:var(--ink);}
+.r2h-val.v-zero{background:#ede1cf;color:var(--ink-3);}
+.r2h-val.v-pos-low{background:#c8d8c0;color:var(--ink);}
+.r2h-val.v-pos-med{background:#9bba8e;color:var(--ink);}
+.r2h-val.v-pos-high{background:#6f9961;color:#fff;}
+.r2h-val.v-pos-extreme{background:#4e7d44;color:#fff;}
+.r2h-val.winner{
+  background:var(--ember);color:var(--bg);
+  outline:3px solid var(--ember);outline-offset:-1px;
+  z-index:1;
+}
+
+/* ═══════════════════════════════════════════════
+   DISSERTATION — Per-Target Winners
+   ═══════════════════════════════════════════════ */
+.win-board{
+  background:var(--bg);
+  padding:24px;width:100%;
+}
+.wb-head{
+  margin-bottom:18px;padding-bottom:14px;
+  border-bottom:1px solid var(--line);
+}
+.wb-title{
+  font-family:var(--mono);font-size:10px;
+  color:var(--ember);letter-spacing:0.12em;text-transform:uppercase;
+  margin-bottom:6px;font-weight:600;
+}
+.wb-sub{
+  font-family:var(--serif);font-style:italic;
+  font-size:13px;color:var(--ink-3);line-height:1.4;
+}
+.wb-rows{display:flex;flex-direction:column;}
+.wb-row{
+  display:grid;grid-template-columns:1fr 100px 80px;
+  align-items:center;gap:14px;
+  padding:14px 0;
+  border-bottom:1px solid var(--line);
+}
+.wb-row:last-child{border-bottom:none;}
+.wb-row.winner{
+  border-bottom-color:var(--ember);
+  background:rgba(230,77,46,0.04);
+  padding:14px;margin:0 -14px;
+}
+.wb-row.worst .wb-target{color:var(--ink-3);font-style:italic;}
+.wb-target{
+  font-family:var(--serif);font-size:18px;
+  color:var(--ink);font-weight:500;letter-spacing:-0.012em;
+}
+.wb-row.winner .wb-target{color:var(--ember);font-style:italic;}
+.wb-model{
+  font-family:var(--mono);font-size:11px;
+  color:var(--ink-2);font-weight:600;letter-spacing:0.04em;
+  text-transform:uppercase;text-align:center;
+}
+.wb-row.winner .wb-model{color:var(--ember);}
+.wb-row.worst .wb-model{color:var(--mute);font-weight:500;}
+.wb-r2{
+  font-family:var(--mono);font-size:13px;
+  font-weight:700;text-align:right;
+}
+.wb-r2.pos{color:#5a7d52;}
+.wb-r2.neg{color:#925248;}
+.wb-row.winner .wb-r2.pos{color:var(--ember);font-size:14px;}
+.wb-summary{
+  margin-top:18px;padding-top:18px;
+  border-top:1px solid var(--line);
+  font-family:var(--serif);font-size:14px;font-style:italic;
+  color:var(--ink-2);line-height:1.55;
+}
+.wb-summary strong{
+  font-family:var(--mono);font-style:normal;
+  color:var(--ember);font-size:11px;font-weight:600;
+  letter-spacing:0.06em;
+}
+
 /* CASE STORY — Story slabs */
 .case-story{padding:96px 56px 0;}
 .story-slab{
@@ -1018,6 +1273,343 @@ nav.scrolled{
 .iter-param:last-child{border-bottom:none;}
 .iter-param .k{color:var(--mute);letter-spacing:0.06em;}
 .iter-param .v{color:var(--ink);font-weight:600;}
+
+/* ═══════════════════════════════════════════════
+   PIPELINE — Horizontal flow (dissertation + face rec)
+   ═══════════════════════════════════════════════ */
+.pipeline-viz{
+  background:var(--bg);padding:32px 28px;width:100%;
+}
+.pipe-header{margin-bottom:24px;padding-bottom:14px;border-bottom:1px solid var(--line);}
+.pipe-title{
+  font-family:var(--mono);font-size:10px;color:var(--ember);
+  letter-spacing:0.12em;text-transform:uppercase;font-weight:600;margin-bottom:6px;
+}
+.pipe-sub{font-family:var(--serif);font-style:italic;font-size:13px;color:var(--ink-3);line-height:1.4;}
+.pipe-flow{
+  display:grid;gap:28px 22px;position:relative;align-items:stretch;
+}
+.pipe-flow.six{grid-template-columns:repeat(6,1fr);}
+.pipe-flow.five{grid-template-columns:repeat(5,1fr);}
+.pipe-flow.four{grid-template-columns:repeat(4,1fr);}
+.pipe-flow.three{grid-template-columns:repeat(3,1fr);}
+.pl-step{
+  background:var(--bg-2);border:1px solid var(--line);
+  padding:14px 12px;
+  display:flex;flex-direction:column;gap:8px;
+  position:relative;min-height:140px;
+}
+.pl-step.danger{border-color:#b07260;background:rgba(176,114,96,0.06);}
+.pl-step.winner{border-color:var(--ember);background:rgba(230,77,46,0.05);}
+.pl-step-n{
+  font-family:var(--mono);font-size:9px;color:var(--mute);
+  letter-spacing:0.12em;font-weight:600;
+}
+.pl-step.danger .pl-step-n{color:#925248;}
+.pl-step.winner .pl-step-n{color:var(--ember);}
+.pl-step-name{
+  font-family:var(--serif);font-size:16px;color:var(--ink);
+  font-weight:500;letter-spacing:-0.012em;line-height:1.1;
+}
+.pl-step.winner .pl-step-name{color:var(--ember);font-style:italic;}
+.pl-step-detail{
+  font-family:var(--sans);font-size:11px;color:var(--ink-3);
+  line-height:1.45;flex:1;
+}
+.pl-step-status{
+  font-family:var(--mono);font-size:10px;
+  font-weight:600;letter-spacing:0.04em;color:var(--mute);
+}
+.pl-step.danger .pl-step-status{color:#925248;}
+.pl-step.winner .pl-step-status{color:var(--ember);}
+.pl-step:not(:last-child)::after{
+  content:'→';position:absolute;right:-16px;top:50%;
+  transform:translateY(-50%);
+  color:var(--ember);font-family:var(--serif);font-size:15px;
+  line-height:1;font-weight:400;
+}
+@media(max-width:780px){
+  .pipe-flow.six,.pipe-flow.five,.pipe-flow.four,.pipe-flow.three{grid-template-columns:1fr;}
+  .pl-step{min-height:auto;}
+  .pl-step:not(:last-child)::after{
+    content:'↓';right:auto;left:50%;top:auto;bottom:-20px;
+    transform:translateX(-50%);font-size:16px;
+  }
+}
+
+/* ═══════════════════════════════════════════════
+   FACE RECOGNITION — Model comparison grid (2×2)
+   ═══════════════════════════════════════════════ */
+.model-quad{
+  background:var(--bg);padding:32px;width:100%;
+}
+.mq-head{margin-bottom:22px;padding-bottom:14px;border-bottom:1px solid var(--line);}
+.mq-title{
+  font-family:var(--mono);font-size:10px;color:var(--ember);
+  letter-spacing:0.12em;text-transform:uppercase;font-weight:600;margin-bottom:6px;
+}
+.mq-sub{font-family:var(--serif);font-style:italic;font-size:13px;color:var(--ink-3);}
+.mq-grid{
+  display:grid;grid-template-columns:1fr 1fr;gap:14px;
+}
+@media(max-width:780px){.mq-grid{grid-template-columns:1fr;}}
+.mq-card{
+  background:var(--bg-2);border:1px solid var(--line);
+  padding:22px;cursor:pointer;
+  transition:all 0.25s;position:relative;
+}
+.mq-card:hover{border-color:var(--ember);transform:translateY(-2px);}
+.mq-card.active{border-color:var(--ember);background:rgba(230,77,46,0.06);}
+.mq-card.winner{border-color:var(--ember);}
+.mq-card.winner::after{
+  content:'★';position:absolute;top:10px;right:14px;
+  color:var(--ember);font-size:13px;
+}
+.mq-card-h{
+  display:flex;justify-content:space-between;align-items:baseline;
+  margin-bottom:12px;flex-wrap:wrap;gap:8px;
+}
+.mq-card-name{
+  font-family:var(--serif);font-size:20px;color:var(--ink);
+  letter-spacing:-0.018em;font-weight:500;
+}
+.mq-card.winner .mq-card-name{color:var(--ember);font-style:italic;}
+.mq-card-mode{
+  font-family:var(--mono);font-size:9px;color:var(--mute);
+  letter-spacing:0.12em;text-transform:uppercase;
+  padding:3px 7px;background:var(--bg);border:1px solid var(--line);
+}
+.mq-card.winner .mq-card-mode{border-color:var(--ember);color:var(--ember);}
+.mq-metrics-row{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:8px;
+  margin-bottom:14px;
+}
+.mq-mcell{text-align:left;}
+.mq-mlabel{
+  font-family:var(--mono);font-size:8px;color:var(--mute);
+  letter-spacing:0.12em;text-transform:uppercase;margin-bottom:4px;
+}
+.mq-mval{
+  font-family:var(--serif);font-size:24px;
+  color:var(--ink);line-height:1;letter-spacing:-0.02em;font-weight:400;
+}
+.mq-card.winner .mq-mval{color:var(--ember);}
+.mq-bar{
+  height:5px;background:var(--bg);border:1px solid var(--line);
+  overflow:hidden;margin-top:14px;
+}
+.mq-bar-fill{
+  height:100%;background:var(--ink-2);width:0;
+  transition:width 1.4s cubic-bezier(0.16,1,0.3,1);
+}
+.mq-card.winner .mq-bar-fill{background:var(--ember);}
+
+.mq-detail{
+  margin-top:18px;
+  background:var(--bg);border:1px dashed var(--line-2);
+  padding:20px 22px;
+  font-family:var(--serif);font-size:14px;font-style:italic;
+  color:var(--ink-2);line-height:1.55;
+}
+.mq-detail strong{
+  font-family:var(--mono);font-style:normal;color:var(--ember);
+  font-size:11px;font-weight:600;letter-spacing:0.06em;
+}
+.mq-detail em{color:var(--ember);font-style:italic;}
+
+/* ═══════════════════════════════════════════════
+   NVIDIA — Strategy Map (Balanced Scorecard)
+   ═══════════════════════════════════════════════ */
+.strategy-map{background:var(--bg);padding:32px 28px;width:100%;}
+.sm-head{margin-bottom:24px;padding-bottom:14px;border-bottom:1px solid var(--line);}
+.sm-title{
+  font-family:var(--mono);font-size:10px;color:var(--ember);
+  letter-spacing:0.12em;text-transform:uppercase;font-weight:600;margin-bottom:6px;
+}
+.sm-sub{font-family:var(--serif);font-style:italic;font-size:13px;color:var(--ink-3);line-height:1.4;}
+.sm-flow{display:grid;grid-template-columns:repeat(4,1fr);gap:24px 8px;position:relative;}
+@media(max-width:780px){.sm-flow{grid-template-columns:1fr;}}
+.sm-card{
+  padding:18px 14px;border:1px solid var(--line);
+  background:var(--bg-2);min-height:200px;
+  display:flex;flex-direction:column;gap:12px;position:relative;
+}
+.sm-card.financial{border-color:var(--ember);background:rgba(230,77,46,0.05);}
+.sm-tier{
+  font-family:var(--mono);font-size:9px;letter-spacing:0.14em;
+  text-transform:uppercase;font-weight:600;color:var(--mute);
+}
+.sm-card.financial .sm-tier{color:var(--ember);}
+.sm-name{
+  font-family:var(--serif);font-size:22px;color:var(--ink);
+  font-weight:500;letter-spacing:-0.018em;line-height:1.05;
+}
+.sm-card.financial .sm-name{color:var(--ember);font-style:italic;}
+.sm-list{list-style:none;padding:0;display:flex;flex-direction:column;gap:6px;flex:1;}
+.sm-list li{
+  font-family:var(--sans);font-size:12px;color:var(--ink-3);
+  padding-left:12px;position:relative;line-height:1.45;
+}
+.sm-list li::before{
+  content:'—';position:absolute;left:0;color:var(--ember);
+}
+.sm-card:not(:last-child)::after{
+  content:'→';position:absolute;right:-12px;top:50%;
+  transform:translate(50%,-50%);color:var(--ember);
+  font-family:var(--serif);font-size:20px;font-weight:300;line-height:1;
+  z-index:2;background:var(--bg);padding:0 4px;
+}
+@media(max-width:780px){
+  .sm-card{min-height:auto;}
+  .sm-card:not(:last-child)::after{
+    content:'↓';right:auto;left:50%;top:auto;bottom:-16px;
+    transform:translate(-50%,50%);
+  }
+}
+
+/* ═══════════════════════════════════════════════
+   NVIDIA — Causal Loop Diagram (SVG)
+   ═══════════════════════════════════════════════ */
+.causal-loop{
+  background:var(--bg);padding:32px 28px;width:100%;
+}
+.cl-head{margin-bottom:18px;padding-bottom:14px;border-bottom:1px solid var(--line);}
+.cl-title{
+  font-family:var(--mono);font-size:10px;color:var(--ember);
+  letter-spacing:0.12em;text-transform:uppercase;font-weight:600;margin-bottom:6px;
+}
+.cl-sub{font-family:var(--serif);font-style:italic;font-size:13px;color:var(--ink-3);line-height:1.4;}
+.cl-svg-wrap{
+  width:100%;background:var(--bg-2);border:1px solid var(--line);
+  padding:24px;margin-bottom:18px;
+}
+.cl-svg-wrap svg{width:100%;height:auto;max-height:380px;display:block;}
+.cl-legend{
+  display:grid;grid-template-columns:1fr 1fr;gap:10px;
+}
+@media(max-width:780px){.cl-legend{grid-template-columns:1fr;}}
+.cl-loop{
+  padding:11px 14px;background:var(--bg-2);border:1px solid var(--line);
+  font-family:var(--sans);font-size:12px;color:var(--ink-2);line-height:1.5;
+}
+.cl-loop strong{
+  font-family:var(--mono);font-size:10px;color:var(--ember);
+  letter-spacing:0.06em;font-weight:600;
+}
+
+/* ═══════════════════════════════════════════════
+   NVIDIA — Rich Picture (network diagram)
+   ═══════════════════════════════════════════════ */
+.rich-pic{
+  background:var(--bg);padding:32px 28px;width:100%;
+}
+.rp-head{margin-bottom:18px;padding-bottom:14px;border-bottom:1px solid var(--line);}
+.rp-title{
+  font-family:var(--mono);font-size:10px;color:var(--ember);
+  letter-spacing:0.12em;text-transform:uppercase;font-weight:600;margin-bottom:6px;
+}
+.rp-sub{font-family:var(--serif);font-style:italic;font-size:13px;color:var(--ink-3);line-height:1.4;}
+.rp-svg-wrap{
+  width:100%;background:var(--bg-2);border:1px solid var(--line);
+  padding:16px;
+}
+.rp-svg-wrap svg{width:100%;height:auto;display:block;max-height:520px;}
+.rp-actors{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:18px;
+}
+@media(max-width:780px){.rp-actors{grid-template-columns:1fr;}}
+.rp-actor{
+  padding:12px 14px;background:var(--bg-2);border:1px solid var(--line);
+  font-family:var(--sans);font-size:12px;color:var(--ink-2);line-height:1.5;
+}
+.rp-actor strong{
+  font-family:var(--mono);font-size:10px;color:var(--ember);
+  letter-spacing:0.08em;text-transform:uppercase;font-weight:600;display:block;margin-bottom:4px;
+}
+
+/* ═══════════════════════════════════════════════
+   NVIDIA — Hand-built Dashboard (replaces dashboard.png)
+   ═══════════════════════════════════════════════ */
+.nv-dash{background:var(--bg);padding:28px;width:100%;}
+.nv-dash-head{
+  display:flex;justify-content:space-between;align-items:flex-start;
+  padding-bottom:18px;border-bottom:1px solid var(--line);
+  margin-bottom:20px;gap:18px;flex-wrap:wrap;
+}
+.nv-dash-name{
+  font-family:var(--mono);font-size:12px;color:var(--ink);
+  letter-spacing:0.04em;font-weight:600;
+  display:flex;align-items:center;gap:10px;
+}
+.nv-dash-icon{color:var(--ember);font-size:13px;}
+.nv-dash-sub{font-family:var(--serif);font-style:italic;font-size:13px;color:var(--ink-3);margin-top:5px;}
+.nv-dash-filters{
+  display:flex;gap:6px;flex-wrap:wrap;
+  font-family:var(--mono);font-size:10px;letter-spacing:0.06em;
+}
+.nv-dash-filter{
+  padding:5px 9px;background:var(--bg-2);border:1px solid var(--line);
+  color:var(--ink-2);font-weight:500;
+}
+
+/* KPI cards row */
+.nv-kpis{
+  display:grid;grid-template-columns:repeat(6,1fr);gap:6px;
+  margin-bottom:18px;
+}
+@media(max-width:780px){.nv-kpis{grid-template-columns:repeat(2,1fr);}}
+.nv-kpi{
+  background:var(--bg-2);border:1px solid var(--line);
+  padding:14px 12px;cursor:pointer;
+  transition:all 0.25s;position:relative;
+}
+.nv-kpi:hover{border-color:var(--ember);transform:translateY(-2px);}
+.nv-kpi.active{border-color:var(--ember);background:rgba(230,77,46,0.08);}
+.nv-kpi-n{
+  font-family:var(--mono);font-size:8px;color:var(--mute);
+  letter-spacing:0.1em;font-weight:600;position:absolute;top:6px;right:8px;
+}
+.nv-kpi.active .nv-kpi-n{color:var(--ember);}
+.nv-kpi-label{
+  font-family:var(--mono);font-size:8px;color:var(--mute);
+  letter-spacing:0.1em;text-transform:uppercase;margin-bottom:6px;line-height:1.2;
+}
+.nv-kpi-val{
+  font-family:var(--serif);font-size:26px;line-height:1;
+  color:var(--ink);font-weight:400;letter-spacing:-0.022em;
+}
+.nv-kpi.active .nv-kpi-val{color:var(--ember);font-style:italic;}
+.nv-kpi-val .small{font-size:0.55em;color:var(--mute);font-weight:400;letter-spacing:0;}
+
+/* Charts grid */
+.nv-charts{
+  display:grid;grid-template-columns:1fr 1.4fr 1fr;gap:10px;
+  margin-bottom:10px;
+}
+@media(max-width:780px){.nv-charts{grid-template-columns:1fr;}}
+.nv-chart{
+  background:var(--bg-2);border:1px solid var(--line);
+  padding:14px;display:flex;flex-direction:column;
+}
+.nv-chart-title{
+  font-family:var(--mono);font-size:9px;color:var(--ink-2);
+  letter-spacing:0.08em;text-transform:uppercase;font-weight:600;
+  margin-bottom:12px;
+}
+.nv-chart svg{width:100%;height:auto;max-height:140px;display:block;}
+.nv-table{width:100%;font-family:var(--mono);font-size:11px;border-collapse:collapse;}
+.nv-table th{
+  text-align:left;padding:7px 4px;border-bottom:1px solid var(--line);
+  font-weight:600;color:var(--ink);letter-spacing:0.04em;
+}
+.nv-table td{padding:6px 4px;border-bottom:1px solid var(--line);color:var(--ink-2);}
+.nv-table tr:last-child td{border-bottom:none;font-weight:600;color:var(--ink);}
+.nv-table td.num{text-align:right;}
+
+.nv-prod-chart{
+  background:var(--bg-2);border:1px solid var(--line);padding:14px;
+}
+.nv-prod-chart svg{width:100%;height:140px;display:block;}
 
 /* TAKEAWAY */
 .takeaway{
@@ -1431,7 +2023,7 @@ footer{
     <div class="imp-cell rv rv-d2">
       <div class="imp-fn">03 / Face Classifier</div>
       <div class="imp-num"><span class="counter" data-target="86">0</span>.<span class="counter" data-target="7">0</span><span class="ac">%</span></div>
-      <div class="imp-label">DenseNet test accuracy, four iterations.</div>
+      <div class="imp-label">DenseNet test accuracy, real-time inference.</div>
     </div>
     <div class="imp-cell rv rv-d3">
       <div class="imp-fn">Cumulative</div>
@@ -1487,14 +2079,86 @@ footer{
       </div>
     </div>
 
-    <!-- HERO — Real BI dashboard -->
+    <!-- HERO — Hand-built dashboard recreation -->
     <div class="case-hero">
       <div class="case-hero-cap">
-        <span><span class="figure">Fig. 01</span> — WQ_ML_Benchmark_Dashboard.pbix · Summary view</span>
+        <span><span class="figure">Fig. 01</span> — WQ_ML_Benchmark_Dashboard · Hand-rendered summary</span>
         <span>2026 · Live artefact</span>
       </div>
       <div class="case-hero-frame">
-        <img src="assets/projects/dissertation/dashboard-summary.webp" alt="Water Quality ML model Benchmark dashboard — 27M training rows, 6M test rows, 0.79 best R², R² by Target and Model chart, Avg R² by Model breakdown">
+
+        <div class="cd-dashboard">
+          <!-- Dashboard header -->
+          <div class="cd-d-head">
+            <div>
+              <div class="cd-d-name"><span class="cd-d-icon">⏵</span> WQ_ML_BENCHMARK.pbix</div>
+              <div class="cd-d-sub">Water Quality ML model Benchmark · Final dissertation deliverable</div>
+            </div>
+            <div class="cd-d-status"><span class="dot"></span>Live · 2026</div>
+          </div>
+
+          <!-- Big metrics -->
+          <div class="cd-d-metrics">
+            <div class="cd-d-metric">
+              <div class="cd-d-m-lbl">Train Rows</div>
+              <div class="cd-d-m-val">27<span class="cd-d-m-unit">M</span></div>
+            </div>
+            <div class="cd-d-metric">
+              <div class="cd-d-m-lbl">Test Rows</div>
+              <div class="cd-d-m-val">6<span class="cd-d-m-unit">M</span></div>
+            </div>
+            <div class="cd-d-metric winner">
+              <div class="cd-d-m-lbl">Best R² · XGBoost × Water Temp</div>
+              <div class="cd-d-m-val">0.79</div>
+            </div>
+          </div>
+
+          <!-- Avg R² diverging chart -->
+          <div class="cd-d-section-h">Avg R² by Model <span class="sub">— higher is better; zero = predicting the mean</span></div>
+          <div class="cd-d-diverge">
+            <div class="cd-d-bar-row winner">
+              <div class="cd-d-bar-name">XGBoost</div>
+              <div class="cd-d-bar-track">
+                <div class="cd-d-bar-mid"></div>
+                <div class="cd-d-bar-fill pos" data-w="14"></div>
+              </div>
+              <div class="cd-d-bar-val pos">+0.25</div>
+            </div>
+            <div class="cd-d-bar-row">
+              <div class="cd-d-bar-name">Ridge</div>
+              <div class="cd-d-bar-track">
+                <div class="cd-d-bar-mid"></div>
+                <div class="cd-d-bar-fill pos" data-w="5"></div>
+              </div>
+              <div class="cd-d-bar-val pos">+0.09</div>
+            </div>
+            <div class="cd-d-bar-row">
+              <div class="cd-d-bar-name">Random Forest</div>
+              <div class="cd-d-bar-track">
+                <div class="cd-d-bar-mid"></div>
+                <div class="cd-d-bar-fill neg" data-w="30"></div>
+              </div>
+              <div class="cd-d-bar-val neg">−0.55</div>
+            </div>
+            <div class="cd-d-bar-row">
+              <div class="cd-d-bar-name">MLP</div>
+              <div class="cd-d-bar-track">
+                <div class="cd-d-bar-mid"></div>
+                <div class="cd-d-bar-fill neg" data-w="50"></div>
+              </div>
+              <div class="cd-d-bar-val neg">−0.91</div>
+            </div>
+          </div>
+
+          <!-- Key finding callout -->
+          <div class="cd-d-callout">
+            <div class="cd-d-callout-mark">★</div>
+            <div class="cd-d-callout-text">
+              <strong>Key finding:</strong> XGBoost wins decisively on Water Temperature at <em>R² = +0.785</em> — the only model × target pairing to clear the +0.7 threshold across all 20 combinations tested.
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
 
@@ -1520,11 +2184,56 @@ footer{
         </div>
         <div class="fig">
           <div class="fig-inner">
-            <img src="assets/projects/dissertation/r2-heatmap.png" alt="R² Score heatmap matrix — all 20 model × target combinations. XGBoost on Water Temp leads at +0.785 (highlighted); MLP on Water Temp worst at −3.611.">
+
+            <div class="pipeline-viz">
+              <div class="pipe-header">
+                <div class="pipe-title">Data Ingestion Pipeline · Rebuilt post-API outage</div>
+                <div class="pipe-sub">Six-stage flow from broken upstream source to fair model benchmark.</div>
+              </div>
+              <div class="pipe-flow six">
+                <div class="pl-step danger">
+                  <div class="pl-step-n">01.</div>
+                  <div class="pl-step-name">EA API</div>
+                  <div class="pl-step-detail">UK Environment Agency endpoint, deprecated Dec 2025.</div>
+                  <div class="pl-step-status">✕ broken</div>
+                </div>
+                <div class="pl-step">
+                  <div class="pl-step-n">02.</div>
+                  <div class="pl-step-name">Colab Ingest</div>
+                  <div class="pl-step-detail">Auto-download 364 monthly CSVs (26y × 14 regions) via new beta endpoint.</div>
+                  <div class="pl-step-status">⏵ python</div>
+                </div>
+                <div class="pl-step">
+                  <div class="pl-step-n">03.</div>
+                  <div class="pl-step-name">PS Rename</div>
+                  <div class="pl-step-detail">PowerShell batch rename — region prefix + year, 14 EA areas.</div>
+                  <div class="pl-step-status">⏵ shell</div>
+                </div>
+                <div class="pl-step">
+                  <div class="pl-step-n">04.</div>
+                  <div class="pl-step-name">Verify</div>
+                  <div class="pl-step-detail">Validation script catches a year-number mismatch in Thames data.</div>
+                  <div class="pl-step-status">⏵ caught 1 bug</div>
+                </div>
+                <div class="pl-step">
+                  <div class="pl-step-n">05.</div>
+                  <div class="pl-step-name">Split</div>
+                  <div class="pl-step-detail">Chronological train/test split — train 2000–2017, test 2018–2025.</div>
+                  <div class="pl-step-status">⏵ 27M / 6M</div>
+                </div>
+                <div class="pl-step winner">
+                  <div class="pl-step-n">06.</div>
+                  <div class="pl-step-name">Benchmark</div>
+                  <div class="pl-step-detail">Ridge, RF, MLP, XGBoost — same preprocessing, fair comparison.</div>
+                  <div class="pl-step-status">★ XGBoost wins</div>
+                </div>
+              </div>
+            </div>
+
           </div>
           <div class="fig-cap">
             <span class="label">Fig. 02</span>
-            <span class="title">R² heatmap · 4 models × 5 targets · XGBoost on Water Temp leads at +0.785.</span>
+            <span class="title">Pipeline · The six-stage flow rebuilt after the December 2025 API deprecation.</span>
           </div>
         </div>
       </div>
@@ -1550,11 +2259,56 @@ footer{
         </div>
         <div class="fig">
           <div class="fig-inner">
-            <img src="assets/projects/dissertation/dashboard-detail.webp" alt="Water Quality ML model Benchmark dashboard — detailed view showing RMSE by model bar chart, MAE by Model bar chart, and a colour-coded comparison table with R², RMSE, and MAE values for all four models across all five targets.">
+
+            <div class="r2-heatmap">
+              <div class="r2h-head">
+                <div class="r2h-title">R² Score · All Model × Target Combinations</div>
+                <div class="r2h-sub">Diverging scale · green = positive, red = negative · ★ winner highlighted in ember</div>
+              </div>
+
+              <div class="r2h-grid">
+                <div class="r2h-cell r2h-corner"></div>
+                <div class="r2h-cell r2h-col-h">Ridge</div>
+                <div class="r2h-cell r2h-col-h">RF</div>
+                <div class="r2h-cell r2h-col-h">MLP</div>
+                <div class="r2h-cell r2h-col-h">XGB</div>
+
+                <div class="r2h-cell r2h-row-h">Nitrate as N</div>
+                <div class="r2h-cell r2h-val v-neg-low">−0.01</div>
+                <div class="r2h-cell r2h-val v-neg-med">−0.32</div>
+                <div class="r2h-cell r2h-val v-neg-high">−1.42</div>
+                <div class="r2h-cell r2h-val v-pos-low">+0.02</div>
+
+                <div class="r2h-cell r2h-row-h">BOD: 5 Day ATU</div>
+                <div class="r2h-cell r2h-val v-neg-low">−0.01</div>
+                <div class="r2h-cell r2h-val v-neg-extreme">−3.49</div>
+                <div class="r2h-cell r2h-val v-neg-low">−0.07</div>
+                <div class="r2h-cell r2h-val v-neg-med">−0.27</div>
+
+                <div class="r2h-cell r2h-row-h">Water Temp</div>
+                <div class="r2h-cell r2h-val v-pos-low">+0.11</div>
+                <div class="r2h-cell r2h-val v-pos-high">+0.73</div>
+                <div class="r2h-cell r2h-val v-neg-extreme">−3.61</div>
+                <div class="r2h-cell r2h-val winner">+0.79</div>
+
+                <div class="r2h-cell r2h-row-h">Dissolved O₂</div>
+                <div class="r2h-cell r2h-val v-pos-med">+0.36</div>
+                <div class="r2h-cell r2h-val v-pos-low">+0.18</div>
+                <div class="r2h-cell r2h-val v-pos-med">+0.46</div>
+                <div class="r2h-cell r2h-val v-pos-high">+0.50</div>
+
+                <div class="r2h-cell r2h-row-h">pH</div>
+                <div class="r2h-cell r2h-val v-neg-low">−0.01</div>
+                <div class="r2h-cell r2h-val v-pos-low">+0.16</div>
+                <div class="r2h-cell r2h-val v-pos-low">+0.08</div>
+                <div class="r2h-cell r2h-val v-pos-med">+0.23</div>
+              </div>
+            </div>
+
           </div>
           <div class="fig-cap">
             <span class="label">Fig. 03</span>
-            <span class="title">RMSE &amp; MAE benchmark · Detailed numeric comparison across all 20 model-target pairs.</span>
+            <span class="title">R² heatmap · 4 models × 5 targets · XGBoost on Water Temp leads at +0.785 ★.</span>
           </div>
         </div>
       </div>
@@ -1566,10 +2320,10 @@ footer{
           <div class="outcome-instr">↓ Select a model to inspect its per-parameter R²</div>
         </div>
         <div class="model-switcher" id="wqMS">
-          <button class="ms-btn" data-model="ridge"><span>Ridge</span><span class="ms-r2">0.094</span></button>
-          <button class="ms-btn" data-model="rf"><span>Random Forest</span><span class="ms-r2">0.211</span></button>
-          <button class="ms-btn" data-model="mlp"><span>MLP</span><span class="ms-r2">0.156</span></button>
-          <button class="ms-btn winner active" data-model="xgb"><span>XGBoost</span><span class="ms-r2">0.253</span></button>
+          <button class="ms-btn" data-model="ridge"><span>Ridge</span><span class="ms-r2">+0.09</span></button>
+          <button class="ms-btn" data-model="rf"><span>Random Forest</span><span class="ms-r2">−0.55</span></button>
+          <button class="ms-btn" data-model="mlp"><span>MLP</span><span class="ms-r2">−0.91</span></button>
+          <button class="ms-btn winner active" data-model="xgb"><span>XGBoost</span><span class="ms-r2">+0.25</span></button>
         </div>
         <div class="model-view" id="wqMV"></div>
       </div>
@@ -1625,14 +2379,169 @@ footer{
       </div>
     </div>
 
-    <!-- HERO — Real Power BI dashboard -->
+    <!-- HERO — Hand-built Power BI dashboard recreation -->
     <div class="case-hero">
       <div class="case-hero-cap">
-        <span><span class="figure">Fig. 01</span> — Power BI dashboard · Production-ready artefact</span>
-        <span>2025</span>
+        <span><span class="figure">Fig. 01</span> — NVIDIA_Supply_Chain.pbix · Hand-rendered</span>
+        <span>2025 · Live artefact</span>
       </div>
       <div class="case-hero-frame">
-        <img src="assets/projects/nvidia/dashboard.png" alt="NVIDIA AI-GPU Supply Chain Power BI Dashboard">
+
+        <div class="nv-dash">
+          <div class="nv-dash-head">
+            <div>
+              <div class="nv-dash-name"><span class="nv-dash-icon">⏵</span> NVIDIA_SUPPLY_CHAIN.pbix</div>
+              <div class="nv-dash-sub">AI-GPU Supply Chain &amp; Forecasting Performance · KV6011</div>
+            </div>
+            <div class="nv-dash-filters">
+              <span class="nv-dash-filter">▾ Product · H100 · H200</span>
+              <span class="nv-dash-filter">▾ Region · EMEA · NA</span>
+            </div>
+          </div>
+
+          <!-- 6 KPI cards -->
+          <div class="nv-kpis">
+            <div class="nv-kpi">
+              <div class="nv-kpi-label">Forecast Acc.</div>
+              <div class="nv-kpi-val">96.<span class="small">4%</span></div>
+            </div>
+            <div class="nv-kpi">
+              <div class="nv-kpi-label">MAPE</div>
+              <div class="nv-kpi-val">24.<span class="small">3%</span></div>
+            </div>
+            <div class="nv-kpi">
+              <div class="nv-kpi-label">Backorders</div>
+              <div class="nv-kpi-val">42.<span class="small">3K</span></div>
+            </div>
+            <div class="nv-kpi">
+              <div class="nv-kpi-label">Capacity Util.</div>
+              <div class="nv-kpi-val">57.<span class="small">0%</span></div>
+            </div>
+            <div class="nv-kpi">
+              <div class="nv-kpi-label">Avg Lead Time</div>
+              <div class="nv-kpi-val">59<span class="small"> days</span></div>
+            </div>
+            <div class="nv-kpi">
+              <div class="nv-kpi-label">On-time Delivery</div>
+              <div class="nv-kpi-val">95.<span class="small">92%</span></div>
+            </div>
+          </div>
+
+          <!-- Charts row: 3 panels -->
+          <div class="nv-charts">
+            <!-- Avg Lead Time by Product -->
+            <div class="nv-chart">
+              <div class="nv-chart-title">Avg Supplier Lead Time · by Product</div>
+              <svg viewBox="0 0 200 110" preserveAspectRatio="xMidYMid meet">
+                <text x="6" y="28" font-family="JetBrains Mono" font-size="9" fill="var(--ink-2)">H100</text>
+                <rect x="40" y="20" width="140" height="14" fill="var(--ink-2)"></rect>
+                <text x="182" y="30" font-family="JetBrains Mono" font-size="9" fill="var(--ink)" text-anchor="end">58</text>
+                <text x="6" y="68" font-family="JetBrains Mono" font-size="9" fill="var(--ink-2)">H200</text>
+                <rect x="40" y="60" width="146" height="14" fill="var(--ink-2)"></rect>
+                <text x="182" y="70" font-family="JetBrains Mono" font-size="9" fill="var(--ink)" text-anchor="end">60</text>
+                <line x1="40" y1="92" x2="184" y2="92" stroke="var(--line-2)" stroke-width="0.5"></line>
+                <text x="40" y="105" font-family="JetBrains Mono" font-size="7" fill="var(--mute)">0</text>
+                <text x="184" y="105" font-family="JetBrains Mono" font-size="7" fill="var(--mute)" text-anchor="end">60 days</text>
+              </svg>
+            </div>
+
+            <!-- Forecast vs Actual -->
+            <div class="nv-chart">
+              <div class="nv-chart-title">Forecast vs Actual Demand · 3M Moving Avg</div>
+              <svg viewBox="0 0 280 110" preserveAspectRatio="xMidYMid meet">
+                <!-- Grid -->
+                <line x1="20" y1="20" x2="270" y2="20" stroke="var(--line)" stroke-width="0.5" stroke-dasharray="1,2"></line>
+                <line x1="20" y1="50" x2="270" y2="50" stroke="var(--line)" stroke-width="0.5" stroke-dasharray="1,2"></line>
+                <line x1="20" y1="80" x2="270" y2="80" stroke="var(--line)" stroke-width="0.5" stroke-dasharray="1,2"></line>
+                <!-- Forecast line (mid-tone) -->
+                <polyline points="20,55 41,30 62,48 83,50 104,72 125,55 146,40 167,50 188,68 209,32 230,52 251,75 270,40" fill="none" stroke="var(--ink-2)" stroke-width="1.4"></polyline>
+                <!-- Actual line (ember) -->
+                <polyline points="20,52 41,35 62,52 83,55 104,75 125,58 146,45 167,53 188,71 209,38 230,55 251,77 270,43" fill="none" stroke="var(--ember)" stroke-width="1.4"></polyline>
+                <!-- Axis labels -->
+                <text x="20" y="103" font-family="JetBrains Mono" font-size="7" fill="var(--mute)">Jan</text>
+                <text x="145" y="103" font-family="JetBrains Mono" font-size="7" fill="var(--mute)" text-anchor="middle">Jun</text>
+                <text x="270" y="103" font-family="JetBrains Mono" font-size="7" fill="var(--mute)" text-anchor="end">Dec</text>
+                <!-- Legend -->
+                <line x1="22" y1="14" x2="34" y2="14" stroke="var(--ink-2)" stroke-width="1.4"></line>
+                <text x="38" y="16" font-family="JetBrains Mono" font-size="7" fill="var(--ink-2)">Forecast</text>
+                <line x1="80" y1="14" x2="92" y2="14" stroke="var(--ember)" stroke-width="1.4"></line>
+                <text x="96" y="16" font-family="JetBrains Mono" font-size="7" fill="var(--ember)">Actual</text>
+              </svg>
+            </div>
+
+            <!-- Inventory and Backorders by Region (table) -->
+            <div class="nv-chart">
+              <div class="nv-chart-title">Inventory &amp; Backorders · by Region</div>
+              <table class="nv-table">
+                <thead><tr><th>Region</th><th class="num">Inv.</th><th class="num">B/O</th></tr></thead>
+                <tbody>
+                  <tr><td>EMEA</td><td class="num">127.9K</td><td class="num">21.1K</td></tr>
+                  <tr><td>NA</td><td class="num">127.9K</td><td class="num">21.1K</td></tr>
+                  <tr><td>Total</td><td class="num">255.8K</td><td class="num">42.3K</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Production vs Demand monthly bars -->
+          <div class="nv-prod-chart">
+            <div class="nv-chart-title" style="margin-bottom:12px;">Production Output vs Actual Demand · Monthly</div>
+            <svg viewBox="0 0 600 130" preserveAspectRatio="xMidYMid meet">
+              <!-- Y axis lines -->
+              <line x1="30" y1="10" x2="595" y2="10" stroke="var(--line)" stroke-width="0.5" stroke-dasharray="1,2"></line>
+              <line x1="30" y1="45" x2="595" y2="45" stroke="var(--line)" stroke-width="0.5" stroke-dasharray="1,2"></line>
+              <line x1="30" y1="80" x2="595" y2="80" stroke="var(--line)" stroke-width="0.5" stroke-dasharray="1,2"></line>
+              <line x1="30" y1="115" x2="595" y2="115" stroke="var(--ink-2)" stroke-width="0.5"></line>
+              <text x="22" y="14" font-family="JetBrains Mono" font-size="7" fill="var(--mute)" text-anchor="end">60K</text>
+              <text x="22" y="49" font-family="JetBrains Mono" font-size="7" fill="var(--mute)" text-anchor="end">40K</text>
+              <text x="22" y="84" font-family="JetBrains Mono" font-size="7" fill="var(--mute)" text-anchor="end">20K</text>
+              <text x="22" y="119" font-family="JetBrains Mono" font-size="7" fill="var(--mute)" text-anchor="end">0</text>
+              <!-- Bars · 12 months · paired (actual=ember, production=ink) -->
+              <!-- Jan -->
+              <rect x="36" y="55" width="14" height="60" fill="var(--ember)"></rect>
+              <rect x="52" y="65" width="14" height="50" fill="var(--ink-2)"></rect>
+              <!-- Feb -->
+              <rect x="84" y="28" width="14" height="87" fill="var(--ember)"></rect>
+              <rect x="100" y="35" width="14" height="80" fill="var(--ink-2)"></rect>
+              <!-- Mar -->
+              <rect x="132" y="33" width="14" height="82" fill="var(--ember)"></rect>
+              <rect x="148" y="40" width="14" height="75" fill="var(--ink-2)"></rect>
+              <!-- Apr -->
+              <rect x="180" y="48" width="14" height="67" fill="var(--ember)"></rect>
+              <rect x="196" y="52" width="14" height="63" fill="var(--ink-2)"></rect>
+              <!-- May (low) -->
+              <rect x="228" y="92" width="14" height="23" fill="var(--ember)"></rect>
+              <rect x="244" y="98" width="14" height="17" fill="var(--ink-2)"></rect>
+              <!-- Jun -->
+              <rect x="276" y="38" width="14" height="77" fill="var(--ember)"></rect>
+              <rect x="292" y="48" width="14" height="67" fill="var(--ink-2)"></rect>
+              <!-- Jul -->
+              <rect x="324" y="55" width="14" height="60" fill="var(--ember)"></rect>
+              <rect x="340" y="65" width="14" height="50" fill="var(--ink-2)"></rect>
+              <!-- Aug -->
+              <rect x="372" y="65" width="14" height="50" fill="var(--ember)"></rect>
+              <rect x="388" y="72" width="14" height="43" fill="var(--ink-2)"></rect>
+              <!-- Sep -->
+              <rect x="420" y="32" width="14" height="83" fill="var(--ember)"></rect>
+              <rect x="436" y="42" width="14" height="73" fill="var(--ink-2)"></rect>
+              <!-- Oct -->
+              <rect x="468" y="46" width="14" height="69" fill="var(--ember)"></rect>
+              <rect x="484" y="50" width="14" height="65" fill="var(--ink-2)"></rect>
+              <!-- Nov (low) -->
+              <rect x="516" y="80" width="14" height="35" fill="var(--ember)"></rect>
+              <rect x="532" y="85" width="14" height="30" fill="var(--ink-2)"></rect>
+              <!-- Dec -->
+              <rect x="564" y="50" width="14" height="65" fill="var(--ember)"></rect>
+              <rect x="580" y="58" width="14" height="57" fill="var(--ink-2)"></rect>
+              <!-- Legend -->
+              <rect x="36" y="-2" width="8" height="6" fill="var(--ember)"></rect>
+              <text x="48" y="3" font-family="JetBrains Mono" font-size="7" fill="var(--ember)">Actual</text>
+              <rect x="92" y="-2" width="8" height="6" fill="var(--ink-2)"></rect>
+              <text x="104" y="3" font-family="JetBrains Mono" font-size="7" fill="var(--ink-2)">Production</text>
+            </svg>
+          </div>
+        </div>
+
       </div>
     </div>
 
@@ -1662,7 +2571,140 @@ footer{
         </div>
         <div class="fig">
           <div class="fig-inner">
-            <img src="assets/projects/nvidia/rich-picture.png" alt="Rich Picture diagram showing NVIDIA's AI-GPU supply chain ecosystem">
+
+            <div class="rich-pic">
+              <div class="rp-head">
+                <div class="rp-title">Rich Picture · SSM Ecosystem Diagram</div>
+                <div class="rp-sub">NVIDIA Operations &amp; Planning at the centre; actors, flows, and external pressures around it.</div>
+              </div>
+              <div class="rp-svg-wrap">
+                <svg viewBox="0 0 700 420" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+                  <!-- Flow lines (drawn first so nodes overlay them) -->
+                  <g stroke="var(--line-2)" stroke-width="1" fill="none">
+                    <!-- Centre to TSMC -->
+                    <line x1="430" y1="210" x2="580" y2="100"></line>
+                    <!-- Centre to CoWoS -->
+                    <line x1="430" y1="210" x2="600" y2="210"></line>
+                    <!-- Centre to Logistics -->
+                    <line x1="370" y1="280" x2="500" y2="370"></line>
+                    <!-- Centre to Cloud customers -->
+                    <line x1="270" y1="280" x2="180" y2="370"></line>
+                    <!-- Centre to Enterprise -->
+                    <line x1="310" y1="280" x2="330" y2="370"></line>
+                    <!-- Centre to Inventory -->
+                    <line x1="270" y1="210" x2="110" y2="210"></line>
+                    <!-- Inventory to Backorders -->
+                    <line x1="100" y1="240" x2="100" y2="360"></line>
+                    <!-- Centre to AI-demand (top) -->
+                    <line x1="350" y1="180" x2="350" y2="80"></line>
+                    <!-- AI-demand to Competitors -->
+                    <line x1="320" y1="50" x2="170" y2="50"></line>
+                    <!-- AI-demand to Geopolitics -->
+                    <line x1="380" y1="50" x2="530" y2="50"></line>
+                    <!-- Media pressure to centre -->
+                    <line x1="170" y1="280" x2="270" y2="240"></line>
+                  </g>
+
+                  <!-- Centre node — NVIDIA -->
+                  <g>
+                    <rect x="270" y="180" width="160" height="60" fill="var(--ink)" stroke="var(--ember)" stroke-width="2"/>
+                    <text x="350" y="206" text-anchor="middle" font-family="Inter" font-size="11" font-weight="700" fill="var(--bg)">NVIDIA AI-GPU</text>
+                    <text x="350" y="222" text-anchor="middle" font-family="Inter" font-size="10" fill="var(--bg)" opacity="0.85">Operations &amp; Planning</text>
+                  </g>
+
+                  <!-- AI demand (top centre) -->
+                  <g>
+                    <rect x="290" y="30" width="120" height="50" fill="rgba(230,77,46,0.12)" stroke="var(--ember)" stroke-width="1.5"/>
+                    <text x="350" y="52" text-anchor="middle" font-family="Inter" font-size="10" font-weight="600" fill="var(--ember)">AI-GPU Demand</text>
+                    <text x="350" y="66" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--ink-2)">Gen-AI · LLMs</text>
+                  </g>
+
+                  <!-- Competitors (top left) -->
+                  <g>
+                    <rect x="50" y="30" width="120" height="40" fill="var(--bg)" stroke="var(--line-2)" stroke-width="1"/>
+                    <text x="110" y="55" text-anchor="middle" font-family="Inter" font-size="10" font-weight="600" fill="var(--ink-2)">Competitors</text>
+                  </g>
+
+                  <!-- Geopolitics (top right) -->
+                  <g>
+                    <rect x="530" y="30" width="120" height="40" fill="var(--bg)" stroke="var(--line-2)" stroke-width="1"/>
+                    <text x="590" y="55" text-anchor="middle" font-family="Inter" font-size="10" font-weight="600" fill="var(--ink-2)">Geopolitics</text>
+                  </g>
+
+                  <!-- TSMC (right) -->
+                  <g>
+                    <rect x="540" y="100" width="130" height="50" fill="var(--bg-2)" stroke="var(--ink-2)" stroke-width="1"/>
+                    <text x="605" y="122" text-anchor="middle" font-family="Inter" font-size="10" font-weight="600" fill="var(--ink)">TSMC</text>
+                    <text x="605" y="138" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--ink-3)">Advanced foundry</text>
+                  </g>
+
+                  <!-- CoWoS (right middle) -->
+                  <g>
+                    <rect x="560" y="185" width="120" height="50" fill="var(--bg-2)" stroke="var(--ink-2)" stroke-width="1"/>
+                    <text x="620" y="207" text-anchor="middle" font-family="Inter" font-size="10" font-weight="600" fill="var(--ink)">CoWoS</text>
+                    <text x="620" y="223" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--ink-3)">Packaging supplier</text>
+                  </g>
+
+                  <!-- Inventory (left) -->
+                  <g>
+                    <rect x="40" y="185" width="130" height="50" fill="var(--bg-2)" stroke="var(--ink-2)" stroke-width="1"/>
+                    <text x="105" y="207" text-anchor="middle" font-family="Inter" font-size="10" font-weight="600" fill="var(--ink)">Inventory</text>
+                    <text x="105" y="223" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--ink-3)">Regional warehouses</text>
+                  </g>
+
+                  <!-- Backorders (bottom-left) -->
+                  <g>
+                    <rect x="40" y="350" width="130" height="50" fill="rgba(176,114,96,0.15)" stroke="#b07260" stroke-width="1.5"/>
+                    <text x="105" y="372" text-anchor="middle" font-family="Inter" font-size="10" font-weight="600" fill="#925248">Backorders</text>
+                    <text x="105" y="388" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--ink-3)">Unserved demand</text>
+                  </g>
+
+                  <!-- Cloud customers (bottom centre-left) -->
+                  <g>
+                    <rect x="190" y="350" width="140" height="50" fill="var(--bg-2)" stroke="var(--ink-2)" stroke-width="1"/>
+                    <text x="260" y="372" text-anchor="middle" font-family="Inter" font-size="10" font-weight="600" fill="var(--ink)">Cloud Customers</text>
+                    <text x="260" y="388" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--ink-3)">AWS · Azure · GCP</text>
+                  </g>
+
+                  <!-- Enterprise &amp; OEMs (bottom centre-right) -->
+                  <g>
+                    <rect x="345" y="350" width="130" height="50" fill="var(--bg-2)" stroke="var(--ink-2)" stroke-width="1"/>
+                    <text x="410" y="372" text-anchor="middle" font-family="Inter" font-size="10" font-weight="600" fill="var(--ink)">Enterprise &amp; OEMs</text>
+                  </g>
+
+                  <!-- Logistics (bottom-right) -->
+                  <g>
+                    <rect x="490" y="350" width="120" height="50" fill="var(--bg-2)" stroke="var(--ink-2)" stroke-width="1"/>
+                    <text x="550" y="372" text-anchor="middle" font-family="Inter" font-size="10" font-weight="600" fill="var(--ink)">Logistics</text>
+                    <text x="550" y="388" text-anchor="middle" font-family="Inter" font-size="9" fill="var(--ink-3)">Shipping providers</text>
+                  </g>
+
+                  <!-- Media &amp; market expectations -->
+                  <g>
+                    <rect x="100" y="280" width="140" height="40" fill="var(--bg)" stroke="var(--line-2)" stroke-width="1" stroke-dasharray="3,2"/>
+                    <text x="170" y="297" text-anchor="middle" font-family="Inter" font-size="9" font-weight="600" fill="var(--ink-2)">Media · Markets</text>
+                    <text x="170" y="311" text-anchor="middle" font-family="Inter" font-size="8" fill="var(--ink-3)">Quarterly expectations</text>
+                  </g>
+
+                  <!-- Flow labels -->
+                  <text x="490" y="155" font-family="JetBrains Mono" font-size="7" fill="var(--ember)" font-style="italic">supply &amp; lead times</text>
+                  <text x="490" y="200" font-family="JetBrains Mono" font-size="7" fill="var(--ember)" font-style="italic">packaging orders</text>
+                  <text x="155" y="200" font-family="JetBrains Mono" font-size="7" fill="var(--ember)" font-style="italic">stock allocation</text>
+                  <text x="225" y="320" font-family="JetBrains Mono" font-size="7" fill="var(--ember)" font-style="italic">GPU orders</text>
+                  <text x="350" y="155" font-family="JetBrains Mono" font-size="7" fill="var(--ember)" font-style="italic" text-anchor="middle">demand signals</text>
+                </svg>
+              </div>
+
+              <div class="rp-actors">
+                <div class="rp-actor"><strong>Centre</strong>NVIDIA Ops &amp; Planning — the actor whose decisions we want the dashboard to support.</div>
+                <div class="rp-actor"><strong>Upstream</strong>TSMC (advanced foundry) &amp; CoWoS packaging — capacity-constrained.</div>
+                <div class="rp-actor"><strong>Downstream</strong>Cloud hyperscalers, enterprise, OEMs, logistics — demand &amp; delivery.</div>
+                <div class="rp-actor"><strong>Pressures</strong>Competitors, geopolitics &amp; export controls, market expectations.</div>
+                <div class="rp-actor"><strong>Driver</strong>Generative-AI demand — explosive and volatile.</div>
+                <div class="rp-actor"><strong>Pain</strong>Backorders / unserved demand — the visible failure.</div>
+              </div>
+            </div>
+
           </div>
           <div class="fig-cap">
             <span class="label">Fig. 02</span>
@@ -1694,7 +2736,69 @@ footer{
         </div>
         <div class="fig">
           <div class="fig-inner">
-            <img src="assets/projects/nvidia/causal-loop.png" alt="Causal loop diagram">
+
+            <div class="causal-loop">
+              <div class="cl-head">
+                <div class="cl-title">Causal Loop Diagram · Reinforcing &amp; balancing feedback</div>
+                <div class="cl-sub">Six variables · two reinforcing loops (R), two balancing loops (B) · + same direction, − opposite.</div>
+              </div>
+              <div class="cl-svg-wrap">
+                <svg viewBox="0 0 600 380" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+                  <defs>
+                    <marker id="cl-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                      <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--ink-2)"/>
+                    </marker>
+                  </defs>
+                  <g stroke="var(--ink-2)" stroke-width="1.4" fill="none" marker-end="url(#cl-arrow)">
+                    <path d="M 200 95 Q 300 70 405 95"/>
+                    <path d="M 460 130 Q 520 180 460 235"/>
+                    <path d="M 410 285 Q 360 320 305 305"/>
+                    <path d="M 140 240 Q 110 180 165 130"/>
+                    <path d="M 220 305 Q 170 320 130 285"/>
+                    <path d="M 165 275 Q 200 305 235 290"/>
+                    <path d="M 360 185 Q 400 160 425 130"/>
+                    <path d="M 320 220 Q 290 260 270 280"/>
+                  </g>
+                  <g>
+                    <circle cx="180" cy="95" r="50" fill="rgba(122,157,110,0.18)" stroke="#7a9d6e" stroke-width="2"/>
+                    <text x="180" y="92" text-anchor="middle" font-family="Inter" font-size="11" font-weight="700" fill="var(--ink)">Lead</text>
+                    <text x="180" y="106" text-anchor="middle" font-family="Inter" font-size="11" font-weight="700" fill="var(--ink)">times</text>
+                    <circle cx="430" cy="95" r="50" fill="rgba(176,114,96,0.2)" stroke="#b07260" stroke-width="2"/>
+                    <text x="430" y="92" text-anchor="middle" font-family="Inter" font-size="11" font-weight="700" fill="var(--ink)">Back-</text>
+                    <text x="430" y="106" text-anchor="middle" font-family="Inter" font-size="11" font-weight="700" fill="var(--ink)">orders</text>
+                    <circle cx="440" cy="260" r="50" fill="rgba(230,77,46,0.15)" stroke="var(--ember)" stroke-width="2"/>
+                    <text x="440" y="257" text-anchor="middle" font-family="Inter" font-size="11" font-weight="700" fill="var(--ink)">Customer</text>
+                    <text x="440" y="270" text-anchor="middle" font-family="Inter" font-size="11" font-weight="700" fill="var(--ink)">pressure</text>
+                    <circle cx="310" cy="200" r="50" fill="var(--ember)" stroke="var(--ember)" stroke-width="2"/>
+                    <text x="310" y="197" text-anchor="middle" font-family="Inter" font-size="11" font-weight="700" fill="var(--bg)">AI-GPU</text>
+                    <text x="310" y="211" text-anchor="middle" font-family="Inter" font-size="11" font-weight="700" fill="var(--bg)">demand</text>
+                    <circle cx="260" cy="310" r="48" fill="var(--ink)" stroke="var(--ink)" stroke-width="2"/>
+                    <text x="260" y="307" text-anchor="middle" font-family="Inter" font-size="11" font-weight="700" fill="var(--bg)">Production</text>
+                    <text x="260" y="321" text-anchor="middle" font-family="Inter" font-size="11" font-weight="700" fill="var(--bg)">push</text>
+                    <circle cx="100" cy="260" r="48" fill="rgba(168,122,50,0.18)" stroke="#a87a32" stroke-width="2"/>
+                    <text x="100" y="257" text-anchor="middle" font-family="Inter" font-size="11" font-weight="700" fill="var(--ink)">Capacity</text>
+                    <text x="100" y="271" text-anchor="middle" font-family="Inter" font-size="11" font-weight="700" fill="var(--ink)">strain</text>
+                  </g>
+                  <g font-family="JetBrains Mono" font-size="13" font-weight="700" fill="var(--ember)">
+                    <text x="300" y="65">+</text>
+                    <text x="498" y="195">+</text>
+                    <text x="355" y="325">+</text>
+                    <text x="100" y="190">+</text>
+                    <text x="175" y="335">+</text>
+                    <text x="225" y="290" fill="#925248">−</text>
+                    <text x="410" y="160">+</text>
+                    <text x="285" y="255">+</text>
+                  </g>
+                </svg>
+              </div>
+              <div class="cl-legend">
+                <div class="cl-loop"><strong>R1 · Demand Surge</strong> — demand ↑ → backorders ↑ → pressure ↑ → strain ↑ (reinforcing)</div>
+                <div class="cl-loop"><strong>R2 · Forecast Volatility</strong> — volatile orders → forecast error → unstable inventory (reinforcing)</div>
+                <div class="cl-loop"><strong>B1 · Capacity Constraint</strong> — production limits → unmet demand → revised forecasts (balancing)</div>
+                <div class="cl-loop"><strong>B2 · Lead Time Adjustment</strong> — long lead times → delayed shipments → re-planning (balancing)</div>
+              </div>
+            </div>
+
           </div>
           <div class="fig-cap">
             <span class="label">Fig. 03</span>
@@ -1721,7 +2825,56 @@ footer{
         </div>
         <div class="fig">
           <div class="fig-inner">
-            <img src="assets/projects/nvidia/strategy-map.png" alt="Strategy map">
+
+            <div class="strategy-map">
+              <div class="sm-head">
+                <div class="sm-title">Strategy Map · Balanced Scorecard</div>
+                <div class="sm-sub">Capabilities at the bottom build through internal processes to customer outcomes, ending in financial result.</div>
+              </div>
+              <div class="sm-flow">
+                <div class="sm-card">
+                  <div class="sm-tier">01 · Learning &amp; Growth</div>
+                  <div class="sm-name">Build the capability</div>
+                  <ul class="sm-list">
+                    <li>BI &amp; data analytics skills</li>
+                    <li>Forecasting expertise</li>
+                    <li>System-dynamics thinking</li>
+                    <li>Tool fluency: Power BI, DAX</li>
+                  </ul>
+                </div>
+                <div class="sm-card">
+                  <div class="sm-tier">02 · Internal Processes</div>
+                  <div class="sm-name">Improve the engine</div>
+                  <ul class="sm-list">
+                    <li>Reduce forecast error (MAPE)</li>
+                    <li>Tighten supply planning</li>
+                    <li>Resolve CoWoS bottlenecks</li>
+                    <li>Balance capacity utilisation</li>
+                  </ul>
+                </div>
+                <div class="sm-card">
+                  <div class="sm-tier">03 · Customer</div>
+                  <div class="sm-name">Earn loyalty</div>
+                  <ul class="sm-list">
+                    <li>Shorter lead times</li>
+                    <li>Higher on-time delivery</li>
+                    <li>Fewer unserved orders</li>
+                    <li>Confidence in supply</li>
+                  </ul>
+                </div>
+                <div class="sm-card financial">
+                  <div class="sm-tier">04 · Financial</div>
+                  <div class="sm-name">Protect the result</div>
+                  <ul class="sm-list">
+                    <li>Predictable revenue</li>
+                    <li>Lower cost of delays</li>
+                    <li>Minimise lost sales</li>
+                    <li>Stable margin profile</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
           </div>
           <div class="fig-cap">
             <span class="label">Fig. 04</span>
@@ -1730,42 +2883,52 @@ footer{
         </div>
       </div>
 
-      <!-- OUTCOME — Interactive dashboard with clickable KPI hotspots -->
+      <!-- OUTCOME — Clickable KPI cards (no image) -->
       <div class="outcome-block">
         <div class="outcome-head">
-          <div class="outcome-mark"><span class="num">iv.</span>The Outcome · Live dashboard explorer</div>
-          <div class="outcome-instr">↓ Click any KPI on the dashboard itself</div>
+          <div class="outcome-mark"><span class="num">iv.</span>The Outcome · KPI explorer</div>
+          <div class="outcome-instr">↓ Click any KPI card to see what drives it</div>
         </div>
 
         <div class="dash-hint">
           <span class="dash-hint-l">
             <span class="dot"></span>
-            <span>NVIDIA_Supply_Chain.pbix · Six KPIs · Numbered hotspots are clickable</span>
+            <span>NVIDIA_Supply_Chain.pbix · Six KPIs · Click to inspect</span>
           </span>
           <span class="dash-hint-r">↘ Try it</span>
         </div>
 
-        <div class="interactive-dash">
-          <img src="assets/projects/nvidia/dashboard.png" alt="NVIDIA AI-GPU Supply Chain Power BI Dashboard — interactive">
-
-          <button class="dash-hotspot active" data-kpi="accuracy" style="left:15.7%;top:0.5%;width:11%;height:13%;" aria-label="Forecast Accuracy">
-            <span class="dash-num">1</span>
-          </button>
-          <button class="dash-hotspot" data-kpi="mape" style="left:26.5%;top:0.5%;width:7.5%;height:13%;" aria-label="MAPE">
-            <span class="dash-num">2</span>
-          </button>
-          <button class="dash-hotspot" data-kpi="backorders" style="left:33.4%;top:0.5%;width:10.5%;height:13%;" aria-label="Total Backorders">
-            <span class="dash-num">3</span>
-          </button>
-          <button class="dash-hotspot" data-kpi="capacity" style="left:42.8%;top:0.5%;width:12.5%;height:13%;" aria-label="Capacity Utilisation">
-            <span class="dash-num">4</span>
-          </button>
-          <button class="dash-hotspot" data-kpi="leadtime" style="left:54.5%;top:0.5%;width:9.5%;height:13%;" aria-label="Avg Lead Time">
-            <span class="dash-num">5</span>
-          </button>
-          <button class="dash-hotspot" data-kpi="otd" style="left:63.5%;top:0.5%;width:16.5%;height:13%;" aria-label="On-time Delivery Rate">
-            <span class="dash-num">6</span>
-          </button>
+        <div class="nv-kpis" style="margin-bottom:0;border:1px solid var(--line);border-top:none;padding:18px;">
+          <div class="nv-kpi active" data-kpi="accuracy">
+            <div class="nv-kpi-n">01</div>
+            <div class="nv-kpi-label">Forecast Acc.</div>
+            <div class="nv-kpi-val">96.<span class="small">4%</span></div>
+          </div>
+          <div class="nv-kpi" data-kpi="mape">
+            <div class="nv-kpi-n">02</div>
+            <div class="nv-kpi-label">MAPE</div>
+            <div class="nv-kpi-val">24.<span class="small">3%</span></div>
+          </div>
+          <div class="nv-kpi" data-kpi="backorders">
+            <div class="nv-kpi-n">03</div>
+            <div class="nv-kpi-label">Backorders</div>
+            <div class="nv-kpi-val">42.<span class="small">3K</span></div>
+          </div>
+          <div class="nv-kpi" data-kpi="capacity">
+            <div class="nv-kpi-n">04</div>
+            <div class="nv-kpi-label">Capacity Util.</div>
+            <div class="nv-kpi-val">57.<span class="small">0%</span></div>
+          </div>
+          <div class="nv-kpi" data-kpi="leadtime">
+            <div class="nv-kpi-n">05</div>
+            <div class="nv-kpi-label">Avg Lead Time</div>
+            <div class="nv-kpi-val">59<span class="small"> days</span></div>
+          </div>
+          <div class="nv-kpi" data-kpi="otd">
+            <div class="nv-kpi-n">06</div>
+            <div class="nv-kpi-label">On-time Delivery</div>
+            <div class="nv-kpi-val">95.<span class="small">92%</span></div>
+          </div>
         </div>
 
         <div class="dash-detail" id="nv-detail">
@@ -1804,20 +2967,20 @@ footer{
       <div class="case-num-row">
         <div class="case-num">03</div>
         <div class="case-num-meta">
-          <div class="case-kind">Deep Learning · Azure ML</div>
-          <h3 class="case-title">CNN benchmark for<br><span class="it">gender classification.</span></h3>
-          <div class="case-date">2024 · Computer Vision · 4 iterations</div>
+          <div class="case-kind">Deep Learning · Azure ML Designer</div>
+          <h3 class="case-title">Gender classification on faces —<br><span class="it">DenseNet vs ResNet, four configurations.</span></h3>
+          <div class="case-date">2024 · Computer Vision · Azure ML · PyTorch</div>
         </div>
       </div>
       <p class="case-deck">
-        Benchmarked <em>DenseNet121</em> against <em>ResNet50</em> on Azure ML across four
-        training iterations — tuning batch size, learning rate, and augmentation in isolated
-        steps. PyTorch on GPU. Every iteration documented so the reasoning is reproducible,
-        not just the final number.
+        Built four model configurations in <em>Azure ML Designer</em> to recognise human faces and
+        classify into Male / Female: <em>DenseNet</em> and <em>ResNet</em>, each evaluated in both
+        a <em>training pipeline</em> (Kaggle Gender_images, 100 photos) and a <em>real-time
+        inference pipeline</em> (a custom dataset of 30 photos I curated myself).
       </p>
       <div class="case-tags">
+        <span class="case-tag">Azure ML Designer</span>
         <span class="case-tag">PyTorch</span>
-        <span class="case-tag">Azure ML</span>
         <span class="case-tag">DenseNet</span>
         <span class="case-tag">ResNet</span>
         <span class="case-tag">Computer Vision</span>
@@ -1825,130 +2988,258 @@ footer{
       </div>
     </div>
 
-    <!-- TYPOGRAPHIC HERO -->
+    <!-- HERO — Azure ML Designer pipeline visualisation -->
     <div class="case-hero">
       <div class="case-hero-cap">
-        <span><span class="figure">Fig. 01</span> — Iteration progression · Awaiting full visualisations</span>
-        <span>2024</span>
+        <span><span class="figure">Fig. 01</span> — Azure ML Designer Pipeline · Hand-rendered</span>
+        <span>2024 · gender_images.pipeline</span>
       </div>
-      <div class="typo-hero">
-        <div class="typo-hero-l">
-          <div class="typo-stat-grid">
-            <div class="typo-stat-cell">
-              <div class="tsc-label">Final accuracy</div>
-              <div class="tsc-val">86.<span class="ac">7</span><span class="sm">%</span></div>
-              <div class="tsc-sub">DenseNet · iter 4</div>
+      <div class="case-hero-frame">
+
+        <div class="pipeline-viz">
+          <div class="pipe-header">
+            <div class="pipe-title">Azure ML Designer Pipeline · 5 stages from raw images to evaluation</div>
+            <div class="pipe-sub">The same pipeline is run with DenseNet and ResNet; a second pipeline reuses the trained models for real-time inference on a custom dataset.</div>
+          </div>
+          <div class="pipe-flow five">
+            <div class="pl-step">
+              <div class="pl-step-n">01.</div>
+              <div class="pl-step-name">Dataset</div>
+              <div class="pl-step-detail">gender_images — Kaggle, 100 photos (50M / 50F).</div>
+              <div class="pl-step-status">⏵ 100 imgs</div>
             </div>
-            <div class="typo-stat-cell">
-              <div class="tsc-label">Lift iter 1→4</div>
-              <div class="tsc-val">+1<span class="ac">4.3</span><span class="sm">pts</span></div>
-              <div class="tsc-sub">across 4 controlled changes</div>
+            <div class="pl-step">
+              <div class="pl-step-n">02.</div>
+              <div class="pl-step-name">Convert &amp; Split</div>
+              <div class="pl-step-detail">Convert to Image Directory · split 70/30 train/test, then 70/30 train/val.</div>
+              <div class="pl-step-status">⏵ azure</div>
             </div>
-            <div class="typo-stat-cell">
-              <div class="tsc-label">Over baseline</div>
-              <div class="tsc-val">+<span class="ac">7.3</span><span class="sm">pts</span></div>
-              <div class="tsc-sub">DenseNet vs ResNet50</div>
+            <div class="pl-step">
+              <div class="pl-step-n">03.</div>
+              <div class="pl-step-name">Transform</div>
+              <div class="pl-step-detail">Init Image Transformation + Apply Transformation across train / val / test.</div>
+              <div class="pl-step-status">⏵ identical pipeline</div>
             </div>
-            <div class="typo-stat-cell">
-              <div class="tsc-label">Iterations</div>
-              <div class="tsc-val"><span class="ac">4</span></div>
-              <div class="tsc-sub">each documented</div>
+            <div class="pl-step">
+              <div class="pl-step-n">04.</div>
+              <div class="pl-step-name">Train (PyTorch)</div>
+              <div class="pl-step-detail">Train PyTorch Model — DenseNet or ResNet — on GPU compute.</div>
+              <div class="pl-step-status">⏵ gpu</div>
+            </div>
+            <div class="pl-step winner">
+              <div class="pl-step-n">05.</div>
+              <div class="pl-step-name">Score &amp; Evaluate</div>
+              <div class="pl-step-detail">Score Image Model → Evaluate Model · precision · recall · accuracy.</div>
+              <div class="pl-step-status">★ DenseNet wins</div>
             </div>
           </div>
         </div>
-        <div class="typo-hero-r">
-          <div class="typo-viz">
-            <div class="typo-viz-title">Iteration progression</div>
-            <div class="typo-viz-sub">Test accuracy · controlled changes</div>
-            <div class="model-bars">
-              <div class="model-bar"><div class="model-bar-name">Iter 1</div><div class="model-bar-track"><div class="model-bar-fill" data-w="64"></div></div><div class="model-bar-val">72.4%</div></div>
-              <div class="model-bar"><div class="model-bar-name">Iter 2</div><div class="model-bar-track"><div class="model-bar-fill" data-w="73"></div></div><div class="model-bar-val">79.1%</div></div>
-              <div class="model-bar"><div class="model-bar-name">Iter 3</div><div class="model-bar-track"><div class="model-bar-fill" data-w="83"></div></div><div class="model-bar-val">83.5%</div></div>
-              <div class="model-bar winner"><div class="model-bar-name">Iter 4</div><div class="model-bar-track"><div class="model-bar-fill" data-w="100"></div></div><div class="model-bar-val">86.7%</div></div>
-            </div>
-          </div>
-        </div>
+
       </div>
     </div>
 
     <div class="case-story">
 
+      <!-- i. BRIEF -->
       <div class="story-slab">
         <div>
           <div class="story-mark"><span class="num">i.</span>The Brief</div>
-          <h4 class="story-title">Two architectures,<br><span class="it">one budget.</span></h4>
+          <h4 class="story-title">Two architectures,<br><span class="it">one Azure pipeline.</span></h4>
           <p class="story-body">
-            Build a binary classifier on facial images with a strict Azure ML GPU budget,
-            two candidate architectures (<strong>DenseNet121</strong> and <strong>ResNet50</strong>),
-            and the requirement to <em>justify every hyperparameter choice</em> — not just
-            report the final number.
-          </p>
-        </div>
-        <div class="fig">
-          <div class="fig-inner">
-            <div class="hero-placeholder" style="aspect-ratio:4/3;">
-              <span class="monogram md faded hp-mono"><svg><use href="#na"/></svg></span>
-              <div class="hp-title">Training samples / pipeline</div>
-              <div class="hp-label">Awaiting upload</div>
-            </div>
-          </div>
-          <div class="fig-cap">
-            <span class="label">Fig. 02</span>
-            <span class="title">Pipeline: dataset → augment → train → evaluate.</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="story-slab reverse">
-        <div>
-          <div class="story-mark"><span class="num">ii.</span>The Method</div>
-          <h4 class="story-title">Change one thing,<br><span class="it">measure the delta.</span></h4>
-          <p class="story-body">
-            Identical preprocessing across both architectures, then a <strong>controlled
-            iteration loop</strong>: hold all variables fixed except one, measure the delta,
-            document the change. By iteration four, the dataset, augmentation, LR schedule,
-            and batch size had each been independently stressed and tuned.
+            Build ML models in <strong>Azure ML Designer</strong> to recognise human faces and classify
+            them into Male / Female. Compare <em>DenseNet</em> (densely-connected CNN) against
+            <em>ResNet</em> (residual-network CNN), then re-run both as <em>real-time inference</em>
+            pipelines against a separate dataset.
           </p>
           <ul class="story-points">
-            <li data-n="01">Same preprocessing for both models → architectural comparison is fair.</li>
-            <li data-n="02">One change per iteration → effect of each hyperparameter is isolated.</li>
-            <li data-n="03">All iterations versioned in Azure ML, so any run is reproducible.</li>
+            <li data-n="01">Training set: <strong>gender_images</strong> — Kaggle, 100 photos (50 male, 50 female).</li>
+            <li data-n="02">Inference set: <strong>Nawaf_data_inference</strong> — 30 photos (15 / 15), self-curated.</li>
+            <li data-n="03">Identical preprocessing across both architectures — fair architectural comparison.</li>
+            <li data-n="04">Four configurations evaluated end-to-end: DenseNet train, ResNet train, DenseNet inference, ResNet inference.</li>
           </ul>
         </div>
         <div class="fig">
           <div class="fig-inner">
-            <div class="hero-placeholder" style="aspect-ratio:4/3;">
-              <span class="monogram md faded hp-mono"><svg><use href="#na"/></svg></span>
-              <div class="hp-title">Confusion matrix / curve</div>
-              <div class="hp-label">Awaiting upload</div>
+
+            <div class="pipeline-viz">
+              <div class="pipe-header">
+                <div class="pipe-title">Real-time Inference Pipeline · Reuses the trained model</div>
+                <div class="pipe-sub">Second pipeline — apply trained DenseNet / ResNet to Nawaf_data_inference (30 new photos).</div>
+              </div>
+              <div class="pipe-flow four">
+                <div class="pl-step">
+                  <div class="pl-step-n">01.</div>
+                  <div class="pl-step-name">New Dataset</div>
+                  <div class="pl-step-detail">Nawaf_data_inference — 30 photos.</div>
+                  <div class="pl-step-status">⏵ 30 imgs</div>
+                </div>
+                <div class="pl-step">
+                  <div class="pl-step-n">02.</div>
+                  <div class="pl-step-name">Convert &amp; Transform</div>
+                  <div class="pl-step-detail">Convert to Image Directory + Apply Image Transformation.</div>
+                  <div class="pl-step-status">⏵ azure</div>
+                </div>
+                <div class="pl-step">
+                  <div class="pl-step-n">03.</div>
+                  <div class="pl-step-name">Score (trained model)</div>
+                  <div class="pl-step-detail">Score Image Model uses the previously trained DenseNet / ResNet weights.</div>
+                  <div class="pl-step-status">⏵ inference</div>
+                </div>
+                <div class="pl-step winner">
+                  <div class="pl-step-n">04.</div>
+                  <div class="pl-step-name">Evaluate</div>
+                  <div class="pl-step-detail">Precision · recall · accuracy on the unseen 30-photo set.</div>
+                  <div class="pl-step-status">★ 86.67%</div>
+                </div>
+              </div>
             </div>
+
           </div>
           <div class="fig-cap">
-            <span class="label">Fig. 03</span>
-            <span class="title">DenseNet vs ResNet — final iteration comparison.</span>
+            <span class="label">Fig. 02</span>
+            <span class="title">Real-time inference pipeline · Trained models applied to a 30-photo unseen set.</span>
           </div>
         </div>
       </div>
 
+      <!-- ii. METHOD -->
+      <div class="story-slab reverse">
+        <div>
+          <div class="story-mark"><span class="num">ii.</span>The Method</div>
+          <h4 class="story-title">Identical pipeline,<br><span class="it">two architectures, two modes.</span></h4>
+          <p class="story-body">
+            Every step of the pipeline was held constant across both architectures: the same Convert
+            to Image Directory step, the same 70/30 splits, the same Init + Apply Image
+            Transformation chain. The <em>only difference</em> was the model component
+            — DenseNet or ResNet — feeding into Train PyTorch Model on GPU compute.
+            That isolation lets the architecture be the variable, not the noise.
+          </p>
+          <p class="story-body">
+            Then a second pipeline reuses each trained model in <strong>real-time inference</strong> against
+            <em>Nawaf_data_inference</em>, a 30-photo set I curated myself. This tests <em>generalisation</em>:
+            does the model recognise faces it has never seen?
+          </p>
+          <ul class="story-points">
+            <li data-n="01">Same preprocessing for both models — architectural comparison is fair.</li>
+            <li data-n="02">Train PyTorch Model on GPU — recommended for image classification at this scale.</li>
+            <li data-n="03">Score Image Model + Evaluate Model surface precision / recall / accuracy automatically.</li>
+            <li data-n="04">Real-time inference tests generalisation on a held-out 30-photo set.</li>
+          </ul>
+        </div>
+        <div class="fig">
+          <div class="fig-inner">
+
+            <div class="model-quad">
+              <div class="mq-head">
+                <div class="mq-title">Four Configurations · At a glance</div>
+                <div class="mq-sub">DenseNet vs ResNet, each in training and inference modes.</div>
+              </div>
+              <div class="mq-grid" style="grid-template-columns:1fr 1fr;gap:8px;">
+                <div class="mq-card" style="cursor:default;">
+                  <div class="mq-card-h"><div class="mq-card-name">DenseNet</div><div class="mq-card-mode">Train</div></div>
+                  <div class="mq-mval">0.80</div>
+                </div>
+                <div class="mq-card" style="cursor:default;">
+                  <div class="mq-card-h"><div class="mq-card-name">ResNet</div><div class="mq-card-mode">Train</div></div>
+                  <div class="mq-mval">0.73</div>
+                </div>
+                <div class="mq-card winner" style="cursor:default;">
+                  <div class="mq-card-h"><div class="mq-card-name">DenseNet</div><div class="mq-card-mode">Real-time</div></div>
+                  <div class="mq-mval">0.87</div>
+                </div>
+                <div class="mq-card" style="cursor:default;">
+                  <div class="mq-card-h"><div class="mq-card-name">ResNet</div><div class="mq-card-mode">Real-time</div></div>
+                  <div class="mq-mval">0.80</div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+          <div class="fig-cap">
+            <span class="label">Fig. 03</span>
+            <span class="title">Four-configuration snapshot · DenseNet real-time inference leads at 0.867.</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- iii. OUTCOME — interactive 4-model comparison -->
       <div class="outcome-block">
         <div class="outcome-head">
-          <div class="outcome-mark"><span class="num">iii.</span>The Outcome · Iteration explorer</div>
-          <div class="outcome-instr">↓ Click an iteration to see what changed</div>
+          <div class="outcome-mark"><span class="num">iii.</span>The Outcome · Configuration explorer</div>
+          <div class="outcome-instr">↓ Click any configuration to see precision · recall · accuracy</div>
         </div>
-        <div class="iter-bar" id="afIB">
-          <button class="iter-btn" data-iter="1"><span class="iter-btn-num">i.</span>72.4%</button>
-          <button class="iter-btn" data-iter="2"><span class="iter-btn-num">ii.</span>79.1%</button>
-          <button class="iter-btn" data-iter="3"><span class="iter-btn-num">iii.</span>83.5%</button>
-          <button class="iter-btn final active" data-iter="4"><span class="iter-btn-num">iv.</span>86.7%</button>
+
+        <div class="model-quad" style="background:transparent;padding:0;">
+          <div class="mq-grid" id="afMQ">
+            <div class="mq-card" data-cfg="dn-train">
+              <div class="mq-card-h">
+                <div class="mq-card-name">DenseNet</div>
+                <div class="mq-card-mode">Training pipeline</div>
+              </div>
+              <div class="mq-metrics-row">
+                <div class="mq-mcell"><div class="mq-mlabel">Prec.</div><div class="mq-mval">0.80</div></div>
+                <div class="mq-mcell"><div class="mq-mlabel">Recall</div><div class="mq-mval">0.80</div></div>
+                <div class="mq-mcell"><div class="mq-mlabel">Acc.</div><div class="mq-mval">0.80</div></div>
+              </div>
+              <div class="mq-bar"><div class="mq-bar-fill" data-w="80"></div></div>
+            </div>
+
+            <div class="mq-card" data-cfg="rn-train">
+              <div class="mq-card-h">
+                <div class="mq-card-name">ResNet</div>
+                <div class="mq-card-mode">Training pipeline</div>
+              </div>
+              <div class="mq-metrics-row">
+                <div class="mq-mcell"><div class="mq-mlabel">Prec.</div><div class="mq-mval">0.74</div></div>
+                <div class="mq-mcell"><div class="mq-mlabel">Recall</div><div class="mq-mval">0.73</div></div>
+                <div class="mq-mcell"><div class="mq-mlabel">Acc.</div><div class="mq-mval">0.73</div></div>
+              </div>
+              <div class="mq-bar"><div class="mq-bar-fill" data-w="73"></div></div>
+            </div>
+
+            <div class="mq-card winner active" data-cfg="dn-rt">
+              <div class="mq-card-h">
+                <div class="mq-card-name">DenseNet</div>
+                <div class="mq-card-mode">Real-time inference</div>
+              </div>
+              <div class="mq-metrics-row">
+                <div class="mq-mcell"><div class="mq-mlabel">Prec.</div><div class="mq-mval">0.87</div></div>
+                <div class="mq-mcell"><div class="mq-mlabel">Recall</div><div class="mq-mval">0.87</div></div>
+                <div class="mq-mcell"><div class="mq-mlabel">Acc.</div><div class="mq-mval">0.87</div></div>
+              </div>
+              <div class="mq-bar"><div class="mq-bar-fill" data-w="87"></div></div>
+            </div>
+
+            <div class="mq-card" data-cfg="rn-rt">
+              <div class="mq-card-h">
+                <div class="mq-card-name">ResNet</div>
+                <div class="mq-card-mode">Real-time inference</div>
+              </div>
+              <div class="mq-metrics-row">
+                <div class="mq-mcell"><div class="mq-mlabel">Prec.</div><div class="mq-mval">0.80</div></div>
+                <div class="mq-mcell"><div class="mq-mlabel">Recall</div><div class="mq-mval">0.80</div></div>
+                <div class="mq-mcell"><div class="mq-mlabel">Acc.</div><div class="mq-mval">0.80</div></div>
+              </div>
+              <div class="mq-bar"><div class="mq-bar-fill" data-w="80"></div></div>
+            </div>
+          </div>
         </div>
-        <div class="iter-view" id="afIV"></div>
+
+        <div class="mq-detail" id="afDetail">
+          ↳ <strong>DENSENET · REAL-TIME INFERENCE · 0.8667</strong> — The winning configuration.
+          The trained DenseNet model, applied to <em>Nawaf_data_inference</em> (30 unseen photos),
+          beats every other run including its own training-set evaluation (0.80). Real-world
+          generalisation is consistent across all three metrics — precision, recall, and accuracy
+          all land at 0.8667, meaning errors are evenly distributed between male and female classes.
+        </div>
       </div>
 
       <div class="takeaway">
         <div class="takeaway-mark">The Takeaway</div>
         <p class="takeaway-quote">
-          "The final accuracy is the headline; the four iterations behind it are the story.
-          <em>Show your work</em> and the result becomes evidence rather than luck."
+          "DenseNet's dense connectivity captured face features more effectively than ResNet's
+          residual blocks on this dataset. <em>The real test was generalisation</em> — and the model
+          that won on the training set kept winning on the held-out photos."
         </p>
         <p class="takeaway-cite">— Lesson from Study 03</p>
         <div class="takeaway-actions">
@@ -2232,6 +3523,17 @@ var barObs=new IntersectionObserver(function(e){
 },{threshold:0.25});
 document.querySelectorAll('.model-bars').forEach(function(g){barObs.observe(g);});
 
+// ═══ DIVERGING BAR ANIMATIONS (custom dashboard hero) ═══
+var divergeObs=new IntersectionObserver(function(e){
+  e.forEach(function(en){if(en.isIntersecting){
+    en.target.querySelectorAll('.cd-d-bar-fill').forEach(function(b,i){
+      setTimeout(function(){b.style.width=b.dataset.w+'%';},i*150);
+    });
+    divergeObs.unobserve(en.target);
+  }});
+},{threshold:0.25});
+document.querySelectorAll('.cd-d-diverge').forEach(function(g){divergeObs.observe(g);});
+
 // ═══ NVIDIA KPI EXPLORER ═══
 var nvKpiData={
   accuracy:'↳ <strong>FORECAST ACCURACY · 96.4%</strong> — The headline. Computed in DAX as <em>1 − MAPE</em> across product (H100, H200) × region (EMEA, NA) pairs. A 3-month moving-average overlay on the Forecast vs Actual chart smooths short-term noise so the underlying trend is visible.',
@@ -2241,9 +3543,9 @@ var nvKpiData={
   leadtime:'↳ <strong>AVG SUPPLIER LEAD TIME · 59 days</strong> — H100 and H200 sit close to each other (~57 and ~60 days). The dashboard surfaces lead-time stability by product family, which feeds the strategic decision of whether to diversify suppliers or renegotiate priority allocation.',
   otd:'↳ <strong>ON-TIME DELIVERY · 95.92%</strong> — Customer-facing metric, downstream consequence of forecast accuracy and lead-time stability. The 4-point gap between accuracy (96.4%) and on-time delivery (95.92%) is the operational slippage between "we predicted right" and "we delivered right".'
 };
-document.querySelectorAll('#case-nvidia .dash-hotspot').forEach(function(k){
+document.querySelectorAll('#case-nvidia .nv-kpi').forEach(function(k){
   k.addEventListener('click',function(){
-    document.querySelectorAll('#case-nvidia .dash-hotspot').forEach(function(x){
+    document.querySelectorAll('#case-nvidia .nv-kpi').forEach(function(x){
       x.classList.remove('active');
     });
     k.classList.add('active');
@@ -2253,14 +3555,14 @@ document.querySelectorAll('#case-nvidia .dash-hotspot').forEach(function(k){
 
 // ═══ DISSERTATION MODEL SWITCHER ═══
 var wqData={
-  ridge:{name:'Ridge Regression',avg:'0.094',note:'Linear baseline. Underfits the non-linear seasonal patterns in temperature and dissolved oxygen — useful as a floor, not a ceiling.',
-    params:[{name:'Water Temp',v:'0.412'},{name:'Dissolved O₂',v:'0.118'},{name:'Nitrate',v:'0.087'},{name:'pH',v:'0.054'},{name:'BOD',v:'−0.201',worst:true}]},
-  rf:{name:'Random Forest',avg:'0.211',note:'Captures non-linearity well, but plateaus on long-tail rare events. A strong middle-tier performer.',
-    params:[{name:'Water Temp',v:'0.701'},{name:'Dissolved O₂',v:'0.198'},{name:'Nitrate',v:'0.142'},{name:'pH',v:'0.115'},{name:'BOD',v:'−0.101',worst:true}]},
-  mlp:{name:'Multi-Layer Perceptron',avg:'0.156',note:'Mid-pack. Trains fine but is data-hungry — the chronological split punishes it more than tree-based methods.',
-    params:[{name:'Water Temp',v:'0.598'},{name:'Dissolved O₂',v:'0.167'},{name:'Nitrate',v:'0.104'},{name:'pH',v:'0.082'},{name:'BOD',v:'−0.171',worst:true}]},
-  xgb:{name:'XGBoost',avg:'0.253',winner:true,note:'Best overall. Wins every parameter except BOD, where every model struggles — BOD reflects acute, unpredictable events that aren\'t encoded in the lag features.',
-    params:[{name:'Water Temp',v:'0.785',best:true},{name:'Dissolved O₂',v:'0.241'},{name:'Nitrate',v:'0.189'},{name:'pH',v:'0.142'},{name:'BOD',v:'−0.089',worst:true}]}
+  ridge:{name:'Ridge Regression',avg:'+0.09',note:'Linear baseline. Surprisingly competitive on average because it never fails catastrophically. Best on Dissolved O₂ — but ceiling is low everywhere.',
+    params:[{name:'Water Temp',v:'+0.106'},{name:'Dissolved O₂',v:'+0.357',best:true},{name:'Nitrate',v:'−0.007'},{name:'pH',v:'−0.012'},{name:'BOD',v:'−0.007'}]},
+  rf:{name:'Random Forest',avg:'−0.55',note:'Strong on Water Temperature (+0.729), but blows up catastrophically on BOD (−3.487). The negative average is dragged down entirely by that one failure mode.',
+    params:[{name:'Water Temp',v:'+0.729'},{name:'Dissolved O₂',v:'+0.179'},{name:'Nitrate',v:'−0.322'},{name:'pH',v:'+0.163'},{name:'BOD',v:'−3.487',worst:true}]},
+  mlp:{name:'Multi-Layer Perceptron',avg:'−0.91',note:'Worst overall. Two catastrophic failures — Water Temp at −3.611 and Nitrate at −1.420 — destroy the average. The modest positive R² on O₂ and pH isn\'t enough.',
+    params:[{name:'Water Temp',v:'−3.611',worst:true},{name:'Dissolved O₂',v:'+0.460'},{name:'Nitrate',v:'−1.420'},{name:'pH',v:'+0.083'},{name:'BOD',v:'−0.065'}]},
+  xgb:{name:'XGBoost',avg:'+0.25',winner:true,note:'Best overall. Wins decisively on Water Temp at +0.785 — the only +0.7+ result across all 20 model × target pairs. Consistently positive everywhere except BOD.',
+    params:[{name:'Water Temp',v:'+0.785',best:true},{name:'Dissolved O₂',v:'+0.503'},{name:'Nitrate',v:'+0.021'},{name:'pH',v:'+0.225'},{name:'BOD',v:'−0.269',worst:true}]}
 };
 function renderWQ(model){
   var d=wqData[model];if(!d)return;
@@ -2282,35 +3584,31 @@ document.querySelectorAll('#wqMS .ms-btn').forEach(function(b){
 });
 renderWQ('xgb');
 
-// ═══ FACE ITERATION STEPPER ═══
-var afData={
-  '1':{acc:'72.4',changed:'<strong>Baseline.</strong> DenseNet121 pretrained on ImageNet, default hyperparameters, no augmentation. The starting point — deliberately unoptimised, to give every later iteration something to beat.',
-    params:[{k:'Batch size',v:'32'},{k:'Learning rate',v:'1e-3'},{k:'Augmentation',v:'None'},{k:'Epochs',v:'10'},{k:'Optimiser',v:'SGD'}]},
-  '2':{acc:'79.1',changed:'<strong>Added augmentation.</strong> Random horizontal flips and ±15° rotations. The +6.7 pt lift confirmed that the training set under-represents real-world face orientations.',
-    params:[{k:'Batch size',v:'32'},{k:'Learning rate',v:'1e-3'},{k:'Augmentation',v:'Flip + rotate'},{k:'Epochs',v:'10'},{k:'Optimiser',v:'SGD'}]},
-  '3':{acc:'83.5',changed:'<strong>Switched optimiser to Adam + LR schedule.</strong> Cosine annealing from 1e-3 to 1e-5. Smoother convergence, +4.4 pts. Validation loss curve stopped oscillating.',
-    params:[{k:'Batch size',v:'32'},{k:'Learning rate',v:'1e-3 → 1e-5'},{k:'Augmentation',v:'Flip + rotate'},{k:'Epochs',v:'15'},{k:'Optimiser',v:'Adam · cosine'}]},
-  '4':{acc:'86.7',final:true,changed:'<strong>Final run.</strong> Larger batch, normalisation tuned for the dataset mean, longer training under the new LR schedule. +3.2 pts. Beats ResNet50 (79.4%) by 7.3 pts at matched compute.',
-    params:[{k:'Batch size',v:'64'},{k:'Learning rate',v:'1e-3 → 1e-5'},{k:'Augmentation',v:'Flip + rotate + norm'},{k:'Epochs',v:'25'},{k:'Optimiser',v:'Adam · cosine'}]}
+// ═══ FACE 4-CONFIGURATION EXPLORER ═══
+var afCfgData={
+  'dn-train':'↳ <strong>DENSENET · TRAINING PIPELINE · 0.80</strong> — DenseNet trained on the Kaggle <em>gender_images</em> set (100 photos, 50/50 male/female). Dense connectivity between layers preserves feature information through the network. Solid baseline performance — precision, recall, and accuracy all settle at 0.80, indicating balanced classification across both classes.',
+  'rn-train':'↳ <strong>RESNET · TRAINING PIPELINE · 0.73</strong> — ResNet trained on the same gender_images set with identical preprocessing. Residual connections allow deeper architectures but didn\'t help here — ResNet trails DenseNet by ~6.7 points across all three metrics. The residual approach may need more training data than the 100-photo Kaggle set provides.',
+  'dn-rt':'↳ <strong>DENSENET · REAL-TIME INFERENCE · 0.8667</strong> — The winning configuration. The trained DenseNet model, applied to <em>Nawaf_data_inference</em> (30 unseen photos), beats every other run including its own training-set evaluation (0.80). Real-world generalisation is consistent across all three metrics — precision, recall, and accuracy all land at 0.8667, meaning errors are evenly distributed between male and female classes.',
+  'rn-rt':'↳ <strong>RESNET · REAL-TIME INFERENCE · 0.80</strong> — Trained ResNet applied to the same 30-photo unseen set. Interestingly, ResNet improves at inference (0.80) compared to its own training-set evaluation (0.7333) — suggesting it may have been slightly under-trained. Still behind DenseNet on the same set by ~7 points.'
 };
-function renderAF(iter){
-  var d=afData[iter];if(!d)return;
-  var html='<div class="iter-grid"><div>';
-  html+='<div class="iter-acc-label">Test accuracy · iter '+iter+'</div>';
-  html+='<div class="iter-accuracy">'+d.acc+'<span class="pct">%</span></div>';
-  html+='<div class="iter-changed">'+d.changed+'</div></div>';
-  html+='<div class="iter-params">';
-  d.params.forEach(function(p){html+='<div class="iter-param"><span class="k">'+p.k+'</span><span class="v">'+p.v+'</span></div>';});
-  html+='</div></div>';
-  document.getElementById('afIV').innerHTML=html;
-}
-document.querySelectorAll('#afIB .iter-btn').forEach(function(b){
-  b.addEventListener('click',function(){
-    document.querySelectorAll('#afIB .iter-btn').forEach(function(x){x.classList.remove('active');});
-    b.classList.add('active');renderAF(b.dataset.iter);
+document.querySelectorAll('#afMQ .mq-card').forEach(function(k){
+  k.addEventListener('click',function(){
+    document.querySelectorAll('#afMQ .mq-card').forEach(function(x){x.classList.remove('active');});
+    k.classList.add('active');
+    document.getElementById('afDetail').innerHTML=afCfgData[k.dataset.cfg]||'';
   });
 });
-renderAF('4');
+
+// Animate model-quad bar fills on scroll-into-view
+var mqObs=new IntersectionObserver(function(e){
+  e.forEach(function(en){if(en.isIntersecting){
+    en.target.querySelectorAll('.mq-bar-fill').forEach(function(b,i){
+      setTimeout(function(){b.style.width=b.dataset.w+'%';},i*120);
+    });
+    mqObs.unobserve(en.target);
+  }});
+},{threshold:0.2});
+document.querySelectorAll('#afMQ').forEach(function(g){mqObs.observe(g);});
 </script>
 </body>
 </html>
