@@ -1,5 +1,6 @@
 import { clamp, lerp, smoothstep } from '../src/util/lerp.js';
 import { detectTier, pointBudget } from '../src/util/capabilities.js';
+import { sectionProgress, activeIndex } from '../src/scroll.js';
 
 const results = [];
 function check(name, fn) {
@@ -29,6 +30,16 @@ check('budget scales with tier', () => {
   if (!(pointBudget('high') > pointBudget('low'))) throw new Error('high must exceed low');
   eq(pointBudget('none'), 0);
 });
+
+check('progress 0 before section', () => eq(sectionProgress(0, 800, 1600, 800), 0));
+check('progress 1 after section', () => eq(sectionProgress(4000, 800, 1600, 800), 1));
+check('progress mid', () => eq(sectionProgress(1600, 800, 1600, 800), 0.5));
+check('activeIndex picks overlapping', () =>
+  eq(activeIndex(0, 800, [{top:0,height:800},{top:800,height:800}]), 0));
+check('activeIndex second section', () =>
+  eq(activeIndex(900, 800, [{top:0,height:800},{top:800,height:800}]), 1));
+check('activeIndex none past end', () =>
+  eq(activeIndex(9000, 800, [{top:0,height:800}]), -1));
 
 function render() {
   const out = document.getElementById('out');

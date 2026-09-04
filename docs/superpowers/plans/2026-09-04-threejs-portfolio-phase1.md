@@ -19,7 +19,8 @@
 - Palette tokens, verbatim: `--bg #05070a`, `--ink #e8eaf0`, `--ember #e64d2e`, `--cyan #38bdf8`, `--violet #a78bfa`.
 - Fonts unchanged: Newsreader (serif), Inter (sans), JetBrains Mono (mono).
 - Confirmed figures, use exactly: **8.3M** samples, **96.4%** forecast accuracy, **86.7%** DenseNet accuracy, **15+** projects shipped, **R² 0.79** (XGBoost × water temp), four models (Ridge, Random Forest, MLP, XGBoost).
-- Never call `dispose()` on a scene merely because it left the viewport — pause it.
+- Never call `dispose()` on a scene merely because it left the viewport — pause it (`root.visible = false`).
+- Every scene's `init(ctx)` MUST return the root `THREE.Object3D` it added, so the lifecycle can gate visibility.
 - The repo is inside a OneDrive-synced folder. Commit after every task.
 
 ## Testing Approach
@@ -448,7 +449,7 @@ git commit -m "feat: add WebGL stage with static-page fallback on any failure"
 **Interfaces:**
 - Consumes: `clamp` (Task 1); stage from Task 3.
 - Produces: `sectionProgress(scrollY, viewportH, top, height) -> 0..1`; `activeIndex(scrollY, viewportH, rects) -> number|-1`; `createScrollDriver(ids) -> { measure(), read() }`.
-- Produces the **scene contract** every later task implements: a module default-exporting `{ id, init(ctx), update(dt, progress), dispose() }` where `ctx = { scene, camera, renderer, tier, budget }`.
+- Produces the **scene contract** every later task implements: a module default-exporting `{ id, init(ctx), update(dt, progress), dispose() }` where `ctx = { scene, camera, renderer, tier, budget }`. **`init` MUST return the root `THREE.Object3D` it added to the scene.** Without that handle the lifecycle can only gate updates, not visibility, and every scene ever initialised would keep rendering stacked on top of the others.
 
 - [ ] **Step 1: Write the failing tests**
 
@@ -530,17 +531,30 @@ import { createScrollDriver } from './scroll.js';
 
 const SECTIONS = ['hero','statement','impact','case-01','case-02','case-03','contact'];
 const registry = new Map();   // id -> scene module
-const live = new Map();       // id -> initialised module
+const live = new Map();       // id -> { mod, root }
 
 function syncScenes(driver, ctx, dt) {
   const { id, progress } = driver.read();
-  if (!id) return;
-  const mod = registry.get(id);
-  if (!mod) return;
-  if (!live.has(id)) { mod.init(ctx); live.set(id, mod); }
-  mod.update(dt, progress);          // only the active scene updates
+
+  // Init on first entry; keep the root handle so visibility can be gated.
+  if (id && registry.has(id) && !live.has(id)) {
+    const mod = registry.get(id);
+    const root = mod.init(ctx);
+    live.set(id, { mod, root });
+  }
+
+  // Exactly one scene is visible and updated; the rest are paused, not disposed.
+  for (const [liveId, { mod, root }] of live) {
+    const active = liveId === id;
+    if (root) root.visible = active;
+    if (active) mod.update(dt, progress);
+  }
 }
 ```
+
+Gating `root.visible` is the whole point: gating only `update()` would leave
+every previously visited scene still in the graph and still rendering, so the
+hero cloud, the lattice, and the bars would pile up on screen together.
 
 In `boot()`, build `ctx = { scene: stage.scene, camera: stage.camera, renderer: stage.renderer, tier, budget: pointBudget(tier) }`, create the driver with `SECTIONS`, and call `syncScenes(driver, ctx, dt)` inside the frame loop before `stage.render()`.
 
