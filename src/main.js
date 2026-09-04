@@ -50,7 +50,7 @@ async function boot() {
     ]);
     scenes.forEach(m => registry.set(m.default.id, m.default));
 
-    const stage = createStage({ canvas, tier, reducedMotion: reduced });
+    const stage = await createStage({ canvas, tier, reducedMotion: reduced });
     document.documentElement.classList.add('webgl-active');
 
     const ctx = {
