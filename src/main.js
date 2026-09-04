@@ -41,6 +41,12 @@ async function boot() {
     // catch below could fall back to the static page.
     const scenes = await Promise.all([
       import('./scenes/latentField.js'),
+      import('./scenes/network.js'),
+      import('./scenes/bars.js'),
+      import('./scenes/manifold.js'),
+      import('./scenes/graph.js'),
+      import('./scenes/convnet.js'),
+      import('./scenes/disperse.js'),
     ]);
     scenes.forEach(m => registry.set(m.default.id, m.default));
 
