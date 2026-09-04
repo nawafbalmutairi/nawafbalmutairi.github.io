@@ -22,7 +22,9 @@ export default {
     });
 
     const nodeGeo = new THREE.SphereGeometry(0.09, 12, 12);
-    const nodeMat = new THREE.MeshBasicMaterial({ color: '#e8eaf0' });
+    const nodeMat = new THREE.MeshStandardMaterial({
+      color: '#e8eaf0', metalness: 0.3, roughness: 0.4,
+      emissive: new THREE.Color('#38bdf8'), emissiveIntensity: 0.18 });
     nodeMesh = new THREE.InstancedMesh(nodeGeo, nodeMat, nodes.length);
     const m = new THREE.Matrix4();
     nodes.forEach((p, i) => { m.setPosition(p); nodeMesh.setMatrixAt(i, m); });

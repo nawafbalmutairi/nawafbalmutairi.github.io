@@ -26,6 +26,10 @@ check('tier low on small memory', () =>
   eq(detectTier({ hasWebGL2: true, isMobile: false, deviceMemory: 2 }), 'low'));
 check('tier high on desktop', () =>
   eq(detectTier({ hasWebGL2: true, isMobile: false, deviceMemory: 8 }), 'high'));
+check('tier none on narrow viewport - tables carry mobile', () =>
+  eq(detectTier({ hasWebGL2: true, isMobile: false, deviceMemory: 8, viewportWidth: 700 }), 'none'));
+check('tier survives a wide viewport', () =>
+  eq(detectTier({ hasWebGL2: true, isMobile: false, deviceMemory: 8, viewportWidth: 1400 }), 'high'));
 check('budget scales with tier', () => {
   if (!(pointBudget('high') > pointBudget('low'))) throw new Error('high must exceed low');
   eq(pointBudget('none'), 0);

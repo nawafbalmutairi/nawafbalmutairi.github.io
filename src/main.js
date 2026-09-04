@@ -1,11 +1,12 @@
 import { readEnvironment, detectTier, pointBudget } from './util/capabilities.js';
 import { prefersReducedMotion } from './util/reducedMotion.js';
 import { createScrollDriver } from './scroll.js';
+import { initUI } from './ui.js';
+import { initDrag } from './drag.js';
 
 const SECTIONS = ['hero', 'statement', 'impact', 'case-01', 'case-02', 'case-03', 'contact'];
 
-const env = readEnvironment();
-const tier = detectTier(env);
+const NARROW = 820;   // below this the case-study tables carry the content
 const reduced = prefersReducedMotion();
 
 const registry = new Map();   // id -> scene module
@@ -31,6 +32,10 @@ function syncScenes(driver, ctx, dt) {
 }
 
 async function boot() {
+  // Decided here, not at module-execution time: innerWidth is not reliable
+  // until layout has settled, and reading it once would lock the decision in
+  // for the life of the page (a phone rotation would never be reconsidered).
+  const tier = detectTier(readEnvironment());
   if (tier === 'none') return;
   try {
     const canvas = document.getElementById('gl');
@@ -40,12 +45,11 @@ async function boot() {
     // from the CDN, and a static import would break main.js itself before the
     // catch below could fall back to the static page.
     const scenes = await Promise.all([
-      import('./scenes/latentField.js'),
+      import('./scenes/latentPortfolio.js'),
       import('./scenes/network.js'),
-      import('./scenes/bars.js'),
       import('./scenes/rSquaredMatrix.js'),
-      import('./scenes/graph.js'),
-      import('./scenes/convnet.js'),
+      import('./scenes/supplySystem.js'),
+      import('./scenes/architectures.js'),
       import('./scenes/disperse.js'),
     ]);
     scenes.forEach(m => registry.set(m.default.id, m.default));
@@ -75,9 +79,17 @@ async function boot() {
     requestAnimationFrame(function frame(now) {
       const dt = Math.min((now - last) / 1000, 0.05);
       last = now;
-      ctx.dt = dt;
-      syncScenes(driver, ctx, dt);
-      stage.render();
+
+      // Crossing the threshold mid-session (rotation, window resize) stops the
+      // 3D rather than leaving a cramped instrument on a narrow screen.
+      const narrow = innerWidth < NARROW;
+      document.documentElement.classList.toggle('webgl-active', !narrow);
+      if (!narrow) {
+        ctx.dt = dt;
+        ctx.isWide = innerWidth >= 980;
+        syncScenes(driver, ctx, dt);
+        stage.render();
+      }
       requestAnimationFrame(frame);
     });
   } catch (err) {
@@ -86,6 +98,11 @@ async function boot() {
     document.documentElement.classList.remove('webgl-active');
   }
 }
+
+// Chrome first, and unconditionally: the pipeline HUD and nav state must work
+// even if WebGL never starts.
+initUI(SECTIONS);
+initDrag(SECTIONS);
 
 if (document.readyState === 'complete') queueMicrotask(boot);
 else addEventListener('load', boot, { once: true });

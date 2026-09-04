@@ -66,8 +66,31 @@ for (let i = 0; i < steps; i++) {
   scene.update(0.016, target * Math.min(1, (i + 1) / (steps * 0.75)));
 }
 stage.render();
+window.__png = null;
 document.getElementById('state').textContent =
   `progress=${target.toFixed(2)} · steps=${steps} · settled`;
+// Compose the WebGL render together with its DOM labels into one PNG so the
+// design can be looked at outside this browser.
+window.__capture = () => {
+  const src = stage.renderer.domElement;
+  const out = document.createElement('canvas');
+  out.width = src.width; out.height = src.height;
+  const g = out.getContext('2d');
+  const sx = src.width / src.clientWidth, sy = src.height / src.clientHeight;
+  g.fillStyle = '#05070a'; g.fillRect(0, 0, out.width, out.height);
+  g.drawImage(src, 0, 0);
+  document.querySelectorAll('.lbl').forEach(el => {
+    const m = el.style.transform.match(/translate\((-?[\d.]+)px, *(-?[\d.]+)px\)/);
+    if (!m) return;
+    const cs = getComputedStyle(el);
+    if (el.style.opacity === '0') return;   // inline value: what the code decided
+    g.font = `${cs.fontWeight} ${parseFloat(cs.fontSize) * sy}px ${cs.fontFamily}`;
+    g.fillStyle = cs.color;
+    g.textAlign = 'center'; g.textBaseline = 'middle';
+    g.fillText(el.textContent, parseFloat(m[1]) * sx, parseFloat(m[2]) * sy);
+  });
+  return out.toDataURL('image/png');
+};
 window.__stage = stage;
 window.__THREE = await import('three');
 window.__ready = true;

@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { createLabelLayer } from '../labels.js';
+import { dragFor } from '../drag.js';
 import { smoothstep, clamp } from '../util/lerp.js';
 
 // The dissertation result, as an object rather than a decoration.
@@ -175,9 +176,10 @@ export default {
 
     // Slow presentation turn, nudged by the pointer — it reads as an object
     // being shown to you, not a spinning logo.
-    const target = -0.62 + (pointer.has ? pointer.x * 0.28 : 0) + (progress - 0.5) * 0.5;
+    const d = dragFor('case-01');
+    const target = -0.62 + d.x + (pointer.has ? pointer.x * 0.18 : 0) + (progress - 0.5) * 0.5;
     group.rotation.y += (target - group.rotation.y) * Math.min(1, dt * 2.2);
-    group.rotation.x = 0.06 + (pointer.has ? clamp(pointer.y, -1, 1) * 0.05 : 0);
+    group.rotation.x = 0.06 + d.y + (pointer.has ? clamp(pointer.y, -1, 1) * 0.04 : 0);
 
     // Hover readout: name the bar and its real value.
     if (pointer.has && raycaster && this._camera) {

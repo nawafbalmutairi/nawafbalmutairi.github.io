@@ -228,3 +228,48 @@ footer{
 }
 @media(min-width:980px){.instrument-hint{display:block}}
 .instrument-hint::before{content:'◈';color:var(--ember);margin-right:8px}
+
+/* ═══ PIPELINE HUD ═══
+   The scroll is the method: problem -> system -> outcome. The HUD names the
+   stage you are standing in rather than decorating the edge of the screen. */
+.hud{
+  position:fixed;left:clamp(14px,2.2vw,26px);top:50%;
+  transform:translateY(-50%);z-index:40;
+  display:none;flex-direction:column;gap:14px;
+  pointer-events:none;
+}
+@media(min-width:1180px){.hud{display:flex}}
+.hud-k{
+  font-family:var(--mono);font-size:9px;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--mute);
+}
+.hud-steps{list-style:none;display:flex;flex-direction:column;gap:11px}
+.hud-steps li{
+  font-family:var(--mono);font-size:10px;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--mute);
+  padding-left:18px;position:relative;
+  transition:color .3s ease;
+}
+.hud-steps li::before{
+  content:'';position:absolute;left:0;top:50%;
+  width:9px;height:1px;background:var(--line);
+  transition:background .3s ease,width .3s ease;
+}
+.hud-steps li.on{color:var(--ink)}
+.hud-steps li.on::before{background:var(--ember);width:13px}
+.hud-steps li.done{color:var(--ink-2)}
+.hud-steps li.done::before{background:var(--ink-2)}
+
+/* Grab pad: an invisible handle over the instrument's half of the case,
+   so dragging turns the object without ever hijacking text or scroll. */
+.grab-pad{
+  position:absolute;top:0;right:0;
+  width:46%;height:min(100vh,860px);
+  z-index:2;cursor:grab;
+  display:none;
+}
+.grab-pad.grabbing{cursor:grabbing}
+@media(min-width:980px) and (pointer:fine){
+  .case--instrument{position:relative}
+  .grab-pad{display:block}
+}

@@ -1,12 +1,10 @@
 import * as THREE from 'three';
-import latentField from '../src/scenes/latentField.js';
+import latentPortfolio from '../src/scenes/latentPortfolio.js';
 import network from '../src/scenes/network.js';
-import bars from '../src/scenes/bars.js';
-import manifold from '../src/scenes/manifold.js';
-import graph from '../src/scenes/graph.js';
-import convnet from '../src/scenes/convnet.js';
-import disperse from '../src/scenes/disperse.js';
 import r2matrix from '../src/scenes/rSquaredMatrix.js';
+import supplySystem from '../src/scenes/supplySystem.js';
+import architectures from '../src/scenes/architectures.js';
+import disperse from '../src/scenes/disperse.js';
 
 const results = [];
 function check(name, fn) {
@@ -16,8 +14,10 @@ function check(name, fn) {
 function eq(a, b) { if (a !== b) throw new Error(`expected ${b}, got ${a}`); }
 function ok(c, m) { if (!c) throw new Error(m || 'expected truthy'); }
 
-const ALL = [latentField, network, bars, manifold, graph, convnet, disperse];
-const IDS = ['hero', 'statement', 'impact', 'case-01', 'case-02', 'case-03', 'contact'];
+const ALL = [latentPortfolio, network, r2matrix, supplySystem, architectures, disperse];
+// 'impact' intentionally has no scene: the DOM already states those four
+// figures in 86px type, so a 3D restatement would be pure decoration.
+const IDS = ['hero', 'statement', 'case-01', 'case-02', 'case-03', 'contact'];
 
 function ctxFor(scene) {
   return { scene, camera: new THREE.PerspectiveCamera(), renderer: null, tier: 'high', budget: 4000, dt: 0.016 };
@@ -25,8 +25,8 @@ function ctxFor(scene) {
 
 // ── Contract: every scene declares an id, returns its root, and cleans up ──
 check('all seven scene ids present and unique', () => {
-  eq(ALL.length, 7);
-  eq(new Set(ALL.map(s => s.id)).size, 7);
+  eq(ALL.length, 6);
+  eq(new Set(ALL.map(s => s.id)).size, 6);
   IDS.forEach(id => ok(ALL.some(s => s.id === id), 'missing scene for ' + id));
 });
 
@@ -66,34 +66,14 @@ ALL.forEach(mod => {
 });
 
 // ── Meaning: the 3D must not contradict the printed figures ──
-check('impact bars rank in the same order as the published numbers', () => {
+check('hero embeds 15 projects across 4 domains', () => {
   const scene = new THREE.Scene();
-  const root = bars.init(ctxFor(scene));
-  bars.update(0.016, 1);
-  const h = root.children.map(m => m.scale.y);
-  // 8.3/10=0.83, 96.4/100=0.964, 86.7/100=0.867, 15/20=0.75
-  ok(h[1] > h[2], 'forecast 96.4% must exceed densenet 86.7%');
-  ok(h[2] > h[0], 'densenet 0.867 must exceed samples 0.83');
-  ok(h[0] > h[3], 'samples 0.83 must exceed projects 0.75');
-  bars.dispose();
-});
-
-check('impact bars start collapsed at progress 0', () => {
-  const scene = new THREE.Scene();
-  const root = bars.init(ctxFor(scene));
-  bars.update(0.016, 0);
-  ok(root.children.every(m => m.scale.y < 0.01), 'bars must not be grown at progress 0');
-  bars.dispose();
-});
-
-check('model clusters are ordered by R², XGBoost highest', () => {
-  const scene = new THREE.Scene();
-  const root = manifold.init(ctxFor(scene));
-  const y = root.children.map(c => c.geometry.attributes.position.array[1]);
-  const names = root.children.map(c => c.name);
-  eq(names[3], 'model:XGBoost');
-  ok(y[3] > y[0], 'XGBoost must sit above Ridge');
-  manifold.dispose();
+  const root = latentPortfolio.init(ctxFor(scene));
+  const nodes = root.children.filter(c => c.isMesh && c.userData && c.userData.name);
+  eq(nodes.length, 15);
+  const pts = root.children.filter(c => c.isPoints);
+  eq(pts.length, 1);
+  latentPortfolio.dispose();
 });
 
 check('neural lattice has 30 nodes in 6-10-10-4 layers', () => {
@@ -105,21 +85,33 @@ check('neural lattice has 30 nodes in 6-10-10-4 layers', () => {
   network.dispose();
 });
 
-check('supply-chain graph has 5 nodes plus flows and causal ring', () => {
+check('supply system carries backorders and flowing volume', () => {
   const scene = new THREE.Scene();
-  const root = graph.init(ctxFor(scene));
-  const meshes = root.children.filter(c => c.isMesh);
-  const lines = root.children.filter(c => c.isLineSegments);
-  eq(lines.length, 1);
-  eq(meshes.length, 6);   // 5 nodes + causal-loop ring
-  graph.dispose();
+  const root = supplySystem.init(ctxFor(scene));
+  const pts = root.children.filter(c => c.isPoints);
+  eq(pts.length, 1);                       // volume in transit
+  ok(pts[0].geometry.attributes.position.count > 50, 'expected flowing particles');
+  supplySystem.update(0.016, 1);
+  const grown = root.children.filter(c => c.isMesh && c.userData && c.userData.full);
+  eq(grown.length, 2);                     // one backorder column per region
+  ok(grown.every(b => b.scale.y > 0.5), 'backorder columns must rise with progress');
+  supplySystem.dispose();
 });
 
-check('convnet has two stacks of six planes', () => {
+check('DenseNet is wired more densely than ResNet, and wins on accuracy', () => {
   const scene = new THREE.Scene();
-  const root = convnet.init(ctxFor(scene));
-  eq(root.children.length, 12);
-  convnet.dispose();
+  const root = architectures.init(ctxFor(scene));
+  const lines = root.children.filter(c => c.isLineSegments);
+  eq(lines.length, 2);
+  const counts = lines.map(l => l.geometry.attributes.position.count / 2);
+  ok(counts[0] > counts[1],
+     'dense connectivity must have more edges than residual shortcuts');
+  eq(counts[0], 15);                       // every layer to every later layer
+  architectures.update(0.016, 1);
+  const accs = root.children.filter(c => c.isMesh && c.userData && c.userData.full);
+  eq(accs.length, 2);
+  ok(accs[0].scale.y > accs[1].scale.y, 'DenseNet 0.867 must exceed ResNet 0.80');
+  architectures.dispose();
 });
 
 check('contact scene scatters as progress increases', () => {
@@ -134,14 +126,7 @@ check('contact scene scatters as progress increases', () => {
   disperse.dispose();
 });
 
-check('hero resolves out of noise over time', () => {
-  const scene = new THREE.Scene();
-  const root = latentField.init(ctxFor(scene));
-  eq(root.material.uniforms.uResolve.value, 0);
-  for (let i = 0; i < 200; i++) latentField.update(0.016, 0);
-  eq(root.material.uniforms.uResolve.value, 1);
-  latentField.dispose();
-});
+
 
 check('R² matrix renders all 20 combinations, negatives included', () => {
   const scene = new THREE.Scene();
