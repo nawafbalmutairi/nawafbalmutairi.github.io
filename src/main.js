@@ -35,6 +35,15 @@ async function boot() {
   try {
     const canvas = document.getElementById('gl');
     const { createStage } = await import('./stage.js');
+
+    // Scenes are imported dynamically, never statically: they pull in three
+    // from the CDN, and a static import would break main.js itself before the
+    // catch below could fall back to the static page.
+    const scenes = await Promise.all([
+      import('./scenes/latentField.js'),
+    ]);
+    scenes.forEach(m => registry.set(m.default.id, m.default));
+
     const stage = createStage({ canvas, tier, reducedMotion: reduced });
     document.documentElement.classList.add('webgl-active');
 
