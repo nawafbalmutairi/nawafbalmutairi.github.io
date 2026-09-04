@@ -62,7 +62,6 @@ async function boot() {
       dt: 0,
     };
     const driver = createScrollDriver(SECTIONS);
-    window.__driver = driver;   // read by the verification step
 
     if (reduced) {
       syncScenes(driver, ctx, 0);
