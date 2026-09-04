@@ -122,3 +122,36 @@ td.win{color:var(--ember);font-weight:600}
   html{scroll-behavior:auto}
   *{animation:none!important;transition:none!important}
 }
+
+/* ═══ 3D LABEL LAYER ═══
+   Real DOM text projected from world space: crisp, themed, readable. */
+.label-layer{
+  position:fixed;inset:0;z-index:2;
+  pointer-events:none;
+  transition:opacity .3s ease;
+}
+.lbl{
+  position:absolute;top:0;left:0;
+  white-space:nowrap;
+  font-family:var(--mono);
+  font-size:10px;letter-spacing:0.1em;text-transform:uppercase;
+  color:var(--ink-2);
+  opacity:0;transition:opacity .18s ease;
+  text-shadow:0 1px 6px rgba(5,7,10,.95),0 0 2px rgba(5,7,10,1);
+}
+.lbl-axis{color:var(--mute)}
+.lbl-note{color:var(--mute);font-size:9px;opacity:.7;text-transform:none;letter-spacing:.06em}
+.lbl-win{
+  color:var(--ember);font-size:13px;font-weight:600;letter-spacing:0.06em;
+}
+.lbl-readout{
+  color:var(--ink);
+  background:rgba(5,7,10,.9);
+  border:1px solid var(--line);
+  padding:6px 10px;border-radius:2px;
+  font-size:10px;letter-spacing:.06em;text-transform:none;
+}
+@media(max-width:820px){
+  .lbl{font-size:9px}
+  .lbl-win{font-size:11px}
+}

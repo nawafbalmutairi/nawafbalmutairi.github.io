@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>instrument preview</title>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../styles/tokens.css">
+<link rel="stylesheet" href="../styles/base.css">
+<style>
+  html,body{height:100%}
+  #gl{display:block!important}
+  /* this harness runs in a non-compositing pane: transitions never advance */
+  .lbl{transition:none!important}
+  .copy{position:fixed;left:5vw;top:50%;transform:translateY(-50%);
+    max-width:44%;z-index:3}
+  .copy h2{font-family:var(--serif);font-size:clamp(30px,4vw,52px);
+    line-height:1.08;letter-spacing:-.03em;margin:14px 0 18px}
+  .copy h2 em{font-style:italic;color:var(--ember)}
+  .copy p{font-size:16px;color:var(--ink-2);line-height:1.6}
+  .state{position:fixed;right:16px;bottom:14px;z-index:9;
+    font-family:var(--mono);font-size:10px;color:var(--mute);letter-spacing:.1em}
+</style>
+</head>
+<body>
+<canvas id="gl" aria-hidden="true"></canvas>
+<div class="copy">
+  <p class="eyebrow">Machine Learning · Dissertation</p>
+  <h2>Benchmarking four ML models on <em>8.3 million</em> water-quality samples.</h2>
+  <p>Ridge, Random Forest, MLP and XGBoost across five parameters — every one of
+  the 20 combinations, as an object you can read.</p>
+  <p class="instrument-hint" style="display:block;margin-top:22px">Live R² matrix — hover any bar to read its value</p>
+</div>
+<div class="state" id="state">…</div>
+
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/"
+}}
+</script>
+<script type="module">
+import { createStage } from '../src/stage.js';
+import scene from '../src/scenes/rSquaredMatrix.js';
+
+const params = new URLSearchParams(location.search);
+const target = parseFloat(params.get('p') ?? '0.4');
+const steps  = parseInt(params.get('steps') ?? '160', 10);
+
+// Wait for stylesheets/fonts: until CSS applies, the canvas has zero layout
+// size and every label projection would be skipped.
+if (document.fonts && document.fonts.ready) await document.fonts.ready;
+const cv0 = document.getElementById('gl');
+for (let i = 0; i < 60 && !cv0.clientWidth; i++) await new Promise(r => setTimeout(r, 50));
+
+const stage = await createStage({
+  canvas: document.getElementById('gl'), tier: 'high', reducedMotion: false });
+document.documentElement.classList.add('webgl-active');
+
+const ctx = { scene: stage.scene, camera: stage.camera, renderer: stage.renderer,
+              tier: 'high', budget: 60000, isWide: innerWidth >= 980, dt: 0.016 };
+scene.init(ctx);
+
+// Drive deterministically to the requested progress, then STOP so the page
+// settles into a static frame that can actually be screenshotted.
+for (let i = 0; i < steps; i++) {
+  scene.update(0.016, target * Math.min(1, (i + 1) / (steps * 0.75)));
+}
+stage.render();
+document.getElementById('state').textContent =
+  `progress=${target.toFixed(2)} · steps=${steps} · settled`;
+window.__stage = stage;
+window.__THREE = await import('three');
+window.__ready = true;
+</script>
+</body>
+</html>

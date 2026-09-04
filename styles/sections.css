@@ -211,3 +211,20 @@ footer{
   display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;
   font-family:var(--mono);font-size:10px;letter-spacing:0.1em;color:var(--mute);
 }
+
+/* ═══ INSTRUMENT CASES ═══
+   The opening of the case yields the right-hand side to the 3D instrument;
+   the deeper reading below reclaims full width as the instrument fades. */
+@media(min-width:980px){
+  .case--instrument .case-head,
+  .case--instrument .case-body{max-width:54%}
+  .case--instrument .case-body{grid-template-columns:1fr;gap:34px}
+}
+.instrument-hint{
+  display:none;
+  font-family:var(--mono);font-size:10px;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--mute);
+  margin-top:22px;
+}
+@media(min-width:980px){.instrument-hint{display:block}}
+.instrument-hint::before{content:'◈';color:var(--ember);margin-right:8px}

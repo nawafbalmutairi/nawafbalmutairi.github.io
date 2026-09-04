@@ -6,6 +6,7 @@ import manifold from '../src/scenes/manifold.js';
 import graph from '../src/scenes/graph.js';
 import convnet from '../src/scenes/convnet.js';
 import disperse from '../src/scenes/disperse.js';
+import r2matrix from '../src/scenes/rSquaredMatrix.js';
 
 const results = [];
 function check(name, fn) {
@@ -140,6 +141,36 @@ check('hero resolves out of noise over time', () => {
   for (let i = 0; i < 200; i++) latentField.update(0.016, 0);
   eq(root.material.uniforms.uResolve.value, 1);
   latentField.dispose();
+});
+
+check('R² matrix renders all 20 combinations, negatives included', () => {
+  const scene = new THREE.Scene();
+  const root = r2matrix.init(ctxFor(scene));
+  r2matrix.update(0.016, 1);
+  const bars = root.children.filter(c => c.isMesh && c.userData && c.userData.model);
+  eq(bars.length, 20);
+  const grown = bars.filter(b => Math.abs(b.scale.y) > 0.05);
+  eq(grown.length, 20);
+  const neg = bars.filter(b => b.userData.r < 0);
+  eq(neg.length, 9);
+  ok(neg.every(b => b.scale.y < -0.05),
+     'negative R² must grow downward through the zero plane, not be clamped flat');
+  const win = bars.find(b => b.userData.isWinner);
+  ok(win.scale.y > 0, 'winner must be positive');
+  r2matrix.dispose();
+});
+
+check('R² matrix uses the published values unchanged', () => {
+  const scene = new THREE.Scene();
+  const root = r2matrix.init(ctxFor(scene));
+  const bars = root.children.filter(c => c.isMesh && c.userData && c.userData.model);
+  const get = (model, target) =>
+    bars.find(b => b.userData.model === model && b.userData.target === target).userData.r;
+  eq(get('XGBoost', 'Water Temp'), 0.79);
+  eq(get('MLP', 'Water Temp'), -3.61);
+  eq(get('Random Forest', 'BOD: 5 Day ATU'), -3.49);
+  eq(get('Ridge', 'Dissolved O₂'), 0.36);
+  r2matrix.dispose();
 });
 
 const out = document.getElementById('out');

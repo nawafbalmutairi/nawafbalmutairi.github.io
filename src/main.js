@@ -43,7 +43,7 @@ async function boot() {
       import('./scenes/latentField.js'),
       import('./scenes/network.js'),
       import('./scenes/bars.js'),
-      import('./scenes/manifold.js'),
+      import('./scenes/rSquaredMatrix.js'),
       import('./scenes/graph.js'),
       import('./scenes/convnet.js'),
       import('./scenes/disperse.js'),
@@ -59,8 +59,10 @@ async function boot() {
       renderer: stage.renderer,
       tier,
       budget: pointBudget(tier),
+      isWide: innerWidth >= 980,
       dt: 0,
     };
+    addEventListener('resize', () => { ctx.isWide = innerWidth >= 980; }, { passive: true });
     const driver = createScrollDriver(SECTIONS);
 
     if (reduced) {
