@@ -1,0 +1,8 @@
+:root{
+  --bg:#05070a; --bg-2:#0b0f16; --ink:#e8eaf0; --ink-2:#9aa3b2; --mute:#5d6675;
+  --line:rgba(232,234,240,.12);
+  --ember:#e64d2e; --cyan:#38bdf8; --violet:#a78bfa;
+  --serif:'Newsreader',Georgia,serif;
+  --sans:'Inter',-apple-system,sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,monospace;
+}
