@@ -38,13 +38,13 @@ export default {
       fragmentShader: frag,
       transparent: true,
       depthWrite: false,
-      blending: THREE.NormalBlending,
+      blending: THREE.AdditiveBlending,
       uniforms: {
         uTime: { value: 0 },
         uResolve: { value: 1 },
         uSize: { value: tier === 'high' ? 2.0 : 2.8 },
-        uColorA: { value: new THREE.Color('#e64d2e') },
-        uColorB: { value: new THREE.Color('#5c6672') },
+        uColorA: { value: new THREE.Color('#ff6a3d') },
+        uColorB: { value: new THREE.Color('#8fa6c4') },
       },
     });
 

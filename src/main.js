@@ -3,6 +3,7 @@ import { prefersReducedMotion } from './util/reducedMotion.js';
 import { createScrollDriver } from './scroll.js';
 import { initUI } from './ui.js';
 import { initDrag } from './drag.js';
+import { initGround, currentGround } from './ground.js';
 
 // Order matters twice over: the scene lifecycle reads it, and the pipeline
 // HUD maps its steps to these by index. 'journey' and 'impact' carry no
@@ -17,21 +18,18 @@ const live = new Map();       // id -> { mod, root }
 
 // The hero's slot is a real box in the layout; every other section carries an
 // absolutely-positioned one. Returning null means "draw nothing this frame".
-function slotRect(id) {
-  if (!id) return null;
-  const el = id === 'hero'
-    ? document.querySelector('#hero .stage-frame')
-    : document.querySelector('#' + CSS.escape(id) + ' .stage-slot');
-  if (!el) return null;
-  const r = el.getBoundingClientRect();
-  if (r.bottom < 0 || r.top > innerHeight || r.width < 8) return null;
-  return { left: r.left, top: r.top, width: r.width, height: r.height };
+// The world is full-bleed now: the graphics own the screen and the copy sits
+// in a column over them. The slot elements survive only as drag handles.
+function fullRect(canvas) {
+  const w = canvas.clientWidth || innerWidth;
+  const h = canvas.clientHeight || innerHeight;
+  return { left: 0, top: 0, width: w, height: h };
 }
 
 function syncScenes(driver, ctx, dt) {
   const { id, progress } = driver.read();
-  // Scenes read ctx.rect to place their labels; the renderer scissors to it.
-  ctx.rect = slotRect(id);
+  // Scenes read ctx.rect to place their labels; it is the whole canvas now.
+  ctx.rect = ctx.fullRect;
 
   // Init on first entry; keep the root handle so visibility can be gated.
   if (id && registry.has(id) && !live.has(id)) {
@@ -84,11 +82,13 @@ async function boot() {
       budget: pointBudget(tier),
       isWide: innerWidth >= 980,
       dt: 0,
+      fullRect: fullRect(canvas),
     };
     addEventListener('resize', () => { ctx.isWide = innerWidth >= 980; }, { passive: true });
     const driver = createScrollDriver(SECTIONS);
 
     if (reduced) {
+      ctx.fullRect = fullRect(canvas);
       syncScenes(driver, ctx, 0);
       stage.render(ctx.rect);
       return;
@@ -106,6 +106,13 @@ async function boot() {
       if (!narrow) {
         ctx.dt = dt;
         ctx.isWide = innerWidth >= 980;
+        ctx.fullRect = fullRect(canvas);
+
+        // The fog is the world's air: retint it as the ground colour moves, or
+        // distant geometry hazes toward a colour the page is no longer wearing.
+        const g = currentGround();
+        stage.scene.fog.color.setRGB(g[0] / 255, g[1] / 255, g[2] / 255);
+
         syncScenes(driver, ctx, dt);
         stage.render(ctx.rect);
       }
@@ -120,6 +127,7 @@ async function boot() {
 
 // Chrome first, and unconditionally: the pipeline HUD and nav state must work
 // even if WebGL never starts.
+initGround();
 initUI(SECTIONS);
 initDrag(SECTIONS);
 

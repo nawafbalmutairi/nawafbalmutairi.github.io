@@ -18,10 +18,10 @@ const REGIONS = [
 ];
 
 const COL = {
-  flow: 0x9a6212,
-  node: 0x6b7683,
-  strain: 0xe64d2e,
-  loop: 0xc98a2a,
+  flow: 0xe8a33d,
+  node: 0xdbe4ee,
+  strain: 0xff6a3d,
+  loop: 0xffc98a,
 };
 
 let group, labels, particles, pMat, pGeo, edges = [];
@@ -51,14 +51,14 @@ export default {
 
     const nodeMat = new THREE.MeshStandardMaterial({
       color: COL.node, metalness: 0.35, roughness: 0.4,
-      emissive: new THREE.Color(COL.node), emissiveIntensity: 0,
+      emissive: new THREE.Color(COL.node), emissiveIntensity: 0.16,
     });
 
     // ── the planning hub: the actor the dashboard exists to support ──
     hubMesh = new THREE.Mesh(new THREE.IcosahedronGeometry(0.72, 1), nodeMat.clone());
     hubMesh.material.color.set(COL.flow);
     hubMesh.material.emissive.set(COL.flow);
-    hubMesh.material.emissiveIntensity = 0.1;
+    hubMesh.material.emissiveIntensity = 0.45;
     hubMesh.position.set(HUB.x, HUB.y, HUB.z);
     group.add(hubMesh);
     labels.add('NVIDIA ops & planning', new THREE.Vector3(0, -1.25, 0), 'axis', group);
@@ -86,7 +86,7 @@ export default {
       geo.translate(0, 0.5, 0);
       const bar = new THREE.Mesh(geo, new THREE.MeshStandardMaterial({
         color: COL.strain, metalness: 0.2, roughness: 0.45, transparent: true,
-        opacity: 0.95, emissive: new THREE.Color(COL.strain), emissiveIntensity: 0.1,
+        opacity: 0.95, emissive: new THREE.Color(COL.strain), emissiveIntensity: 0.45,
       }));
       bar.position.set(r.x + 1.5, r.y - 0.5, r.z);
       bar.scale.y = 0.001;
@@ -121,7 +121,7 @@ export default {
     pGeo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
     pMat = new THREE.PointsMaterial({
       color: COL.flow, size: 0.13, transparent: true, opacity: 0.95,
-      depthWrite: false, blending: THREE.NormalBlending,
+      depthWrite: false, blending: THREE.AdditiveBlending,
     });
     particles = new THREE.Points(pGeo, pMat);
     particles.userData = { off };
@@ -149,7 +149,8 @@ export default {
     group.scale.setScalar(isWide ? 0.82 : 0.58);
     group.rotation.set(0.12, -0.5, 0);
     scene.add(group);
-    fitToCamera(group, cam);
+    fitToCamera(group, cam, { margin: 0.52 });
+    group.position.x += cam.aspect > 1.2 ? 3.4 : 0;   // clear of the copy
 
     canvasEl = document.getElementById('gl');
     return group;

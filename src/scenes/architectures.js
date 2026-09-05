@@ -10,9 +10,9 @@ import { smoothstep, clamp } from '../util/lerp.js';
 // ember because it won at 0.867 on the held-out set.
 const LAYERS = 6;
 const COL = {
-  dense: 0x6d4bd6,
-  res: 0x9aa3af,
-  signal: 0x0d7d74,
+  dense: 0xa78bfa,
+  res: 0x8895a6,
+  signal: 0x4fd6c4,
 };
 
 let group, labels, canvasEl = null, camera = null, sceneCtx = null;
@@ -57,8 +57,8 @@ export default {
     group.name = 'case-03:architectures';
     labels = createLabelLayer();
 
-    denseNodes = column(-2.5, COL.dense, 0.12);
-    resNodes = column(2.5, COL.res, 0);
+    denseNodes = column(-2.5, COL.dense, 0.5);
+    resNodes = column(2.5, COL.res, 0.12);
     denseNodes.forEach(n => group.add(n));
     resNodes.forEach(n => group.add(n));
 
@@ -89,7 +89,7 @@ export default {
       geo.translate(0, 0.5, 0);
       const bar = new THREE.Mesh(geo, new THREE.MeshStandardMaterial({
         color, metalness: 0.25, roughness: 0.45, transparent: true, opacity: 0.92,
-        emissive: new THREE.Color(color), emissiveIntensity: i === 0 ? 0.12 : 0,
+        emissive: new THREE.Color(color), emissiveIntensity: i === 0 ? 0.5 : 0.12,
       }));
       bar.position.set(x, -4.6, 0);
       bar.scale.y = 0.001;
@@ -107,7 +107,8 @@ export default {
     group.scale.setScalar(isWide ? 0.72 : 0.52);
     group.rotation.set(0.05, -0.35, 0);
     scene.add(group);
-    fitToCamera(group, cam);
+    fitToCamera(group, cam, { margin: 0.52 });
+    group.position.x += cam.aspect > 1.2 ? 3.4 : 0;   // clear of the copy
 
     canvasEl = document.getElementById('gl');
     return group;
@@ -121,7 +122,7 @@ export default {
     resLines.material.opacity = 0.28 + Math.abs(Math.sin(t * 1.1 + 1.6)) * 0.14;
 
     denseNodes.forEach((n, i) => {
-      n.material.emissiveIntensity = 0.06 + Math.abs(Math.sin(t * 1.6 - i * 0.5)) * 0.16;
+      n.material.emissiveIntensity = 0.3 + Math.abs(Math.sin(t * 1.6 - i * 0.5)) * 0.45;
     });
 
     accBars.forEach((b, i) => {

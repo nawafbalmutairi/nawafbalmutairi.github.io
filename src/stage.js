@@ -16,22 +16,24 @@ export async function createStage({ canvas, tier, reducedMotion }) {
   // Fog matches the paper, so depth reads as distance rather than haze over a
   // void. There is no bloom in the light design: additive glow on a near-white
   // ground just washes to white. Depth comes from lighting and contrast.
-  scene.fog = new THREE.FogExp2(0xf6f7f9, 0.026);
+  // Fog takes the ground's colour so depth reads as distance into the world
+  // rather than a grey haze; main.js retints it as the ground shifts.
+  scene.fog = new THREE.FogExp2(0x0c1220, 0.03);
 
   const camera = new THREE.PerspectiveCamera(42, 1, 0.1, 200);
   camera.position.set(0, 1.7, 15);
 
   // Lighting for a light room: bright sky fill, a soft key from above-front,
   // and a cool bounce standing in for light coming back off the paper.
-  scene.add(new THREE.HemisphereLight(0xffffff, 0xc9d2dd, 1.0));
+  scene.add(new THREE.HemisphereLight(0xbcd2ff, 0x0a0d14, 0.75));
 
-  const key = new THREE.DirectionalLight(0xffffff, 1.15);
+  const key = new THREE.DirectionalLight(0xfff4ec, 1.5);
   key.position.set(5, 9, 8);
   scene.add(key);
 
-  const fill = new THREE.DirectionalLight(0xdfe7f0, 0.55);
-  fill.position.set(-7, 2, -5);
-  scene.add(fill);
+  const rim = new THREE.DirectionalLight(0xff8a5c, 0.7);
+  rim.position.set(-8, 2, -6);
+  scene.add(rim);
 
   function setSize() {
     const w = canvas.clientWidth || innerWidth;

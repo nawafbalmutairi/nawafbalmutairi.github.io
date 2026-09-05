@@ -7,10 +7,10 @@ import { lerp, smoothstep, clamp } from '../util/lerp.js';
 // four domains the stack section already names. The clusters are the point —
 // this is what the work looks like when you step back from it.
 const DOMAINS = [
-  { key: 'Data & BI',             color: 0x0d7d74, c: [-4.6, 1.3, 0.6] },
-  { key: 'Machine learning',      color: 0x9a6212, c: [4.3, 1.9, -0.8] },
-  { key: 'Software architecture', color: 0x6d4bd6, c: [3.2, -2.4, 1.4] },
-  { key: 'Process & design',      color: 0x5c6672, c: [-3.9, -2.6, -1.1] },
+  { key: 'Data & BI',             color: 0x4fd6c4, c: [-4.6, 1.3, 0.6] },
+  { key: 'Machine learning',      color: 0xe8a33d, c: [4.3, 1.9, -0.8] },
+  { key: 'Software architecture', color: 0xa78bfa, c: [3.2, -2.4, 1.4] },
+  { key: 'Process & design',      color: 0xdbe4ee, c: [-3.9, -2.6, -1.1] },
 ];
 
 const PROJECTS = [
@@ -70,9 +70,8 @@ export default {
       tgt[i * 3 + 2] = d.c[2] + s();
 
       tmp.setHex(d.color);
-      // Darken rather than lighten: on paper a point reads by being darker
-      // than the ground, the opposite of the dark build's additive glow.
-      const dim = 0.55 + Math.random() * 0.45;
+      // Back on a dark world: points read by glowing brighter than the ground.
+      const dim = 0.62 + Math.random() * 0.38;
       col[i * 3] = tmp.r * dim; col[i * 3 + 1] = tmp.g * dim; col[i * 3 + 2] = tmp.b * dim;
     }
 
@@ -84,7 +83,7 @@ export default {
     fieldMat = new THREE.PointsMaterial({
       size: tier === 'high' ? 0.05 : 0.075,
       vertexColors: true, transparent: true, opacity: 0.9,
-      depthWrite: false, blending: THREE.NormalBlending,
+      depthWrite: false, blending: THREE.AdditiveBlending,
     });
     field = new THREE.Points(fieldGeo, fieldMat);
     group.add(field);
@@ -94,7 +93,8 @@ export default {
     PROJECTS.forEach((p, i) => {
       const d = DOMAINS[p[1]];
       const m = new THREE.Mesh(nodeGeo, new THREE.MeshStandardMaterial({
-        color: d.color, metalness: 0.15, roughness: 0.42,
+        color: d.color, metalness: 0.2, roughness: 0.35,
+        emissive: new THREE.Color(d.color), emissiveIntensity: 0.5,
       }));
       const a = (i / PROJECTS.length) * Math.PI * 2;
       m.position.set(
@@ -124,7 +124,8 @@ export default {
     const v = new THREE.Vector3();
     for (let i = 0; i < t.length; i += 3) settledBox.expandByPoint(v.set(t[i], t[i + 1], t[i + 2]));
     settledBox.expandByScalar(1.2);   // room for the cluster labels above each group
-    fitToCamera(group, cam, { box: settledBox, margin: 0.82 });
+    fitToCamera(group, cam, { box: settledBox, margin: 0.5 });
+    group.position.x += cam.aspect > 1.2 ? 3.6 : 0;   // clear of the copy column
 
     canvasEl = document.getElementById('gl');
     addEventListener('pointermove', onPointer, { passive: true });

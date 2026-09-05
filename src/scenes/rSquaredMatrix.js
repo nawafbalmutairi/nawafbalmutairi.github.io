@@ -20,8 +20,8 @@ const R2 = [
 const WINNER = { t: 2, m: 3 };   // XGBoost x Water Temp, +0.79
 
 const COL = {
-  positive: 0x0d7d74,   // beat the mean
-  negative: 0xaeb8c4,   // worse than predicting the mean
+  positive: 0x4fd6c4,   // beat the mean
+  negative: 0x7d8a9c,   // worse than predicting the mean
   winner:   0xe64d2e,   // the only pairing that actually worked
 };
 
@@ -58,7 +58,7 @@ export default {
     const d = (TARGETS.length - 1) * STEP_Z;
 
     // ── zero plane: the line between "useful" and "worse than the mean" ──
-    const grid = new THREE.GridHelper(Math.max(w, d) + 4, 9, 0x9fb0ad, 0xc9d3d1);
+    const grid = new THREE.GridHelper(Math.max(w, d) + 4, 9, 0x4fd6c4, 0x2c4a4a);
     grid.position.y = 0;
     grid.material.transparent = true;
     grid.material.opacity = 0.55;
@@ -70,7 +70,7 @@ export default {
     const plane = new THREE.Mesh(
       new THREE.PlaneGeometry(w + 3, d + 3),
       new THREE.MeshBasicMaterial({
-        color: 0xdfe9e7, transparent: true, opacity: 0.5,
+        color: 0x08201f, transparent: true, opacity: 0.35,
         side: THREE.DoubleSide, depthWrite: false }));
     plane.rotation.x = -Math.PI / 2;
     plane.position.y = -0.01;
@@ -97,7 +97,7 @@ export default {
           opacity: positive ? 1 : 0.42,
           depthWrite: positive,
           emissive: new THREE.Color(color),
-          emissiveIntensity: isWinner ? 0.16 : 0,
+          emissiveIntensity: isWinner ? 0.55 : positive ? 0.2 : 0.05,
         });
 
         const mesh = new THREE.Mesh(geo, mat);
@@ -110,7 +110,7 @@ export default {
         const edge = new THREE.LineSegments(
           new THREE.EdgesGeometry(geo),
           new THREE.LineBasicMaterial({
-            color: isWinner ? 0x8f2a15 : positive ? 0x0a5f58 : 0x8b98a6,
+            color: isWinner ? 0xffb59e : positive ? 0xa8f0e4 : 0x9fb0c4,
             transparent: true, opacity: positive ? 0.45 : 0.95 }));
         mesh.add(edge);
         edge.scale.set(1, 1, 1);
@@ -155,7 +155,8 @@ export default {
     group.rotation.y = -0.62;
     group.rotation.x = 0.06;
     scene.add(group);
-    fitToCamera(group, camera);
+    fitToCamera(group, camera, { margin: 0.52 });
+    group.position.x += camera.aspect > 1.2 ? 3.4 : 0;   // clear of the copy
 
     raycaster = new THREE.Raycaster();
     pointerNDC = new THREE.Vector2();
@@ -193,9 +194,9 @@ export default {
       const obj = hit ? hit.object : null;
       if (obj !== hovered) {
         if (hovered) hovered.material.emissiveIntensity =
-          hovered.userData.isWinner ? 0.16 : 0;
+          hovered.userData.isWinner ? 0.55 : hovered.userData.r > 0 ? 0.2 : 0.05;
         hovered = obj;
-        if (hovered) hovered.material.emissiveIntensity = 0.34;
+        if (hovered) hovered.material.emissiveIntensity = 0.9;
       }
       if (hovered) {
         const u = hovered.userData;
