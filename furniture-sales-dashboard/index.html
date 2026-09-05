@@ -4,29 +4,28 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>US Furniture Sales BI Dashboard — Nawaf Almutairi</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300..800;1,6..72,300..800&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
   :root {
-    --bg: #0a0c10;
-    --surface: #111418;
-    --surface2: #181c22;
-    --border: rgba(255,255,255,0.07);
-    --green: #76ff7a;
-    --green-dim: rgba(118,255,122,0.12);
-    --amber: #ffb347;
-    --amber-dim: rgba(255,179,71,0.12);
-    --red: #ff5f6d;
-    --red-dim: rgba(255,95,109,0.12);
-    --blue: #4fc3f7;
-    --blue-dim: rgba(79,195,247,0.12);
-    --purple: #c084fc;
-    --purple-dim: rgba(192,132,252,0.12);
-    --text: #e8eaf0;
-    --text-muted: #6b7280;
-    --text-sub: #9ca3af;
-    --accent: #76ff7a;
-  }
+    --bg:#05070a;
+    --surface:#0b1119;
+    --surface2:#121a24;
+    --border:rgba(233,236,242,.13);
+    --green:#4ade9b;
+    --green-dim:rgba(74,222,155,.12);
+    --amber:#e8a33d;
+    --amber-dim:rgba(232,163,61,.12);
+    --red:#ff6b7a;
+    --red-dim:rgba(255,107,122,.12);
+    --blue:#38bdf8;
+    --blue-dim:rgba(56,189,248,.12);
+    --purple:#a78bfa;
+    --purple-dim:rgba(167,139,250,.12);
+    --text:#e9ecf2;
+    --text-muted:#6c7a8a;
+    --text-sub:#9fabba;
+    --accent: #76ff7a;;--ember:#e64d2e;}
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -496,9 +495,41 @@
   .kpi-card:nth-child(6) { animation-delay: 0.3s; }
 
   canvas { display: block; }
+
+/* ═══ portfolio chrome ═══ shared with the homepage so a subpage never
+   feels like a different site the visitor accidentally wandered into. */
+.home-link{
+  position:fixed;top:0;left:0;right:0;z-index:200;
+  display:flex;justify-content:space-between;align-items:center;gap:20px;
+  padding:12px clamp(16px,4vw,40px);
+  background:rgba(5,7,10,.86);
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--border);
+  text-decoration:none;
+}
+.home-link .hl-mark{
+  font-family:'Newsreader',Georgia,serif;font-size:15px;color:var(--text);
+  letter-spacing:-.01em;
+}
+.home-link .hl-mark em{font-style:italic;color:var(--ember)}
+.home-link .hl-back{
+  font-family:'JetBrains Mono',ui-monospace,monospace;font-size:10px;
+  letter-spacing:.12em;text-transform:uppercase;color:var(--text-muted);
+  transition:color .2s;
+}
+.home-link:hover .hl-back{color:var(--ember)}
+body{padding-top:46px}
+:focus-visible{outline:2px solid var(--blue);outline-offset:3px}
+
+/* Title accent is the brand ember, matching the homepage. Status colours
+   (green/amber/red/blue/purple) keep their meanings untouched. */
+h1 span{color:var(--ember)}
 </style>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 60'><rect width='60' height='60' fill='%2305070a'/><path d='M16 26L16 12L21 12L33 23L33 12L38 12L38 26L33 26L21 15L21 26Z' fill='%23e8eaf0'/><line x1='6' y1='33' x2='54' y2='33' stroke='%23e64d2e' stroke-width='2'/><text x='30' y='53' text-anchor='middle' font-family='Georgia' font-style='italic' font-weight='900' font-size='22' fill='%23e64d2e'>A</text></svg>">
 </head>
 <body>
+<a class="home-link" href="https://nawafbalmutairi.github.io/"><span class="hl-mark">Nawaf <em>Almutairi</em></span><span class="hl-back">&#8592; back to portfolio</span></a>
+
 <div class="wrapper">
 
   <!-- ═══════ HEADER ═══════ -->
