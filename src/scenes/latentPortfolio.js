@@ -26,7 +26,7 @@ const PROJECTS = [
 let group, labels, field, fieldMat, fieldGeo, nodes = [];
 let canvasEl = null, camera = null;
 const pointer = { x: 0, y: 0, has: false };
-let resolve = 0;
+let resolve = 0, startedAt = 0, settled = false;
 
 function onPointer(e) {
   pointer.x = (e.clientX / innerWidth) * 2 - 1;
@@ -37,13 +37,15 @@ function onPointer(e) {
 export default {
   id: 'hero',
 
-  init({ scene, camera: cam, tier, budget }) {
+  init({ scene, camera: cam, tier, budget, isWide }) {
     camera = cam;
     group = new THREE.Group();
     group.name = 'hero:latentPortfolio';
     labels = createLabelLayer();
     nodes = [];
     resolve = 0;
+    settled = false;
+    startedAt = performance.now();
 
     // ── ambient latent field, tinted toward the nearest cluster ──
     const n = Math.max(4000, Math.floor(budget * 0.6));
@@ -72,6 +74,7 @@ export default {
     fieldGeo = new THREE.BufferGeometry();
     fieldGeo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
     fieldGeo.setAttribute('aTarget', new THREE.BufferAttribute(tgt, 3));
+    fieldGeo.setAttribute('aStart', new THREE.BufferAttribute(pos.slice(), 3));
     fieldGeo.setAttribute('color', new THREE.BufferAttribute(col, 3));
     fieldMat = new THREE.PointsMaterial({
       size: tier === 'high' ? 0.045 : 0.07,
@@ -105,7 +108,9 @@ export default {
     labels.add('15 shipped projects · 4 domains',
       new THREE.Vector3(0, -5.6, 0), 'note', group);
 
-    group.position.set(0, 0.4, 0);
+    // Held to the right on wide screens so the name and bio keep a clean
+    // column; a cloud behind body copy is the wallpaper this design avoids.
+    group.position.set(isWide ? 3.0 : 0, 0.4, 0);
     scene.add(group);
 
     canvasEl = document.getElementById('gl');
@@ -115,13 +120,25 @@ export default {
 
   update(dt, progress) {
     // Resolve out of noise into the clustered structure.
-    resolve = Math.min(1, resolve + dt * 0.5);
+    // Driven by elapsed wall-clock time, not accumulated frames: on a slow
+    // device a frame-counted resolve would leave the viewer staring at an
+    // unresolved starfield for seconds.
+    resolve = clamp((performance.now() - startedAt) / 1400, 0, 1);
     const e = smoothstep(0, 1, resolve);
-    const p = fieldGeo.attributes.position.array;
-    const t = fieldGeo.attributes.aTarget.array;
-    if (resolve < 1) {
-      for (let i = 0; i < p.length; i++) p[i] = lerp(p[i], t[i], e * 0.06);
+    // Keep writing until the final frame is actually committed: guarding on
+    // `resolve < 1` drops the last write whenever frames are sparse enough to
+    // step straight past 1, leaving the cloud permanently unresolved.
+    if (!settled) {
+      // Interpolated from the stored start positions by absolute progress,
+      // never accumulated per frame: an accumulating lerp converges at
+      // whatever rate the device happens to render, so a slow machine would
+      // sit on an unresolved starfield - the decoration this design avoids.
+      const p = fieldGeo.attributes.position.array;
+      const a = fieldGeo.attributes.aStart.array;
+      const t = fieldGeo.attributes.aTarget.array;
+      for (let i = 0; i < p.length; i++) p[i] = lerp(a[i], t[i], e);
       fieldGeo.attributes.position.needsUpdate = true;
+      if (resolve >= 1) settled = true;
     }
 
     const now = performance.now() * 0.001;
