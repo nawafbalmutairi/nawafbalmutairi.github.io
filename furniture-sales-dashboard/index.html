@@ -8,24 +8,24 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
   :root {
-    --bg:#f6f7f9;
-    --surface:#ffffff;
-    --surface2:#eceff3;
-    --border:rgba(16,20,26,.12);
-    --green:#0d7d74;
-    --green-dim:rgba(13,125,116,.12);
-    --amber:#9a6212;
-    --amber-dim:rgba(154,98,18,.12);
-    --red:#c0392b;
-    --red-dim:rgba(192,57,43,.12);
-    --blue:#2563a8;
-    --blue-dim:rgba(37,99,168,.12);
-    --purple:#6d4bd6;
-    --purple-dim:rgba(109,75,214,.12);
-    --text:#10141a;
-    --text-muted:#7b8794;
-    --text-sub:#454f5c;
-    --accent: #0d7d74;;--ember:#e64d2e;}
+    --bg:#0c1220;
+    --surface:rgba(255,255,255,.045);
+    --surface2:rgba(255,255,255,.075);
+    --border:rgba(244,246,248,.16);
+    --green:#4fd6c4;
+    --green-dim:rgba(79,214,196,.14);
+    --amber:#e8a33d;
+    --amber-dim:rgba(232,163,61,.14);
+    --red:#ff7a6a;
+    --red-dim:rgba(255,122,106,.14);
+    --blue:#7cc4ff;
+    --blue-dim:rgba(124,196,255,.14);
+    --purple:#a78bfa;
+    --purple-dim:rgba(167,139,250,.14);
+    --text:#f4f6f8;
+    --text-muted:rgba(244,246,248,.46);
+    --text-sub:rgba(244,246,248,.74);
+    --accent: #4fd6c4;;--ember:#ff6a3d;}
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -502,10 +502,8 @@
   position:fixed;top:0;left:0;right:0;z-index:200;
   display:flex;justify-content:space-between;align-items:center;gap:20px;
   padding:12px clamp(16px,4vw,40px);
-  background:rgba(246,247,249,.92);
-  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
-  border-bottom:1px solid var(--border);
-  text-decoration:none;
+  background:linear-gradient(to bottom,rgba(0,0,0,.5),transparent);
+  border-bottom:0;text-decoration:none;
 }
 .home-link .hl-mark{
   font-family:'Newsreader',Georgia,serif;font-size:15px;color:var(--text);
@@ -514,7 +512,7 @@
 .home-link .hl-mark em{font-style:italic;color:var(--ember)}
 .home-link .hl-back{
   font-family:'JetBrains Mono',ui-monospace,monospace;font-size:10px;
-  letter-spacing:.12em;text-transform:uppercase;color:var(--text-muted);
+  letter-spacing:.14em;text-transform:uppercase;color:var(--text-muted);
   transition:color .2s;
 }
 .home-link:hover .hl-back{color:var(--ember)}
@@ -762,8 +760,8 @@ h1 span{color:var(--ember)}
       </div>
       <div class="chart-container" style="height:280px"><canvas id="trendChart"></canvas></div>
       <div class="legend">
-        <div class="legend-item"><div class="legend-dot" style="background:#0d7d74"></div>Sales Revenue</div>
-        <div class="legend-item"><div class="legend-dot" style="background:#c0392b"></div>Profit / Loss</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#4fd6c4"></div>Sales Revenue</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#ff7a6a"></div>Profit / Loss</div>
       </div>
     </div>
   </div>
@@ -779,9 +777,9 @@ h1 span{color:var(--ember)}
       </div>
       <div class="chart-container" style="height:220px"><canvas id="quarterChart"></canvas></div>
       <div class="legend">
-        <div class="legend-item"><div class="legend-dot" style="background:#2563a8"></div>Sales</div>
-        <div class="legend-item"><div class="legend-dot" style="background:#0d7d74"></div>Profit (+)</div>
-        <div class="legend-item"><div class="legend-dot" style="background:#c0392b"></div>Profit (-)</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#7cc4ff"></div>Sales</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#4fd6c4"></div>Profit (+)</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#ff7a6a"></div>Profit (-)</div>
       </div>
     </div>
     <div class="chart-card">
@@ -808,8 +806,8 @@ h1 span{color:var(--ember)}
       </div>
       <div class="chart-container" style="height:280px"><canvas id="scatterChart"></canvas></div>
       <div class="legend">
-        <div class="legend-item"><div class="legend-dot" style="background:#0d7d74"></div>Profitable transaction</div>
-        <div class="legend-item"><div class="legend-dot" style="background:#c0392b"></div>Loss-making transaction</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#4fd6c4"></div>Profitable transaction</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#ff7a6a"></div>Loss-making transaction</div>
       </div>
     </div>
     <div class="chart-card">
@@ -822,8 +820,8 @@ h1 span{color:var(--ember)}
       </div>
       <div class="chart-container" style="height:280px"><canvas id="bandChart"></canvas></div>
       <div class="legend">
-        <div class="legend-item"><div class="legend-dot" style="background:#0d7d74"></div>Net profit</div>
-        <div class="legend-item"><div class="legend-dot" style="background:#c0392b"></div>Net loss</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#4fd6c4"></div>Net profit</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#ff7a6a"></div>Net loss</div>
       </div>
     </div>
   </div>
@@ -851,9 +849,9 @@ h1 span{color:var(--ember)}
       </div>
       <div class="chart-container" style="height:300px"><canvas id="stateChart"></canvas></div>
       <div class="legend">
-        <div class="legend-item"><div class="legend-dot" style="background:#2563a8"></div>Sales</div>
-        <div class="legend-item"><div class="legend-dot" style="background:#0d7d74"></div>Profit</div>
-        <div class="legend-item"><div class="legend-dot" style="background:#c0392b"></div>Loss</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#7cc4ff"></div>Sales</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#4fd6c4"></div>Profit</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#ff7a6a"></div>Loss</div>
       </div>
     </div>
     <div class="chart-card">
@@ -866,8 +864,8 @@ h1 span{color:var(--ember)}
       </div>
       <div class="chart-container" style="height:300px"><canvas id="regionChart"></canvas></div>
       <div class="legend">
-        <div class="legend-item"><div class="legend-dot" style="background:#6d4bd6"></div>Sales</div>
-        <div class="legend-item"><div class="legend-dot" style="background:#0d7d74"></div>Profit</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#a78bfa"></div>Sales</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#4fd6c4"></div>Profit</div>
       </div>
     </div>
   </div>
@@ -883,9 +881,9 @@ h1 span{color:var(--ember)}
       </div>
       <div class="chart-container" style="height:220px"><canvas id="subcatChart"></canvas></div>
       <div class="legend">
-        <div class="legend-item"><div class="legend-dot" style="background:#2563a8"></div>Sales</div>
-        <div class="legend-item"><div class="legend-dot" style="background:#0d7d74"></div>Profit</div>
-        <div class="legend-item"><div class="legend-dot" style="background:#c0392b"></div>Loss</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#7cc4ff"></div>Sales</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#4fd6c4"></div>Profit</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#ff7a6a"></div>Loss</div>
       </div>
     </div>
   </div>
@@ -991,7 +989,7 @@ h1 span{color:var(--ember)}
 <!-- ═══════════════════════════════════════════════════ -->
 <script>
 const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-const TT = { backgroundColor:'#d7dce3', borderColor:'rgba(255,255,255,0.1)', borderWidth:1, titleFont:{family:'DM Mono',size:11}, bodyFont:{family:'DM Sans',size:12}, titleColor:'#7b8794', bodyColor:'#10141a', padding:12 };
+const TT = { backgroundColor:'#24303e', borderColor:'rgba(255,255,255,0.1)', borderWidth:1, titleFont:{family:'DM Mono',size:11}, bodyFont:{family:'DM Sans',size:12}, titleColor:'#7b8794', bodyColor:'#f4f6f8', padding:12 };
 function AX(){ return { x:{ticks:{color:'#6b7280',font:{family:'DM Mono',size:10}},grid:{color:'rgba(255,255,255,0.04)'},border:{color:'rgba(255,255,255,0.06)'}}, y:{ticks:{color:'#6b7280',font:{family:'DM Mono',size:10}},grid:{color:'rgba(255,255,255,0.04)'},border:{color:'rgba(255,255,255,0.06)'}} }; }
 Chart.defaults.color = '#6b7280';
 let charts = {};
@@ -1021,7 +1019,7 @@ const STATES = [['California',150185,8593,418],['New York',92433,5946,229],['Tex
     type:'bar',
     data:{ labels:['$0-50','$50-100','$100-200','$200-500','$500-1K','$1K-2K','$2K+'], datasets:[{
       data:[516,240,309,497,288,126,39],
-      backgroundColor:'rgba(118,255,122,0.5)', borderColor:'#0d7d74', borderWidth:1, borderRadius:3, barPercentage:0.8
+      backgroundColor:'rgba(118,255,122,0.5)', borderColor:'#4fd6c4', borderWidth:1, borderRadius:3, barPercentage:0.8
     }]},
     options:{ responsive:true, maintainAspectRatio:false,
       plugins:{ legend:{display:false}, tooltip:{...TT, callbacks:{label:ctx=>' '+ctx.raw+' transactions'}} },
@@ -1036,7 +1034,7 @@ const STATES = [['California',150185,8593,418],['New York',92433,5946,229],['Tex
   const pLabels = ['-$2K to -$500','-$500 to -$100','-$100 to $0','$0 to $100','$100 to $500','$500+'];
   const pData   = [14,157,543,1198,196,13];
   const pColors = pData.map((_,i)=> i<3 ? 'rgba(255,95,109,0.5)' : 'rgba(118,255,122,0.5)');
-  const pBorders= pData.map((_,i)=> i<3 ? '#c0392b' : '#0d7d74');
+  const pBorders= pData.map((_,i)=> i<3 ? '#ff7a6a' : '#4fd6c4');
   new Chart(document.getElementById('profitHistChart'), {
     type:'bar',
     data:{ labels:pLabels, datasets:[{ data:pData, backgroundColor:pColors, borderColor:pBorders, borderWidth:1, borderRadius:3, barPercentage:0.8 }]},
@@ -1053,8 +1051,8 @@ const STATES = [['California',150185,8593,418],['New York',92433,5946,229],['Tex
   new Chart(document.getElementById('cleanChart'), {
     type:'bar',
     data:{ labels:['Sales','Discount','Other 19 cols'], datasets:[
-      { label:'Before', data:[106,106,0], backgroundColor:'rgba(255,95,109,0.6)', borderColor:'#c0392b', borderWidth:1, borderRadius:3, barPercentage:0.6, categoryPercentage:0.7 },
-      { label:'After', data:[0,0,0], backgroundColor:'rgba(118,255,122,0.6)', borderColor:'#0d7d74', borderWidth:1, borderRadius:3, barPercentage:0.6, categoryPercentage:0.7 },
+      { label:'Before', data:[106,106,0], backgroundColor:'rgba(255,95,109,0.6)', borderColor:'#ff7a6a', borderWidth:1, borderRadius:3, barPercentage:0.6, categoryPercentage:0.7 },
+      { label:'After', data:[0,0,0], backgroundColor:'rgba(118,255,122,0.6)', borderColor:'#4fd6c4', borderWidth:1, borderRadius:3, barPercentage:0.6, categoryPercentage:0.7 },
     ]},
     options:{ responsive:true, maintainAspectRatio:false,
       plugins:{ legend:{display:false}, tooltip:{...TT, callbacks:{label:ctx=>` ${ctx.dataset.label}: ${ctx.raw} missing`}} },
@@ -1079,8 +1077,8 @@ const STATES = [['California',150185,8593,418],['New York',92433,5946,229],['Tex
   new Chart(document.getElementById('trendChart'), {
     type:'line',
     data:{ labels:allLabels, datasets:[
-      { label:'Sales', data:allSales, borderColor:'#0d7d74', backgroundColor:'rgba(118,255,122,0.07)', borderWidth:2, pointRadius:2, pointHoverRadius:5, pointBackgroundColor:'#0d7d74', fill:true, tension:0.35 },
-      { label:'Profit', data:allProfit, borderColor:'#c0392b', backgroundColor:'rgba(255,95,109,0.08)', borderWidth:1.5, pointRadius:2, pointHoverRadius:5, pointBackgroundColor:'#c0392b', fill:true, tension:0.35 },
+      { label:'Sales', data:allSales, borderColor:'#4fd6c4', backgroundColor:'rgba(118,255,122,0.07)', borderWidth:2, pointRadius:2, pointHoverRadius:5, pointBackgroundColor:'#4fd6c4', fill:true, tension:0.35 },
+      { label:'Profit', data:allProfit, borderColor:'#ff7a6a', backgroundColor:'rgba(255,95,109,0.08)', borderWidth:1.5, pointRadius:2, pointHoverRadius:5, pointBackgroundColor:'#ff7a6a', fill:true, tension:0.35 },
     ]},
     options:{ responsive:true, maintainAspectRatio:false,
       interaction:{ mode:'index', intersect:false },
@@ -1097,8 +1095,8 @@ const STATES = [['California',150185,8593,418],['New York',92433,5946,229],['Tex
   new Chart(document.getElementById('quarterChart'), {
     type:'bar',
     data:{ labels:qKeys, datasets:[
-      { label:'Sales', data:qKeys.map(k=>QTR[k].s), backgroundColor:'rgba(79,195,247,0.5)', borderColor:'#2563a8', borderWidth:1, borderRadius:2, barPercentage:0.75, categoryPercentage:0.8 },
-      { label:'Profit', data:qKeys.map(k=>QTR[k].p), backgroundColor:qKeys.map(k=>QTR[k].p>=0?'rgba(118,255,122,0.55)':'rgba(255,95,109,0.55)'), borderColor:qKeys.map(k=>QTR[k].p>=0?'#0d7d74':'#c0392b'), borderWidth:1, borderRadius:2, barPercentage:0.75, categoryPercentage:0.8 },
+      { label:'Sales', data:qKeys.map(k=>QTR[k].s), backgroundColor:'rgba(79,195,247,0.5)', borderColor:'#7cc4ff', borderWidth:1, borderRadius:2, barPercentage:0.75, categoryPercentage:0.8 },
+      { label:'Profit', data:qKeys.map(k=>QTR[k].p), backgroundColor:qKeys.map(k=>QTR[k].p>=0?'rgba(118,255,122,0.55)':'rgba(255,95,109,0.55)'), borderColor:qKeys.map(k=>QTR[k].p>=0?'#4fd6c4':'#ff7a6a'), borderWidth:1, borderRadius:2, barPercentage:0.75, categoryPercentage:0.8 },
     ]},
     options:{ responsive:true, maintainAspectRatio:false,
       plugins:{ legend:{display:false}, tooltip:{...TT, callbacks:{label:ctx=>` ${ctx.dataset.label}: $${(ctx.raw/1000).toFixed(1)}K`}} },
@@ -1134,7 +1132,7 @@ const STATES = [['California',150185,8593,418],['New York',92433,5946,229],['Tex
     data:{ labels:bLabels, datasets:[{
       data:bData,
       backgroundColor:bData.map(v=>v>=0?'rgba(118,255,122,0.6)':'rgba(255,95,109,0.6)'),
-      borderColor:bData.map(v=>v>=0?'#0d7d74':'#c0392b'),
+      borderColor:bData.map(v=>v>=0?'#4fd6c4':'#ff7a6a'),
       borderWidth:1, borderRadius:3, barPercentage:0.65
     }]},
     options:{ responsive:true, maintainAspectRatio:false,
@@ -1152,8 +1150,8 @@ const STATES = [['California',150185,8593,418],['New York',92433,5946,229],['Tex
     data:{
       labels:STATES.map(s=>s[0]),
       datasets:[
-        { label:'Sales', data:STATES.map(s=>s[1]), backgroundColor:'rgba(79,195,247,0.5)', borderColor:'#2563a8', borderWidth:1, borderRadius:2, barPercentage:.6 },
-        { label:'Profit', data:STATES.map(s=>s[2]), backgroundColor:STATES.map(s=>s[2]>=0?'rgba(118,255,122,0.5)':'rgba(255,95,109,0.5)'), borderColor:STATES.map(s=>s[2]>=0?'#0d7d74':'#c0392b'), borderWidth:1, borderRadius:2, barPercentage:.6 },
+        { label:'Sales', data:STATES.map(s=>s[1]), backgroundColor:'rgba(79,195,247,0.5)', borderColor:'#7cc4ff', borderWidth:1, borderRadius:2, barPercentage:.6 },
+        { label:'Profit', data:STATES.map(s=>s[2]), backgroundColor:STATES.map(s=>s[2]>=0?'rgba(118,255,122,0.5)':'rgba(255,95,109,0.5)'), borderColor:STATES.map(s=>s[2]>=0?'#4fd6c4':'#ff7a6a'), borderWidth:1, borderRadius:2, barPercentage:.6 },
       ]
     },
     options:{ responsive:true, maintainAspectRatio:false, indexAxis:'y',
@@ -1172,8 +1170,8 @@ const STATES = [['California',150185,8593,418],['New York',92433,5946,229],['Tex
   new Chart(document.getElementById('regionChart'), {
     type:'bar',
     data:{ labels:rKeys, datasets:[
-      { label:'Sales', data:rSales, backgroundColor:'rgba(192,132,252,0.5)', borderColor:'#6d4bd6', borderWidth:1, borderRadius:2, barPercentage:.7, categoryPercentage:.75 },
-      { label:'Profit', data:rProfit, backgroundColor:rProfit.map(v=>v>=0?'rgba(118,255,122,0.55)':'rgba(255,95,109,0.55)'), borderColor:rProfit.map(v=>v>=0?'#0d7d74':'#c0392b'), borderWidth:1, borderRadius:2, barPercentage:.7, categoryPercentage:.75 },
+      { label:'Sales', data:rSales, backgroundColor:'rgba(192,132,252,0.5)', borderColor:'#a78bfa', borderWidth:1, borderRadius:2, barPercentage:.7, categoryPercentage:.75 },
+      { label:'Profit', data:rProfit, backgroundColor:rProfit.map(v=>v>=0?'rgba(118,255,122,0.55)':'rgba(255,95,109,0.55)'), borderColor:rProfit.map(v=>v>=0?'#4fd6c4':'#ff7a6a'), borderWidth:1, borderRadius:2, barPercentage:.7, categoryPercentage:.75 },
     ]},
     options:{ responsive:true, maintainAspectRatio:false,
       plugins:{ legend:{display:false}, tooltip:{...TT, callbacks:{label:ctx=>` ${ctx.dataset.label}: $${(ctx.raw/1000).toFixed(1)}K`}} },
@@ -1192,11 +1190,11 @@ const scKeys = ['Chairs','Tables','Bookcases','Furnishings'];
     type:'bar',
     data:{ labels:scKeys, datasets:[
       { label:'Sales', data:scKeys.map(k=>SC[k].s),
-        backgroundColor:'rgba(79,195,247,0.6)', borderColor:'#2563a8',
+        backgroundColor:'rgba(79,195,247,0.6)', borderColor:'#7cc4ff',
         borderWidth:1, borderRadius:3, barPercentage:.55, categoryPercentage:.8 },
       { label:'Profit', data:scKeys.map(k=>SC[k].p),
         backgroundColor:scKeys.map(k=> SC[k].p>=0?'rgba(118,255,122,0.6)':'rgba(255,95,109,0.6)'),
-        borderColor:scKeys.map(k=> SC[k].p>=0?'#0d7d74':'#c0392b'),
+        borderColor:scKeys.map(k=> SC[k].p>=0?'#4fd6c4':'#ff7a6a'),
         borderWidth:1, borderRadius:3, barPercentage:.55, categoryPercentage:.8 },
     ]},
     options:{ responsive:true, maintainAspectRatio:false,

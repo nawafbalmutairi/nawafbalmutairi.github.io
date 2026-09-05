@@ -6,7 +6,7 @@
 <title>UCD Case Study: Student Work-Life Balance App — Nawaf Almutairi</title>
 <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300..800;1,6..72,300..800&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-  :root{--bg:#f6f7f9;--surface:#ffffff;--surface2:#eceff3;--border:rgba(16,20,26,.12);--green:#0d7d74;--green-dim:rgba(13,125,116,.12);--amber:#9a6212;--amber-dim:rgba(154,98,18,.12);--red:#c0392b;--red-dim:rgba(192,57,43,.12);--blue:#2563a8;--blue-dim:rgba(37,99,168,.12);--purple:#6d4bd6;--purple-dim:rgba(109,75,214,.12);--text:#10141a;--text-muted:#7b8794;--text-sub:#454f5c;;--ember:#e64d2e;}
+  :root{--bg:#0c1220;--surface:rgba(255,255,255,.045);--surface2:rgba(255,255,255,.075);--border:rgba(244,246,248,.16);--green:#4fd6c4;--green-dim:rgba(79,214,196,.14);--amber:#e8a33d;--amber-dim:rgba(232,163,61,.14);--red:#ff7a6a;--red-dim:rgba(255,122,106,.14);--blue:#7cc4ff;--blue-dim:rgba(124,196,255,.14);--purple:#a78bfa;--purple-dim:rgba(167,139,250,.14);--text:#f4f6f8;--text-muted:rgba(244,246,248,.46);--text-sub:rgba(244,246,248,.74);;--ember:#ff6a3d;}
   *{margin:0;padding:0;box-sizing:border-box;}
   body{font-family:'Instrument Sans',-apple-system,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;}
   body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(118,255,122,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(118,255,122,0.025) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0;}
@@ -138,10 +138,8 @@
   position:fixed;top:0;left:0;right:0;z-index:200;
   display:flex;justify-content:space-between;align-items:center;gap:20px;
   padding:12px clamp(16px,4vw,40px);
-  background:rgba(246,247,249,.92);
-  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
-  border-bottom:1px solid var(--border);
-  text-decoration:none;
+  background:linear-gradient(to bottom,rgba(0,0,0,.5),transparent);
+  border-bottom:0;text-decoration:none;
 }
 .home-link .hl-mark{
   font-family:'Newsreader',Georgia,serif;font-size:15px;color:var(--text);
@@ -150,7 +148,7 @@
 .home-link .hl-mark em{font-style:italic;color:var(--ember)}
 .home-link .hl-back{
   font-family:'JetBrains Mono',ui-monospace,monospace;font-size:10px;
-  letter-spacing:.12em;text-transform:uppercase;color:var(--text-muted);
+  letter-spacing:.14em;text-transform:uppercase;color:var(--text-muted);
   transition:color .2s;
 }
 .home-link:hover .hl-back{color:var(--ember)}
