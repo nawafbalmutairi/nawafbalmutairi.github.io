@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { createLabelLayer } from '../labels.js';
 import { dragFor } from '../drag.js';
+import { fitToCamera } from '../util/fit.js';
 import { smoothstep, clamp } from '../util/lerp.js';
 
 // The two architectures drawn as what actually distinguishes them.
@@ -9,12 +10,12 @@ import { smoothstep, clamp } from '../util/lerp.js';
 // ember because it won at 0.867 on the held-out set.
 const LAYERS = 6;
 const COL = {
-  dense: 0xe64d2e,
-  res: 0x7d8b9c,
-  signal: 0x38bdf8,
+  dense: 0x6d4bd6,
+  res: 0x9aa3af,
+  signal: 0x0d7d74,
 };
 
-let group, labels, canvasEl = null, camera = null;
+let group, labels, canvasEl = null, camera = null, sceneCtx = null;
 let denseNodes = [], resNodes = [], denseLines, resLines;
 let accBars = [];
 
@@ -48,14 +49,16 @@ function linesFor(nodes, pairs, color, opacity) {
 export default {
   id: 'case-03',
 
-  init({ scene, camera: cam, isWide }) {
+  init(ctx) {
+    const { scene, camera: cam, isWide } = ctx;
+    sceneCtx = ctx;
     camera = cam;
     group = new THREE.Group();
     group.name = 'case-03:architectures';
     labels = createLabelLayer();
 
-    denseNodes = column(-2.5, COL.dense, 0.32);
-    resNodes = column(2.5, COL.res, 0.1);
+    denseNodes = column(-2.5, COL.dense, 0.12);
+    resNodes = column(2.5, COL.res, 0);
     denseNodes.forEach(n => group.add(n));
     resNodes.forEach(n => group.add(n));
 
@@ -86,7 +89,7 @@ export default {
       geo.translate(0, 0.5, 0);
       const bar = new THREE.Mesh(geo, new THREE.MeshStandardMaterial({
         color, metalness: 0.25, roughness: 0.45, transparent: true, opacity: 0.92,
-        emissive: new THREE.Color(color), emissiveIntensity: i === 0 ? 0.4 : 0.1,
+        emissive: new THREE.Color(color), emissiveIntensity: i === 0 ? 0.12 : 0,
       }));
       bar.position.set(x, -4.6, 0);
       bar.scale.y = 0.001;
@@ -99,11 +102,12 @@ export default {
     labels.add('real-time inference · 30 unseen photos',
       new THREE.Vector3(0, -5.35, 0), 'note', group);
 
-    this._offsetX = isWide ? 2.6 : 0;
+    this._offsetX = 0;   // the slot composes it; the scene just centres
     group.position.set(this._offsetX, 0.9, 1.0);
     group.scale.setScalar(isWide ? 0.72 : 0.52);
     group.rotation.set(0.05, -0.35, 0);
     scene.add(group);
+    fitToCamera(group, cam);
 
     canvasEl = document.getElementById('gl');
     return group;
@@ -117,7 +121,7 @@ export default {
     resLines.material.opacity = 0.28 + Math.abs(Math.sin(t * 1.1 + 1.6)) * 0.14;
 
     denseNodes.forEach((n, i) => {
-      n.material.emissiveIntensity = 0.22 + Math.abs(Math.sin(t * 1.6 - i * 0.5)) * 0.4;
+      n.material.emissiveIntensity = 0.06 + Math.abs(Math.sin(t * 1.6 - i * 0.5)) * 0.16;
     });
 
     accBars.forEach((b, i) => {
@@ -133,7 +137,7 @@ export default {
     group.visible = fade > 0.02;
     group.position.x = (this._offsetX ?? 0) + (1 - fade) * 2.4;
     labels.setOpacity(clamp(fade, 0, 1));
-    if (canvasEl && camera) labels.update(camera, canvasEl);
+    labels.update(camera, sceneCtx && sceneCtx.rect);
   },
 
   dispose() {

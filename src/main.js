@@ -4,7 +4,10 @@ import { createScrollDriver } from './scroll.js';
 import { initUI } from './ui.js';
 import { initDrag } from './drag.js';
 
-const SECTIONS = ['hero', 'statement', 'impact', 'case-01', 'case-02', 'case-03', 'contact'];
+// Order matters twice over: the scene lifecycle reads it, and the pipeline
+// HUD maps its steps to these by index. 'journey' and 'impact' carry no
+// scene - the DOM already says what they say.
+const SECTIONS = ['hero', 'journey', 'statement', 'case-01', 'case-02', 'case-03', 'contact'];
 
 const NARROW = 820;   // below this the case-study tables carry the content
 const reduced = prefersReducedMotion();
@@ -12,8 +15,23 @@ const reduced = prefersReducedMotion();
 const registry = new Map();   // id -> scene module
 const live = new Map();       // id -> { mod, root }
 
+// The hero's slot is a real box in the layout; every other section carries an
+// absolutely-positioned one. Returning null means "draw nothing this frame".
+function slotRect(id) {
+  if (!id) return null;
+  const el = id === 'hero'
+    ? document.querySelector('#hero .stage-frame')
+    : document.querySelector('#' + CSS.escape(id) + ' .stage-slot');
+  if (!el) return null;
+  const r = el.getBoundingClientRect();
+  if (r.bottom < 0 || r.top > innerHeight || r.width < 8) return null;
+  return { left: r.left, top: r.top, width: r.width, height: r.height };
+}
+
 function syncScenes(driver, ctx, dt) {
   const { id, progress } = driver.read();
+  // Scenes read ctx.rect to place their labels; the renderer scissors to it.
+  ctx.rect = slotRect(id);
 
   // Init on first entry; keep the root handle so visibility can be gated.
   if (id && registry.has(id) && !live.has(id)) {
@@ -29,6 +47,7 @@ function syncScenes(driver, ctx, dt) {
     if (entry.root) entry.root.visible = active;
     if (active) entry.mod.update(dt, progress);
   }
+  return id;
 }
 
 async function boot() {
@@ -71,7 +90,7 @@ async function boot() {
 
     if (reduced) {
       syncScenes(driver, ctx, 0);
-      stage.render();
+      stage.render(ctx.rect);
       return;
     }
 
@@ -88,7 +107,7 @@ async function boot() {
         ctx.dt = dt;
         ctx.isWide = innerWidth >= 980;
         syncScenes(driver, ctx, dt);
-        stage.render();
+        stage.render(ctx.rect);
       }
       requestAnimationFrame(frame);
     });

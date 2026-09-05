@@ -23,8 +23,7 @@ export default {
 
     const nodeGeo = new THREE.SphereGeometry(0.09, 12, 12);
     const nodeMat = new THREE.MeshStandardMaterial({
-      color: '#e8eaf0', metalness: 0.3, roughness: 0.4,
-      emissive: new THREE.Color('#38bdf8'), emissiveIntensity: 0.18 });
+      color: '#2b3440', metalness: 0.15, roughness: 0.45 });
     nodeMesh = new THREE.InstancedMesh(nodeGeo, nodeMat, nodes.length);
     const m = new THREE.Matrix4();
     nodes.forEach((p, i) => { m.setPosition(p); nodeMesh.setMatrixAt(i, m); });
@@ -44,7 +43,7 @@ export default {
     const eGeo = new THREE.BufferGeometry();
     eGeo.setAttribute('position', new THREE.Float32BufferAttribute(verts, 3));
     edgeMat = new THREE.LineBasicMaterial({
-      color: '#38bdf8', transparent: true, opacity: tier === 'high' ? 0.22 : 0.3 });
+      color: '#8d99a8', transparent: true, opacity: tier === 'high' ? 0.5 : 0.6 });
     edges = new THREE.LineSegments(eGeo, edgeMat);
     group.add(edges);
 
@@ -54,7 +53,7 @@ export default {
 
   update(dt, progress) {
     group.rotation.y = -0.5 + progress * 1.0;
-    edgeMat.opacity = 0.12 + Math.abs(Math.sin(performance.now() * 0.0012)) * 0.18;
+    edgeMat.opacity = 0.3 + Math.abs(Math.sin(performance.now() * 0.0012)) * 0.22;
   },
 
   dispose() {

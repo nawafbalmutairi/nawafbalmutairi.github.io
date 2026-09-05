@@ -1,8 +1,26 @@
 :root{
-  --bg:#05070a; --bg-2:#0b0f16; --ink:#e8eaf0; --ink-2:#9aa3b2; --mute:#5d6675;
-  --line:rgba(232,234,240,.12);
-  --ember:#e64d2e; --cyan:#38bdf8; --violet:#a78bfa;
+  /* Ground: cool near-white with a blue-grey bias — technical paper, not cream.
+     Cream + serif + terracotta is the look this redesign deliberately leaves. */
+  --bg:#f6f7f9;
+  --bg-2:#eceff3;
+  --card:#ffffff;
+  --ink:#10141a;
+  --ink-2:#454f5c;
+  --mute:#7b8794;
+  --line:#d7dce3;
+  --line-2:#e6eaef;
+
+  /* Ember is the through-line, carried over from the previous identity.
+     Used sparingly: the name, the current stage, one accent per heading. */
+  --ember:#e64d2e;
+  --ember-d:#b8391f;
+
+  /* Each case study owns a hue; these appear nowhere else. */
+  --teal:#0d7d74;    --teal-tint:#eaf3f1;
+  --ochre:#9a6212;   --ochre-tint:#f4eee3;
+  --violet:#6d4bd6;  --violet-tint:#efecfa;
+
   --serif:'Newsreader',Georgia,serif;
-  --sans:'Inter',-apple-system,sans-serif;
-  --mono:'JetBrains Mono',ui-monospace,monospace;
+  --sans:'Instrument Sans',-apple-system,BlinkMacSystemFont,sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,SFMono-Regular,monospace;
 }

@@ -158,6 +158,62 @@ check('R² matrix uses the published values unchanged', () => {
   r2matrix.dispose();
 });
 
+
+// ── Fit: a scene must sit inside the slot the renderer scissors to.
+// The dark build could sprawl because it rendered full-bleed; now the slot is
+// the frame, anything outside it is simply invisible to the viewer.
+function fitsSlot(mod, aspect) {
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(42, aspect, 0.1, 200);
+  camera.position.set(0, 1.7, 15);
+  camera.updateMatrixWorld();
+  camera.updateProjectionMatrix();
+  const root = mod.init({ scene, camera, renderer: null, tier: 'high',
+                          budget: 4000, isWide: true, dt: 0.016,
+                          rect: { left: 0, top: 0, width: 600, height: 600 } });
+  mod.update(0.016, 0.5);
+  root.updateMatrixWorld(true);
+
+  // Where the content SETTLES is what must fit. A point cloud spends its first
+  // second scattered far outside the frame on purpose — points fly in from the
+  // edges — so measuring the transient state would fail a scene that is right.
+  const box = new THREE.Box3();
+  const p = new THREE.Vector3();
+  let usedTargets = false;
+  root.traverse(o => {
+    const t = o.isPoints && o.geometry.attributes.aTarget;
+    if (!t) return;
+    usedTargets = true;
+    for (let i = 0; i < t.array.length; i += 3) {
+      p.set(t.array[i], t.array[i + 1], t.array[i + 2]);
+      o.localToWorld(p);
+      box.expandByPoint(p);
+    }
+  });
+  if (!usedTargets) box.setFromObject(root);
+  const v = new THREE.Vector3();
+  let maxX = 0, maxY = 0;
+  for (const x of [box.min.x, box.max.x])
+    for (const y of [box.min.y, box.max.y])
+      for (const z of [box.min.z, box.max.z]) {
+        v.set(x, y, z).project(camera);
+        maxX = Math.max(maxX, Math.abs(v.x));
+        maxY = Math.max(maxY, Math.abs(v.y));
+      }
+  mod.dispose();
+  return { maxX, maxY };
+}
+
+['1.0', '1.6'].forEach(() => {});
+[[latentPortfolio, 'hero'], [r2matrix, 'case-01'],
+ [supplySystem, 'case-02'], [architectures, 'case-03']].forEach(([mod, id]) => {
+  check(`${id}: fits inside its slot at 1:1`, () => {
+    const f = fitsSlot(mod, 1.0);
+    ok(f.maxX <= 1.06 && f.maxY <= 1.06,
+       `overflows slot: |x|=${f.maxX.toFixed(2)} |y|=${f.maxY.toFixed(2)} (want <= 1.06)`);
+  });
+});
+
 const out = document.getElementById('out');
 out.textContent = results.map(([s, n]) => `${s}  ${n}`).join('\n');
 const failed = results.filter(r => r[0] === 'FAIL').length;

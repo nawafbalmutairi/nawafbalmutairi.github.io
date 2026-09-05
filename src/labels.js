@@ -30,17 +30,23 @@ export function createLabelLayer() {
       return item;
     },
 
-    update(camera, canvas) {
-      const w = canvas.clientWidth, h = canvas.clientHeight;
+    // `rect` is the slot the renderer scissors to. Projecting against the
+    // whole canvas instead scatters labels across the copy, because the
+    // render only ever fills that rectangle.
+    update(camera, rect) {
+      if (!rect) return;
+      const w = rect.width, h = rect.height;
       if (!w || !h) return;
       for (const it of items) {
         it.anchor.getWorldPosition(v);
         const depth = v.distanceTo(camera.position);
         v.project(camera);
-        const x = (v.x * 0.5 + 0.5) * w;
-        const y = (-v.y * 0.5 + 0.5) * h;
+        const x = rect.left + (v.x * 0.5 + 0.5) * w;
+        const y = rect.top + (-v.y * 0.5 + 0.5) * h;
+        // Clipped to the slot, with a small margin so edge labels still show.
         const visible = it.visible && depth > 0.5 && v.z < 1
-          && x > -80 && x < w + 80 && y > -40 && y < h + 40;
+          && x > rect.left - 60 && x < rect.left + w + 60
+          && y > rect.top - 30 && y < rect.top + h + 30;
         if (visible) {
           it.el.style.transform = `translate(-50%,-50%) translate(${x.toFixed(1)}px,${y.toFixed(1)}px)`;
         }

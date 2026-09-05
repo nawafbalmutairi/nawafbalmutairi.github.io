@@ -13,14 +13,11 @@ export function initDrag(ids) {
 
   ids.forEach(id => {
     const section = document.getElementById(id);
-    if (!section || !section.classList.contains('case--instrument')) return;
+    if (!section) return;
+    const pad = section.querySelector('.stage-slot');
+    if (!pad) return;
 
     state.set(id, { x: 0, y: 0 });
-
-    const pad = document.createElement('div');
-    pad.className = 'grab-pad';
-    pad.setAttribute('aria-hidden', 'true');
-    section.appendChild(pad);
 
     let on = false, lx = 0, ly = 0;
 

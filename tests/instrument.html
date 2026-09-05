@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>instrument preview</title>
-<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<title>scene preview</title>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300..700;1,6..72,300..700&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../styles/tokens.css">
 <link rel="stylesheet" href="../styles/base.css">
 <style>
@@ -11,24 +11,23 @@
   #gl{display:block!important}
   /* this harness runs in a non-compositing pane: transitions never advance */
   .lbl{transition:none!important}
-  .copy{position:fixed;left:5vw;top:50%;transform:translateY(-50%);
-    max-width:44%;z-index:3}
-  .copy h2{font-family:var(--serif);font-size:clamp(30px,4vw,52px);
-    line-height:1.08;letter-spacing:-.03em;margin:14px 0 18px}
-  .copy h2 em{font-style:italic;color:var(--ember)}
-  .copy p{font-size:16px;color:var(--ink-2);line-height:1.6}
+  .copy{position:fixed;left:5vw;top:50%;transform:translateY(-50%);max-width:38%;z-index:3}
+  .copy h2{font-family:var(--serif);font-size:clamp(28px,3.6vw,46px);
+    line-height:1.06;letter-spacing:-.03em;margin:14px 0 16px}
+  .slot{position:fixed;right:5vw;top:50%;transform:translateY(-50%);
+    width:min(44%,600px);height:min(66vh,620px);
+    border:1px solid var(--line);background:var(--bg-2);z-index:1}
   .state{position:fixed;right:16px;bottom:14px;z-index:9;
     font-family:var(--mono);font-size:10px;color:var(--mute);letter-spacing:.1em}
 </style>
 </head>
 <body>
 <canvas id="gl" aria-hidden="true"></canvas>
+<div class="slot" id="slot" aria-hidden="true"></div>
 <div class="copy">
-  <p class="eyebrow">Machine Learning · Dissertation</p>
-  <h2>Benchmarking four ML models on <em>8.3 million</em> water-quality samples.</h2>
-  <p>Ridge, Random Forest, MLP and XGBoost across five parameters — every one of
-  the 20 combinations, as an object you can read.</p>
-  <p class="instrument-hint" style="display:block;margin-top:22px">Live R² matrix — hover any bar to read its value</p>
+  <p class="eyebrow" id="eyebrow">—</p>
+  <h2 id="title">—</h2>
+  <p class="lede" id="blurb">—</p>
 </div>
 <div class="state" id="state">…</div>
 
@@ -40,24 +39,50 @@
 </script>
 <script type="module">
 import { createStage } from '../src/stage.js';
-import scene from '../src/scenes/rSquaredMatrix.js';
+
+const SCENES = {
+  'hero':    { mod: '../src/scenes/latentPortfolio.js', eyebrow: 'Hero',
+               title: 'Fifteen projects, four domains.',
+               blurb: 'The portfolio as an embedding — each solid point a shipped project.' },
+  'case-01': { mod: '../src/scenes/rSquaredMatrix.js',  eyebrow: 'Case 01 · Dissertation',
+               title: 'Four models, five parameters, one that worked.',
+               blurb: 'All twenty combinations on 8.3M water-quality samples.' },
+  'case-02': { mod: '../src/scenes/supplySystem.js',    eyebrow: 'Case 02 · Business Intelligence',
+               title: 'A supply chain, running.',
+               blurb: 'Volume moves supply → hub → region; backorders accumulate.' },
+  'case-03': { mod: '../src/scenes/architectures.js',   eyebrow: 'Case 03 · Deep Learning',
+               title: 'The wiring is the comparison.',
+               blurb: 'Dense connectivity against residual shortcuts.' },
+};
 
 const params = new URLSearchParams(location.search);
+const key = SCENES[params.get('scene')] ? params.get('scene') : 'case-01';
 const target = parseFloat(params.get('p') ?? '0.4');
-const steps  = parseInt(params.get('steps') ?? '160', 10);
+const steps = parseInt(params.get('steps') ?? '160', 10);
 
-// Wait for stylesheets/fonts: until CSS applies, the canvas has zero layout
+// Wait for stylesheets/fonts: until CSS applies the canvas has zero layout
 // size and every label projection would be skipped.
 if (document.fonts && document.fonts.ready) await document.fonts.ready;
-const cv0 = document.getElementById('gl');
-for (let i = 0; i < 60 && !cv0.clientWidth; i++) await new Promise(r => setTimeout(r, 50));
+const cv = document.getElementById('gl');
+for (let i = 0; i < 60 && !cv.clientWidth; i++) await new Promise(r => setTimeout(r, 50));
 
-const stage = await createStage({
-  canvas: document.getElementById('gl'), tier: 'high', reducedMotion: false });
+const cfg = SCENES[key];
+document.getElementById('eyebrow').textContent = cfg.eyebrow;
+document.getElementById('title').textContent = cfg.title;
+document.getElementById('blurb').textContent = cfg.blurb;
+
+const stage = await createStage({ canvas: cv, tier: 'high', reducedMotion: false });
 document.documentElement.classList.add('webgl-active');
 
+function slotRect() {
+  const r = document.getElementById('slot').getBoundingClientRect();
+  return { left: r.left, top: r.top, width: r.width, height: r.height };
+}
+
+const scene = (await import(cfg.mod)).default;
 const ctx = { scene: stage.scene, camera: stage.camera, renderer: stage.renderer,
-              tier: 'high', budget: 60000, isWide: innerWidth >= 980, dt: 0.016 };
+              tier: 'high', budget: 60000, isWide: true, dt: 0.016 };
+ctx.rect = slotRect();
 scene.init(ctx);
 
 // Drive deterministically to the requested progress, then STOP so the page
@@ -65,34 +90,14 @@ scene.init(ctx);
 for (let i = 0; i < steps; i++) {
   scene.update(0.016, target * Math.min(1, (i + 1) / (steps * 0.75)));
 }
-stage.render();
-window.__png = null;
-document.getElementById('state').textContent =
-  `progress=${target.toFixed(2)} · steps=${steps} · settled`;
-// Compose the WebGL render together with its DOM labels into one PNG so the
-// design can be looked at outside this browser.
-window.__capture = () => {
-  const src = stage.renderer.domElement;
-  const out = document.createElement('canvas');
-  out.width = src.width; out.height = src.height;
-  const g = out.getContext('2d');
-  const sx = src.width / src.clientWidth, sy = src.height / src.clientHeight;
-  g.fillStyle = '#05070a'; g.fillRect(0, 0, out.width, out.height);
-  g.drawImage(src, 0, 0);
-  document.querySelectorAll('.lbl').forEach(el => {
-    const m = el.style.transform.match(/translate\((-?[\d.]+)px, *(-?[\d.]+)px\)/);
-    if (!m) return;
-    const cs = getComputedStyle(el);
-    if (el.style.opacity === '0') return;   // inline value: what the code decided
-    g.font = `${cs.fontWeight} ${parseFloat(cs.fontSize) * sy}px ${cs.fontFamily}`;
-    g.fillStyle = cs.color;
-    g.textAlign = 'center'; g.textBaseline = 'middle';
-    g.fillText(el.textContent, parseFloat(m[1]) * sx, parseFloat(m[2]) * sy);
-  });
-  return out.toDataURL('image/png');
-};
+stage.render(slotRect());
+ctx.rect = slotRect();
+
 window.__stage = stage;
-window.__THREE = await import('three');
+window.__scene = scene;
+window.__slotRect = slotRect;
+document.getElementById('state').textContent =
+  `${key} · progress=${target.toFixed(2)} · settled`;
 window.__ready = true;
 </script>
 </body>

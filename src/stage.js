@@ -3,52 +3,35 @@ import * as THREE from 'three';
 export async function createStage({ canvas, tier, reducedMotion }) {
   const renderer = new THREE.WebGLRenderer({
     canvas,
-    antialias: tier === 'high',
+    antialias: true,
     alpha: true,
     powerPreference: 'high-performance',
   });
   renderer.outputColorSpace = THREE.SRGBColorSpace;
-  renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.15;
+  renderer.toneMapping = THREE.NoToneMapping;
 
   const maxDpr = tier === 'high' ? 2 : 1.5;
 
   const scene = new THREE.Scene();
-  // Fog gives real depth instead of flat cut-outs floating on black.
-  scene.fog = new THREE.FogExp2(0x05070a, 0.035);
+  // Fog matches the paper, so depth reads as distance rather than haze over a
+  // void. There is no bloom in the light design: additive glow on a near-white
+  // ground just washes to white. Depth comes from lighting and contrast.
+  scene.fog = new THREE.FogExp2(0xf6f7f9, 0.026);
 
   const camera = new THREE.PerspectiveCamera(42, 1, 0.1, 200);
-  camera.position.set(0, 1.6, 15);
+  camera.position.set(0, 1.7, 15);
 
-  // Lighting rig: cool ambient fill, warm key, cyan rim. Materials are
-  // Standard, not Basic, so geometry actually reads as solid.
-  const hemi = new THREE.HemisphereLight(0x8fb6ff, 0x0a0d14, 0.55);
-  scene.add(hemi);
+  // Lighting for a light room: bright sky fill, a soft key from above-front,
+  // and a cool bounce standing in for light coming back off the paper.
+  scene.add(new THREE.HemisphereLight(0xffffff, 0xc9d2dd, 1.0));
 
-  const key = new THREE.DirectionalLight(0xfff1e8, 1.35);
-  key.position.set(6, 9, 7);
+  const key = new THREE.DirectionalLight(0xffffff, 1.15);
+  key.position.set(5, 9, 8);
   scene.add(key);
 
-  const rim = new THREE.DirectionalLight(0x38bdf8, 0.85);
-  rim.position.set(-8, 3, -6);
-  scene.add(rim);
-
-  const warm = new THREE.PointLight(0xe64d2e, 0.7, 45);
-  warm.position.set(-4, -2, 6);
-  scene.add(warm);
-
-  let composer = null;
-  if (tier === 'high' && !reducedMotion) {
-    const [{ EffectComposer }, { RenderPass }, { UnrealBloomPass }] = await Promise.all([
-      import('three/addons/postprocessing/EffectComposer.js'),
-      import('three/addons/postprocessing/RenderPass.js'),
-      import('three/addons/postprocessing/UnrealBloomPass.js'),
-    ]);
-    composer = new EffectComposer(renderer);
-    composer.addPass(new RenderPass(scene, camera));
-    composer.addPass(new UnrealBloomPass(
-      new THREE.Vector2(innerWidth, innerHeight), 0.42, 0.75, 0.92));
-  }
+  const fill = new THREE.DirectionalLight(0xdfe7f0, 0.55);
+  fill.position.set(-7, 2, -5);
+  scene.add(fill);
 
   function setSize() {
     const w = canvas.clientWidth || innerWidth;
@@ -56,7 +39,6 @@ export async function createStage({ canvas, tier, reducedMotion }) {
     if (!w || !h) return;
     renderer.setPixelRatio(Math.min(devicePixelRatio, maxDpr));
     renderer.setSize(w, h, false);
-    composer?.setSize(w, h);
     camera.aspect = w / h;
     camera.updateProjectionMatrix();
   }
@@ -64,11 +46,27 @@ export async function createStage({ canvas, tier, reducedMotion }) {
   addEventListener('resize', setSize, { passive: true });
 
   return {
-    renderer, scene, camera, composer, setSize, reducedMotion,
-    render() { composer ? composer.render() : renderer.render(scene, camera); },
+    renderer, scene, camera, setSize, reducedMotion,
+
+    // `rect` is a slot in CSS pixels ({left, top, width, height}); the render
+    // is scissored to it so 3D never draws over the copy. No rect means the
+    // frame is skipped entirely rather than filling the page.
+    render(rect) {
+      renderer.setScissorTest(false);
+      renderer.clear();
+      if (!rect || rect.width < 8 || rect.height < 8) return;
+      const y = (canvas.clientHeight || innerHeight) - (rect.top + rect.height);
+      renderer.setViewport(rect.left, y, rect.width, rect.height);
+      renderer.setScissor(rect.left, y, rect.width, rect.height);
+      renderer.setScissorTest(true);
+      if (camera.aspect !== rect.width / rect.height) {
+        camera.aspect = rect.width / rect.height;
+        camera.updateProjectionMatrix();
+      }
+      renderer.render(scene, camera);
+    },
     dispose() {
       removeEventListener('resize', setSize);
-      composer?.dispose?.();
       renderer.dispose();
     },
   };

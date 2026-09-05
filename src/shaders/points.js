@@ -21,5 +21,6 @@ void main(){
   float a = smoothstep(0.5, 0.15, length(d));
   if (a < 0.01) discard;
   vec3 c = mix(uColorA, uColorB, clamp(vDepth / 24.0, 0.0, 1.0));
-  gl_FragColor = vec4(c, a * 0.85);
+  // Near-opaque: on a light ground a point reads by contrast, not by glow.
+  gl_FragColor = vec4(c, a * 0.95);
 }`;

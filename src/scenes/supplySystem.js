@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { createLabelLayer } from '../labels.js';
 import { dragFor } from '../drag.js';
+import { fitToCamera } from '../util/fit.js';
 import { smoothstep, clamp } from '../util/lerp.js';
 
 // The NVIDIA case as a working system, not a diagram of one.
@@ -17,15 +18,15 @@ const REGIONS = [
 ];
 
 const COL = {
-  flow: 0x38bdf8,
-  node: 0xdbe4ee,
+  flow: 0x9a6212,
+  node: 0x6b7683,
   strain: 0xe64d2e,
-  loop: 0xa78bfa,
+  loop: 0xc98a2a,
 };
 
 let group, labels, particles, pMat, pGeo, edges = [];
 let backorderBars = [], ringR, ringB, hubMesh;
-let canvasEl = null, camera = null;
+let canvasEl = null, camera = null, sceneCtx = null;
 const PARTICLES_PER_EDGE = 26;
 
 function edgeList() {
@@ -38,7 +39,9 @@ function edgeList() {
 export default {
   id: 'case-02',
 
-  init({ scene, camera: cam, isWide }) {
+  init(ctx) {
+    const { scene, camera: cam, isWide } = ctx;
+    sceneCtx = ctx;
     camera = cam;
     group = new THREE.Group();
     group.name = 'case-02:supplySystem';
@@ -48,14 +51,14 @@ export default {
 
     const nodeMat = new THREE.MeshStandardMaterial({
       color: COL.node, metalness: 0.35, roughness: 0.4,
-      emissive: new THREE.Color(COL.node), emissiveIntensity: 0.12,
+      emissive: new THREE.Color(COL.node), emissiveIntensity: 0,
     });
 
     // ── the planning hub: the actor the dashboard exists to support ──
     hubMesh = new THREE.Mesh(new THREE.IcosahedronGeometry(0.72, 1), nodeMat.clone());
     hubMesh.material.color.set(COL.flow);
     hubMesh.material.emissive.set(COL.flow);
-    hubMesh.material.emissiveIntensity = 0.3;
+    hubMesh.material.emissiveIntensity = 0.1;
     hubMesh.position.set(HUB.x, HUB.y, HUB.z);
     group.add(hubMesh);
     labels.add('NVIDIA ops & planning', new THREE.Vector3(0, -1.25, 0), 'axis', group);
@@ -83,7 +86,7 @@ export default {
       geo.translate(0, 0.5, 0);
       const bar = new THREE.Mesh(geo, new THREE.MeshStandardMaterial({
         color: COL.strain, metalness: 0.2, roughness: 0.45, transparent: true,
-        opacity: 0.9, emissive: new THREE.Color(COL.strain), emissiveIntensity: 0.35,
+        opacity: 0.95, emissive: new THREE.Color(COL.strain), emissiveIntensity: 0.1,
       }));
       bar.position.set(r.x + 1.5, r.y - 0.5, r.z);
       bar.scale.y = 0.001;
@@ -100,7 +103,7 @@ export default {
     const eGeo = new THREE.BufferGeometry();
     eGeo.setAttribute('position', new THREE.Float32BufferAttribute(verts, 3));
     group.add(new THREE.LineSegments(eGeo, new THREE.LineBasicMaterial({
-      color: COL.flow, transparent: true, opacity: 0.22 })));
+      color: COL.flow, transparent: true, opacity: 0.4 })));
 
     // ── volume actually moving through the system ──
     const total = edges.length * PARTICLES_PER_EDGE;
@@ -118,7 +121,7 @@ export default {
     pGeo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
     pMat = new THREE.PointsMaterial({
       color: COL.flow, size: 0.13, transparent: true, opacity: 0.95,
-      depthWrite: false, blending: THREE.AdditiveBlending,
+      depthWrite: false, blending: THREE.NormalBlending,
     });
     particles = new THREE.Points(pGeo, pMat);
     particles.userData = { off };
@@ -141,11 +144,12 @@ export default {
     labels.add('B · balancing', new THREE.Vector3(0, 0.1, -4.35), 'note', group);
     labels.add('96.4% forecast accuracy', new THREE.Vector3(0, 2.0, 0), 'win', group);
 
-    this._offsetX = isWide ? 2.5 : 0;
+    this._offsetX = 0;   // the slot composes it; the scene just centres
     group.position.set(this._offsetX, -0.2, 1.2);
     group.scale.setScalar(isWide ? 0.82 : 0.58);
     group.rotation.set(0.12, -0.5, 0);
     scene.add(group);
+    fitToCamera(group, cam);
 
     canvasEl = document.getElementById('gl');
     return group;
@@ -189,7 +193,7 @@ export default {
     group.visible = fade > 0.02;
     group.position.x = (this._offsetX ?? 0) + (1 - fade) * 2.4;
     labels.setOpacity(clamp(fade, 0, 1));
-    if (canvasEl && camera) labels.update(camera, canvasEl);
+    labels.update(camera, sceneCtx && sceneCtx.rect);
   },
 
   dispose() {

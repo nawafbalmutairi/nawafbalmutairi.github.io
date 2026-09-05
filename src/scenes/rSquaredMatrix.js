@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { createLabelLayer } from '../labels.js';
 import { dragFor } from '../drag.js';
+import { fitToCamera } from '../util/fit.js';
 import { smoothstep, clamp } from '../util/lerp.js';
 
 // The dissertation result, as an object rather than a decoration.
@@ -19,8 +20,8 @@ const R2 = [
 const WINNER = { t: 2, m: 3 };   // XGBoost x Water Temp, +0.79
 
 const COL = {
-  positive: 0x38bdf8,   // beat the mean
-  negative: 0x39414f,   // worse than predicting the mean
+  positive: 0x0d7d74,   // beat the mean
+  negative: 0xaeb8c4,   // worse than predicting the mean
   winner:   0xe64d2e,   // the only pairing that actually worked
 };
 
@@ -45,7 +46,9 @@ function onPointer(e) {
 export default {
   id: 'case-01',
 
-  init({ scene, camera, isWide }) {
+  init(ctx) {
+    const { scene, camera, isWide } = ctx;
+    this._ctx = ctx;
     group = new THREE.Group();
     group.name = 'case-01:r2matrix';
     labels = createLabelLayer();
@@ -55,7 +58,7 @@ export default {
     const d = (TARGETS.length - 1) * STEP_Z;
 
     // ── zero plane: the line between "useful" and "worse than the mean" ──
-    const grid = new THREE.GridHelper(Math.max(w, d) + 4, 9, 0x4a6076, 0x24303e);
+    const grid = new THREE.GridHelper(Math.max(w, d) + 4, 9, 0x9fb0ad, 0xc9d3d1);
     grid.position.y = 0;
     grid.material.transparent = true;
     grid.material.opacity = 0.55;
@@ -67,7 +70,7 @@ export default {
     const plane = new THREE.Mesh(
       new THREE.PlaneGeometry(w + 3, d + 3),
       new THREE.MeshBasicMaterial({
-        color: 0x0d1621, transparent: true, opacity: 0.16,
+        color: 0xdfe9e7, transparent: true, opacity: 0.5,
         side: THREE.DoubleSide, depthWrite: false }));
     plane.rotation.x = -Math.PI / 2;
     plane.position.y = -0.01;
@@ -91,24 +94,24 @@ export default {
           metalness: 0.25,
           roughness: isWinner ? 0.25 : 0.55,
           transparent: true,
-          opacity: positive ? 1 : 0.3,
+          opacity: positive ? 1 : 0.42,
           depthWrite: positive,
           emissive: new THREE.Color(color),
-          emissiveIntensity: isWinner ? 0.55 : positive ? 0.18 : 0.04,
+          emissiveIntensity: isWinner ? 0.16 : 0,
         });
 
         const mesh = new THREE.Mesh(geo, mat);
         mesh.position.set(m * STEP_X - w / 2, 0, t * STEP_Z - d / 2);
         mesh.scale.y = 0.001;
         mesh.userData = { r, h, model: MODELS[m], target: TARGETS[t], isWinner, base: color,
-                          baseOpacity: positive ? 1 : 0.3 };
+                          baseOpacity: positive ? 1 : 0.42 };
         // Edges give every bar definition against the dark ground; the
         // failures especially need an outline or they read as empty space.
         const edge = new THREE.LineSegments(
           new THREE.EdgesGeometry(geo),
           new THREE.LineBasicMaterial({
-            color: isWinner ? 0xffb59e : positive ? 0x7fd4ff : 0x8494a8,
-            transparent: true, opacity: positive ? 0.5 : 0.95 }));
+            color: isWinner ? 0x8f2a15 : positive ? 0x0a5f58 : 0x8b98a6,
+            transparent: true, opacity: positive ? 0.45 : 0.95 }));
         mesh.add(edge);
         edge.scale.set(1, 1, 1);
 
@@ -144,7 +147,7 @@ export default {
     readout = labels.add('', new THREE.Vector3(0, 0, 0), 'readout', group);
     readout.visible = false;
 
-    this._offsetX = isWide ? 2.6 : 0;      // composed beside the text, not behind it
+    this._offsetX = 0;   // the slot composes it; the scene just centres
     group.position.x = this._offsetX;
     group.position.y = -0.4;
     group.position.z = 1.5;
@@ -152,6 +155,7 @@ export default {
     group.rotation.y = -0.62;
     group.rotation.x = 0.06;
     scene.add(group);
+    fitToCamera(group, camera);
 
     raycaster = new THREE.Raycaster();
     pointerNDC = new THREE.Vector2();
@@ -189,9 +193,9 @@ export default {
       const obj = hit ? hit.object : null;
       if (obj !== hovered) {
         if (hovered) hovered.material.emissiveIntensity =
-          hovered.userData.isWinner ? 0.55 : hovered.userData.r > 0 ? 0.18 : 0.04;
+          hovered.userData.isWinner ? 0.16 : 0;
         hovered = obj;
-        if (hovered) hovered.material.emissiveIntensity = 0.8;
+        if (hovered) hovered.material.emissiveIntensity = 0.34;
       }
       if (hovered) {
         const u = hovered.userData;
@@ -212,7 +216,7 @@ export default {
     group.position.x = (this._offsetX ?? 0) + (1 - fade) * 2.5;
 
     labels.setOpacity(fade);
-    if (canvasEl) labels.update(this._camera, canvasEl);
+    labels.update(this._camera, this._ctx && this._ctx.rect);
   },
 
   dispose() {
