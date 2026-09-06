@@ -9,6 +9,7 @@
 export const cases = [
   {
     id: 'water-quality',
+    face: 'matrix',
     index: '01',
     kind: 'Machine Learning · Dissertation',
     // src(pre-redesign index.html #case-01)
@@ -40,6 +41,7 @@ export const cases = [
 
   {
     id: 'nvidia-bi',
+    face: 'kpis',
     index: '02',
     kind: 'Business Intelligence',
     // src(pre-redesign index.html #case-02)
@@ -77,6 +79,7 @@ export const cases = [
 
   {
     id: 'face-classifier',
+    face: 'versus',
     index: '03',
     kind: 'Deep Learning · Computer Vision',
     // src(pre-redesign index.html #case-03)
@@ -107,11 +110,16 @@ export const cases = [
 ];
 
 // src(pre-redesign index.html #index) — six further projects.
+//
+// `face` names the composition each one is drawn as in the Work gallery, and
+// `figures` restates the numbers ALREADY PRESENT in that project's own note
+// above — structured so a face can lay them out, not newly asserted.
+
 export const further = [
-  { y: '2025', title: 'Conference Microservices', note: 'PHP REST API, 5 endpoints. Kruchten 4+1 architecture, Kubernetes on AWS. Final score 86%.', tags: ['PHP', 'REST', 'AWS', 'K8s'], href: 'https://nawafbalmutairi.github.io/Conference-Info-Platform/' },
-  { y: '2024', title: 'US Retail Sales Analysis', note: '2,121 transactions in Python/Pandas. ETL pipeline, time-series breakdown, discount–profit correlation surfaced.', tags: ['Python', 'Pandas', 'Chart.js'], href: 'https://nawafbalmutairi.github.io/furniture-sales-dashboard/' },
-  { y: '2025', title: 'ITIL Config Management', note: 'CMDB strategy for an 87-store retailer. 7 KPIs designed, CI accuracy maintained above 95%.', tags: ['ITIL 4', 'CMDB', 'ITSM'], href: 'https://nawafbalmutairi.github.io/ITIL-Configuratio-Management-Abona-Tarn-PLC/index.html' },
-  { y: '2025', title: 'UCD Work-Life App', note: 'Personas, MoSCoW prioritisation, Figma prototype and cognitive walkthrough — full UCD methodology end to end.', tags: ['Figma', 'UCD', 'Prototyping'], href: 'https://nawafbalmutairi.github.io/UCD-Practical-Work-Work-Life-Balance-App/index.html' },
-  { y: '2025', title: 'Vision 2030 KPI Tracker', note: 'Saudi Vision 2030 indicators visualised in an interactive Power BI dashboard. Published on LinkedIn.', tags: ['Power BI', 'DAX', 'Public Sector'], href: 'https://www.linkedin.com/in/nawaf-almutairi-907766290/' },
-  { y: 'Ongoing', title: 'GitHub Portfolio', note: '15+ public repositories spanning data analysis, ML, BI, software architecture and ITSM frameworks. All sources open.', tags: ['Git', 'Open source'], href: 'https://github.com/nawafbalmutairi' },
+  { y: '2025', title: 'Conference Microservices', face: 'blueprint', figures: { endpoints: 5, score: '86%', model: 'Kruchten 4+1', host: 'Kubernetes on AWS' }, note: 'PHP REST API, 5 endpoints. Kruchten 4+1 architecture, Kubernetes on AWS. Final score 86%.', tags: ['PHP', 'REST', 'AWS', 'K8s'], href: 'https://nawafbalmutairi.github.io/Conference-Info-Platform/' },
+  { y: '2024', title: 'US Retail Sales Analysis', face: 'analytics', figures: { rows: '2,121', unit: 'transactions', focus: 'discount → profit' }, note: '2,121 transactions in Python/Pandas. ETL pipeline, time-series breakdown, discount–profit correlation surfaced.', tags: ['Python', 'Pandas', 'Chart.js'], href: 'https://nawafbalmutairi.github.io/furniture-sales-dashboard/' },
+  { y: '2025', title: 'ITIL Config Management', face: 'register', figures: { stores: 87, kpis: 7, accuracy: '95%+' }, note: 'CMDB strategy for an 87-store retailer. 7 KPIs designed, CI accuracy maintained above 95%.', tags: ['ITIL 4', 'CMDB', 'ITSM'], href: 'https://nawafbalmutairi.github.io/ITIL-Configuratio-Management-Abona-Tarn-PLC/index.html' },
+  { y: '2025', title: 'UCD Work-Life App', face: 'screens', figures: { steps: ['Personas', 'MoSCoW', 'Figma prototype', 'Cognitive walkthrough'] }, note: 'Personas, MoSCoW prioritisation, Figma prototype and cognitive walkthrough — full UCD methodology end to end.', tags: ['Figma', 'UCD', 'Prototyping'], href: 'https://nawafbalmutairi.github.io/UCD-Practical-Work-Work-Life-Balance-App/index.html' },
+  { y: '2025', title: 'Vision 2030 KPI Tracker', face: 'dials', figures: { subject: 'Saudi Vision 2030', tool: 'Power BI' }, note: 'Saudi Vision 2030 indicators visualised in an interactive Power BI dashboard. Published on LinkedIn.', tags: ['Power BI', 'DAX', 'Public Sector'], href: 'https://www.linkedin.com/in/nawaf-almutairi-907766290/' },
+  { y: 'Ongoing', title: 'GitHub Portfolio', face: 'commits', figures: { repos: '15+', scope: 'data · ML · BI · architecture · ITSM' }, note: '15+ public repositories spanning data analysis, ML, BI, software architecture and ITSM frameworks. All sources open.', tags: ['Git', 'Open source'], href: 'https://github.com/nawafbalmutairi' },
 ];

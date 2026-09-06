@@ -56,19 +56,6 @@ void main() {
   gl_FragColor = vec4(c, uFade * (0.42 + uFocus * 0.58));
 }`;
 
-/** Loads a figure, if the project has one. Never rejects — a missing figure
-    just means the face draws its own motif instead. */
-function loadImage(src) {
-  return new Promise(res => {
-    if (!src) return res(null);
-    const img = new Image();
-    img.crossOrigin = 'anonymous';
-    img.onload = () => res(img);
-    img.onerror = () => res(null);
-    img.src = src;
-  });
-}
-
 export async function createGallery({ canvas, items, onFocus, onOpen }) {
   const THREE = await import(/* @vite-ignore */ THREE_URL);
   const dpr = Math.min(devicePixelRatio || 1, 2);
@@ -100,10 +87,10 @@ export async function createGallery({ canvas, items, onFocus, onOpen }) {
   group.position.x = -OFFSET;
   scene.add(group);
 
-  // Faces are drawn once, in parallel, and only after their figure decodes.
-  await Promise.all(items.map(async (item, i) => {
-    const img = await loadImage(item.image);
-    const face = drawFace(item, img, dpr);
+  // Every face is drawn from the project's own data, so there is nothing to
+  // wait on: no figure is fetched here any more.
+  items.forEach((item, i) => {
+    const face = drawFace(item, null, dpr);
     const tex = new THREE.CanvasTexture(face);
     tex.colorSpace = THREE.SRGBColorSpace;
     tex.anisotropy = 4;
@@ -123,7 +110,7 @@ export async function createGallery({ canvas, items, onFocus, onOpen }) {
     mesh.renderOrder = 2;
     group.add(mesh);
     planes[i] = mesh;
-  }));
+  });
 
   let target = 0, shown = 0, vel = 0, hovered = -1;
   let running = true, raf = 0, dirty = true;

@@ -148,10 +148,8 @@ function sceneWork() {
     'face-classifier': 'Face classification',
   };
 
-  // Each project carries what its face needs: the motif is drawn from that
-  // project's own data, so no two look alike.
-  const MOTIF = { 'water-quality': 'matrix', 'nvidia-bi': 'flow', 'face-classifier': 'wiring' };
-
+  // Each project carries exactly what its own face draws — nine faces, nine
+  // compositions, every number from that project's entry in /content.
   const items = [
     ...cases.map(c => ({
       id: c.id, index: c.index, kind: c.kind.split(' · ')[0],
@@ -160,15 +158,21 @@ function sceneWork() {
       stat: c.figures[0].v, statLabel: c.figures[0].k,
       tags: c.stack.slice(0, 4),
       accent: c.accent, hex: HEX[c.accent],
-      motif: MOTIF[c.id], matrix: WQ.results.map(r => r.map(x => x.r2)),
-      image: IMG[c.id], open: c.id,
+      face: c.face,
+      metrics: c.figures,
+      models: WQ.models,
+      targets: WQ.targets.map(t => t.key),
+      matrix: WQ.results.map(r => r.map(v => v.r2)),
+      best: WQ.best,
+      open: c.id,
     })),
-    ...further.map((f, i) => ({
-      id: f.title, index: String(i + 4).padStart(2, '0'), kind: f.y,
-      kicker: f.y, title: f.title, lede: f.note, brief: f.note,
-      stat: f.tags[0], statLabel: 'built with',
-      tags: f.tags, accent: 'ember', hex: HEX.ember,
-      motif: 'field', href: f.href,
+    ...further.map((fw, i) => ({
+      id: fw.title, index: String(i + 4).padStart(2, '0'), kind: fw.y,
+      kicker: fw.y, title: fw.title, lede: fw.note, brief: fw.note,
+      stat: fw.tags[0], statLabel: 'built with',
+      tags: fw.tags, accent: 'ember', hex: HEX.ember,
+      face: fw.face, figs: fw.figures,
+      href: fw.href,
     })),
   ];
 
