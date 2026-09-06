@@ -88,9 +88,33 @@ async function boot() {
     const driver = createScrollDriver(SECTIONS);
 
     if (reduced) {
-      ctx.fullRect = fullRect(canvas);
-      syncScenes(driver, ctx, 0);
-      stage.render(ctx.rect);
+      // Reduced motion means no animation, not no updates. Without a loop
+      // there is nothing to redraw on scroll, which would leave the hero's
+      // instrument frozen behind every later section and blank the canvas
+      // outright after a resize. So draw a fresh still frame whenever the view
+      // changes, always with dt 0: the right scene for the section being read,
+      // and nothing moving of its own accord.
+      let queued = false;
+      const still = () => {
+        queued = false;
+        const narrow = innerWidth < NARROW;
+        document.documentElement.classList.toggle('webgl-active', !narrow);
+        if (narrow) return;
+        ctx.isWide = innerWidth >= 980;
+        ctx.fullRect = fullRect(canvas);
+        const g = currentGround();
+        stage.scene.fog.color.setRGB(g[0] / 255, g[1] / 255, g[2] / 255);
+        syncScenes(driver, ctx, 0);
+        stage.render(ctx.rect);
+      };
+      const schedule = () => {
+        if (queued) return;
+        queued = true;
+        setTimeout(still, 60);   // after the stage's own resize handler
+      };
+      addEventListener('scroll', schedule, { passive: true });
+      addEventListener('resize', schedule, { passive: true });
+      still();
       return;
     }
 
