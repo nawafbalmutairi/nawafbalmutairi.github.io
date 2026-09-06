@@ -1,0 +1,139 @@
+/* ═══════════════════════════════════════════════════════════════════
+   THE SPATIAL SYSTEM
+   Four planes — environment, far, mid, near — plus chrome floating
+   nearest the camera. Depth is carried by four cues at once, because
+   any one alone reads as a flat rectangle with a shadow: position,
+   scale, atmospheric dimming, and focus.
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ─── environment plate ─────────────────────────────────────────── */
+.env {
+  position: fixed;
+  inset: -6%;                       /* overscan: parallax must never expose an edge */
+  z-index: var(--z-env);
+  background-size: cover;
+  background-position: 58% 40%;
+  will-change: transform;
+  transform: translate3d(0, 0, 0);
+  /* The room is behind everything and never competes with a word of text. */
+  filter: saturate(0.92) brightness(0.86);
+}
+.env::after {                        /* scrim: buys the contrast the text needs */
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(120% 90% at 72% 18%, rgba(0,0,0,0) 0%, rgba(0,0,0,0.30) 58%, rgba(0,0,0,0.62) 100%),
+    linear-gradient(to bottom, rgba(6,10,14,0.42) 0%, rgba(6,10,14,0.20) 40%, rgba(6,10,14,0.58) 100%);
+}
+
+/* ─── the Panel primitive ───────────────────────────────────────────
+   Every surface on this site is one of these. Depth, offset, rotation
+   and translucency arrive as custom properties from panel.js; no
+   section styles its own panel.                                      */
+.panel {
+  --p-tint: var(--panel);
+  --p-blur: 22px;
+  --p-lift: 0px;
+  --p-rot: 0deg;
+  --p-tilt: 0deg;
+  --p-scale: 1;
+  --p-dim: 0;
+
+  position: relative;
+  border-radius: var(--r-lg);
+  background: var(--p-tint);
+  backdrop-filter: blur(var(--p-blur)) saturate(1.35);
+  -webkit-backdrop-filter: blur(var(--p-blur)) saturate(1.35);
+
+  /* Material, not just a rectangle:
+     1 — a lit lip along the top edge, where the room's light lands
+     2 — a thin bright rim on the light side (the plate lights from upper-right)
+     3 — a dark underside, so the panel has thickness rather than being a decal
+     4 — a soft contact shadow dropped onto whatever sits behind it           */
+  box-shadow:
+    inset 0 1px 0 0 var(--panel-lip),
+    inset -1px 0 0 0 rgba(255, 236, 214, 0.13),
+    inset 0 -1px 0 0 rgba(0, 0, 0, 0.55),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.055),
+    0 2px 6px -2px rgba(0, 0, 0, 0.5),
+    0 24px 48px -22px rgba(0, 0, 0, 0.75),
+    0 60px 120px -60px rgba(0, 0, 0, 0.9);
+
+  transform:
+    translate3d(var(--p-x, 0), calc(var(--p-y, 0px) - var(--p-lift)), 0)
+    rotate(var(--p-rot))
+    perspective(1600px) rotateY(var(--p-tilt))
+    scale(var(--p-scale));
+
+  transition:
+    transform var(--dur) var(--ease),
+    box-shadow var(--dur) var(--ease),
+    background-color var(--dur) var(--ease),
+    filter var(--dur) var(--ease),
+    opacity var(--dur) var(--ease);
+  will-change: transform;
+}
+
+/* Atmosphere: distance dims and softens. Applied to the panel's contents so
+   the glass itself stays crisp — haze on the frame reads as a bug, not depth. */
+.panel > .panel-in { position: relative; z-index: 1; }
+.panel[data-plane='far'] > .panel-in,
+.panel[data-plane='mid'] > .panel-in {
+  /* Distance softens, but never past reading. An earlier pass blurred the far
+     plane by 2.6px at half opacity and the text became decoration — depth is
+     not worth a word the visitor cannot read. */
+  filter: saturate(calc(1 - var(--p-dim) * 0.2));
+  opacity: calc(1 - var(--p-dim) * 0.16);
+}
+
+.panel[data-plane='near'] { --p-tint: var(--panel-near); --p-blur: 26px; --p-dim: 0; }
+.panel[data-plane='mid']  { --p-tint: var(--panel);      --p-blur: 18px; --p-dim: 0.5; }
+.panel[data-plane='far']  { --p-tint: var(--panel-far);  --p-blur: 12px; --p-dim: 1; }
+
+/* Interactive panels answer the pointer by coming toward it, and by resolving:
+   the content sharpens as it arrives. Movement is small on purpose. */
+.panel[data-interactive] { cursor: pointer; }
+.panel[data-interactive]:hover,
+.panel[data-interactive]:focus-visible {
+  --p-lift: 8px;
+  --p-scale: 1.014;
+  --p-dim: 0;
+  --p-tint: var(--panel-near);
+  box-shadow:
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.42),
+    inset -1px 0 0 0 rgba(255, 240, 220, 0.2),
+    inset 0 -1px 0 0 rgba(0, 0, 0, 0.5),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.085),
+    0 4px 10px -3px rgba(0, 0, 0, 0.5),
+    0 40px 70px -26px rgba(0, 0, 0, 0.8),
+    0 90px 150px -70px rgba(0, 0, 0, 0.95);
+}
+
+/* ─── chrome: nav rail and contact dock float nearest the camera ─── */
+.chrome {
+  position: fixed;
+  z-index: var(--z-chrome);
+  --p-blur: 30px;
+  --p-tint: rgba(14, 19, 26, 0.62);
+}
+
+/* ─── fallbacks ─────────────────────────────────────────────────────
+   No backdrop-filter (Firefox with the flag off, older engines): the
+   glass becomes an opaque tinted panel. Text contrast goes UP, never
+   down — an unreadable panel is the one outcome not allowed.          */
+@supports not ((backdrop-filter: blur(2px)) or (-webkit-backdrop-filter: blur(2px))) {
+  .panel      { background: rgba(11, 16, 22, 0.93); }
+  .chrome     { background: rgba(9, 13, 18, 0.96); }
+  .env::after { background: linear-gradient(to bottom, rgba(6,10,14,0.6), rgba(6,10,14,0.7)); }
+}
+
+/* ─── reduced motion ────────────────────────────────────────────────
+   No camera drift, no float, no transitions. The composition, depth,
+   lighting and material all remain — it still looks designed, it just
+   stops moving.                                                       */
+@media (prefers-reduced-motion: reduce) {
+  .panel, .env { transition: none !important; }
+  .env { will-change: auto; }
+  .panel[data-interactive]:hover { --p-lift: 0px; --p-scale: 1; }
+}
