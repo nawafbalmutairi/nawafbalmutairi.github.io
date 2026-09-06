@@ -100,6 +100,14 @@
   position: absolute;
   top: var(--gutter-t); right: var(--gutter-r);
   bottom: var(--gutter-b); left: var(--gutter-l);
+  /* The room is fixed, but a destination must never trap its own content.
+     Absolutely positioned panels still contribute scrollable overflow, so
+     anything taller than the frame can be scrolled to instead of clipped. */
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255,255,255,0.22) transparent;
   opacity: 0;
   visibility: hidden;
   transition: opacity 460ms var(--ease), visibility 0s linear 460ms;
@@ -238,20 +246,23 @@
 /* Height follows the track rather than stretching to the frame: a panel that
    reaches the floor with nothing in the bottom half reads as a mistake. */
 #p-journey { left: 0; right: 0; top: 13%; }
-#p-journey .panel-in { display: grid; gap: 20px; }
+/* minmax(0,1fr): an implicit grid column sizes to max-content, which let
+   the 2252px track stretch its own panel instead of scrolling inside it. */
+#p-journey .panel-in { display: grid; grid-template-columns: minmax(0, 1fr); gap: 20px; }
 #p-certs   { left: 0; bottom: 0; width: min(430px, 38%); }
 
 /* A spine you travel along, with each stop hanging off it. The track scrolls
    horizontally and says so — an edge that simply cuts off reads as a bug. */
-.track-wrap { position: relative; }
-.track-wrap::after {
-  content: ''; position: absolute; top: 0; right: 0; bottom: 0; width: 88px;
+.track-wrap { position: relative; min-width: 0; }
+.track-wrap[data-more='yes']::after {
+  content: ''; position: absolute; top: 0; right: 0; bottom: 0; width: 96px;
   pointer-events: none;
-  background: linear-gradient(to right, transparent, rgba(11, 16, 22, 0.72));
-  border-radius: 0 var(--r-md) var(--r-md) 0;
+  background: linear-gradient(to right, transparent, rgba(11, 16, 22, 0.8));
 }
 .track {
   position: relative;
+  min-width: 0;
+  scroll-behavior: smooth;
   display: flex; gap: 14px; align-items: flex-start;
   overflow-x: auto; overscroll-behavior-x: contain;
   padding: 30px 2px 14px;
@@ -289,11 +300,21 @@
 }
 .stop .t { font-size: 0.66rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--accent); }
 .stop h3 { font-size: 0.98rem; }
-.track-hint {
-  position: absolute; right: 0; bottom: -2px; z-index: 2;
-  font-size: 0.64rem; letter-spacing: 0.16em; text-transform: uppercase;
-  color: var(--ink-4);
+.track-nav {
+  position: absolute; top: 50%; z-index: 3;
+  width: 38px; height: 38px; border: 0; border-radius: 50%;
+  transform: translateY(-50%);
+  background: rgba(20, 26, 34, 0.86);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.12), 0 14px 28px -14px rgba(0,0,0,0.9);
+  color: var(--ink); font-size: 1rem; cursor: pointer;
+  transition: opacity 220ms var(--ease), background-color 220ms var(--ease);
 }
+.track-nav:hover:not(:disabled) { background: rgba(30, 38, 48, 0.94); }
+.track-nav:disabled { opacity: 0.22; cursor: default; }
+.track-nav.prev { left: -6px; }
+.track-nav.next { right: -6px; }
 
 /* ═══ 05 CONTACT ═══ */
 #p-contact { left: 0; top: 6%; width: min(560px, 47vw); }
@@ -476,4 +497,26 @@
 /* Very small screens: the dock's four links need to stay tappable. */
 @media (max-width: 380px) {
   .dock a { padding: 8px 9px; font-size: 0.76rem; }
+}
+
+
+/* An in-flow spacer sized by fitScene() to the real content height. Without
+   it, absolutely positioned panels stop the scroll ~24px short of themselves. */
+.scene::before { content: ''; display: block; height: var(--tail, 0px); pointer-events: none; }
+
+/* A destination that scrolls says so, once, at the bottom edge. */
+.scene::-webkit-scrollbar { width: 9px; }
+.scene::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 5px; }
+.scene[data-overflow]::after {
+  content: 'scroll for more ↓';
+  position: sticky; bottom: 0; left: 0;
+  display: block; width: max-content; margin: 18px auto 0;
+  padding: 7px 14px; border-radius: 999px;
+  background: rgba(14, 19, 26, 0.8);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.09);
+  font-size: 0.66rem; font-weight: 600; letter-spacing: 0.15em;
+  text-transform: uppercase; color: var(--ink-3);
+  pointer-events: none;
 }

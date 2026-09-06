@@ -6,6 +6,8 @@ import { cases, further } from '../content/work.js';
 import { groups, journey, certificates } from '../content/stack-journey.js';
 import * as WQ from '../content/water-quality.js';
 import { panel, initParallax, initEnvironment } from '../spatial/panel.js';
+import { pipelines } from '../content/pipelines.js';
+import { buildJourney } from '../spatial/pipeline.js';
 
 /* ── tiny DOM helper ─────────────────────────────────────────────── */
 function h(tag, props = {}, ...kids) {
@@ -241,6 +243,51 @@ function sceneStack() {
   return s;
 }
 
+
+/* A horizontal track is only usable if it can actually be driven. A vertical
+   wheel does nothing to one by default, and the right-hand stops were simply
+   unreachable — so the wheel is mapped onto it, arrows are provided for the
+   pointer, and the whole strip stays keyboard-focusable. */
+function trackWrap(...stops) {
+  const track = h('div', {
+    class: 'track', tabindex: '0', role: 'group',
+    'aria-label': 'Timeline — scroll or use the arrows to move through it',
+  }, ...stops);
+
+  const page = dir => track.scrollBy({ left: dir * Math.round(track.clientWidth * 0.8), behavior: 'smooth' });
+
+  const prev = h('button', { class: 'track-nav prev', type: 'button',
+    'aria-label': 'Earlier', onclick: () => page(-1) }, '←');
+  const next = h('button', { class: 'track-nav next', type: 'button',
+    'aria-label': 'Later', onclick: () => page(1) }, '→');
+
+  track.addEventListener('wheel', e => {
+    // Only hijack a vertical wheel while the track still has somewhere to go,
+    // so the destination itself can still be scrolled at either end.
+    if (Math.abs(e.deltaY) <= Math.abs(e.deltaX)) return;
+    const max = track.scrollWidth - track.clientWidth;
+    const next2 = track.scrollLeft + e.deltaY;
+    if (next2 < 0 || next2 > max) return;
+    e.preventDefault();
+    track.scrollLeft = next2;
+    sync();
+  }, { passive: false });
+
+  track.addEventListener('scroll', sync, { passive: true });
+
+  function sync() {
+    const max = track.scrollWidth - track.clientWidth;
+    prev.disabled = track.scrollLeft < 4;
+    next.disabled = track.scrollLeft > max - 4;
+    wrap.dataset.more = next.disabled ? 'no' : 'yes';
+  }
+
+  const wrap = h('div', { class: 'track-wrap' }, track, prev, next);
+  requestAnimationFrame(sync);
+  addEventListener('resize', sync, { passive: true });
+  return wrap;
+}
+
 /* ═══ 04 — JOURNEY ═════════════════════════════════════════════════ */
 function sceneJourney() {
   const s = h('section', { class: 'scene', data: { id: 'journey' }, 'aria-label': 'Journey' });
@@ -250,15 +297,13 @@ function sceneJourney() {
     h('div', {},
       h('div', { class: 't-label', text: 'Journey' }),
       h('h2', { class: 't-h1', style: 'margin-top:8px', text: 'Sep 2023 → now.' })),
-    h('div', { class: 'track-wrap' },
-      h('span', { class: 'track-hint', text: 'scroll →' }),
-      h('div', { class: 'track', tabindex: '0', role: 'group', 'aria-label': 'Timeline, scrolls horizontally' },
+    trackWrap(
       journey.map(j =>
         h('article', { class: 'stop', data: { kind: j.kind } },
           h('div', { class: 't', text: j.t }),
           h('h3', { text: j.title }),
           h('p', { class: 't-small', style: 'margin:0', text: j.d }))),
-      )),
+      ),
   );
 
   // Certificates are a different kind of fact from a dated milestone, so they
@@ -409,6 +454,9 @@ function openStudy(id) {
         h('span', { text: f.k }),
         h('span', { style: 'text-transform:none;letter-spacing:0;color:var(--ink-4)', text: f.n })))),
 
+    // Every case gets its journey; the water-quality one also gets the
+    // full evaluation matrix beneath it.
+    pipelines[c.id] ? buildJourney(pipelines[c.id]) : null,
     c.id === 'water-quality' ? studyWaterQuality() : null,
     c.visual.kind === 'figure' ? h('figure', { style: 'margin:0 0 18px' },
       h('img', { src: c.visual.src, alt: c.visual.alt, loading: 'lazy',
@@ -426,15 +474,9 @@ function openStudy(id) {
 }
 
 function studyWaterQuality() {
+  // The pipeline strip that used to sit here is now the interactive journey
+  // above, which carries the same stages in more detail.
   return h('div', { style: 'margin-bottom:22px' },
-    h('div', { class: 't-label', style: 'margin-bottom:10px', text: 'Pipeline' }),
-    h('div', { style: 'display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin-bottom:24px' },
-      WQ.pipeline.map(p => h('div', {
-        style: 'padding:12px;border-radius:12px;background:rgba(255,255,255,.05)',
-      },
-        h('div', { class: 't-label', text: `${p.n} · ${p.k}` }),
-        h('div', { class: 't-num', style: 'font-size:1.05rem;margin:4px 0 3px', text: p.v }),
-        h('div', { class: 't-small', style: 'font-size:.76rem', text: p.d })))),
     h('div', { class: 't-label', style: 'margin-bottom:4px', text: 'Evaluation — all 20 runs' }),
     h('p', { class: 't-small', style: 'margin:0 0 12px;max-width:70ch',
       text: 'R² below zero means the model did worse than predicting the mean. ' +
@@ -452,6 +494,27 @@ function onStudyKey(e) { if (e.key === 'Escape') closeStudy(); }
 /* ═══ NAVIGATION ═══════════════════════════════════════════════════
    Destinations are addressable, back/forward works, and the rail is a
    real set of buttons so the keyboard reaches every one. */
+/* Absolutely positioned panels contribute scrollable overflow, but the
+   container's padding-bottom does not extend past them — so the lowest panel
+   ended up ~24px short of reachable. An in-flow spacer sized to the real
+   content height fixes that exactly, without guessing. */
+function fitScene(scene) {
+  if (!scene) return;
+  let low = 0;
+  for (const el of scene.querySelectorAll('.panel, .sig')) {
+    low = Math.max(low, el.offsetTop + el.offsetHeight);
+  }
+  scene.style.setProperty('--tail', low + 28 + 'px');
+  // Told once, at the foot of the destination, only when there is more below.
+  requestAnimationFrame(() => {
+    if (scene.scrollHeight > scene.clientHeight + 4) scene.dataset.overflow = '';
+    else delete scene.dataset.overflow;
+  });
+}
+
+function fitActive() { fitScene(field.querySelector('.scene[data-active]')); }
+addEventListener('resize', fitActive, { passive: true });
+
 function go(id, push = true) {
   if (!destinations.some(d => d.id === id)) id = destinations[0].id;
   active = id;
@@ -460,6 +523,8 @@ function go(id, push = true) {
     else delete s.dataset.active;
   }
   railButtons.forEach((b, k) => b.setAttribute('aria-current', String(k === id)));
+  const sc = field.querySelector('.scene[data-active]');
+  if (sc) { sc.scrollTop = 0; fitScene(sc); }
   if (push && location.hash.slice(1) !== id) history.pushState({ id }, '', '#' + id);
   document.title = `${destinations.find(d => d.id === id).label} — Nawaf Almutairi`;
 }
