@@ -364,3 +364,51 @@ main a[href^="http"], main a[href^="mailto"],
 }
 .subdock a, .home-link, .badge a,
 .home-link .hl-mark, .home-link .hl-back { text-decoration: none !important; }
+
+/* ═══════════════════════════════════════════════════════════════════
+   SCROLL RESPONSE
+   The room answers the scroll, and blocks arrive out of its depth when
+   you actually reach them. Driven by ui/subtravel.js; without it the
+   page is simply the page.
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* The plate drifts as you read — the room moves with you rather than
+   sitting behind the page like a photograph. */
+.env { transform: translate3d(0, var(--travel, 0px), 0); will-change: transform; }
+
+/* How far through the document you are. */
+.read-progress {
+  position: fixed; inset: 0 0 auto 0; height: 2px; z-index: 50;
+  background: var(--hue);
+  transform-origin: left;
+  transform: scaleX(var(--progress, 0));
+  opacity: 0.9;
+  pointer-events: none;
+}
+
+/* Depth needs somewhere to be measured from. */
+html[data-reveal] main,
+html[data-reveal] .w,
+html[data-reveal] .wrapper { perspective: 1200px; }
+
+html[data-reveal] .rv {
+  opacity: 0;
+  transform: translate3d(0, 20px, -48px);
+  transition: opacity 480ms var(--ease), transform 600ms var(--ease);
+  will-change: transform, opacity;
+}
+html[data-reveal] .rv[data-in] {
+  opacity: 1;
+  transform: none;
+  will-change: auto;
+}
+
+/* The template's own entrance fired for the whole page at load, long
+   before you had scrolled to most of it. Reveal replaces it. */
+html[data-reveal] .fade-in { animation: none; opacity: 1; transform: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .env { transform: none; }
+  .read-progress { transition: none; }
+  html[data-reveal] .rv { opacity: 1; transform: none; transition: none; }
+}
