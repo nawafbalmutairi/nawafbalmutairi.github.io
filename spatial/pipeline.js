@@ -110,6 +110,9 @@ export function buildJourney(pipe, { id = 'journey' } = {}) {
     detail.setAttribute('aria-labelledby', `${uid}-tab-${active}`);
     chips[active].scrollIntoView({ block: 'nearest', inline: 'center', behavior: 'smooth' });
     if (scene) scene.focus(active);
+    // The detail text changes height, which changes how far this destination
+    // has to pan — the scroll track is measured from real content.
+    dispatchEvent(new Event('pj:resize'));
   }
 
   root.addEventListener('keydown', e => {

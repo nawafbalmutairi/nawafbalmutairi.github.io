@@ -507,16 +507,72 @@
 /* A destination that scrolls says so, once, at the bottom edge. */
 .scene::-webkit-scrollbar { width: 9px; }
 .scene::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 5px; }
-.scene[data-overflow]::after {
-  content: 'scroll for more ↓';
-  position: sticky; bottom: 0; left: 0;
-  display: block; width: max-content; margin: 18px auto 0;
-  padding: 7px 14px; border-radius: 999px;
-  background: rgba(14, 19, 26, 0.8);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+/* The old "scroll for more" badge is gone: it appeared over about 76px of
+   travel, which is why it read as decoration. Scrolling is the way through
+   the room now, and the rail shows how far along you are. */
+
+
+/* ═══════════════════════════════════════════════════════════════════
+   TRAVEL MODE
+   The window scrolls a track; the room stays put and the destinations
+   move through it. Only on wide screens — the flow layouts below
+   1101px scroll natively and need none of this.
+   ═══════════════════════════════════════════════════════════════════ */
+.scroll-track { width: 1px; height: 0; pointer-events: none; opacity: 0; }
+
+html[data-travel] body { overflow-x: hidden; }
+
+html[data-travel] .field {
+  perspective: 1500px;
+  perspective-origin: 52% 46%;
+}
+html[data-travel] .scene {
+  overflow: visible;                 /* the stage does the clipping now */
+  transition: none;                  /* every frame is driven by scroll */
+  will-change: transform, opacity;
+  transform-style: preserve-3d;
+}
+html[data-travel] .scene::before { content: none; }   /* the tail spacer is unused here */
+html[data-travel] .scene:not([data-active]) .panel { --p-scale: 1; --p-lift: 0px; }
+
+/* The room drifts as you travel, so the space moves with you rather than
+   the panels sliding over a photograph. */
+.env { transform: translate3d(0, var(--travel, 0px), 0); }
+
+/* How far through the room you are, read off the rail. */
+.rail { overflow: hidden; }
+.rail::after {
+  content: '';
+  position: absolute; left: 0; top: 0; bottom: 0; width: 2px;
+  background: var(--accent);
+  transform-origin: top;
+  transform: scaleY(var(--progress, 0));
+  opacity: 0.85;
+  transition: transform 120ms linear;
+}
+html:not([data-travel]) .rail::after { display: none; }
+
+/* A single cue at the very start, gone the moment you move. */
+.travel-cue {
+  position: fixed; left: 50%; bottom: clamp(74px, 9vh, 104px);
+  transform: translateX(-50%);
+  z-index: var(--z-chrome);
+  display: flex; align-items: center; gap: 9px;
+  padding: 8px 16px; border-radius: 999px;
+  background: rgba(14, 19, 26, 0.72);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
   box-shadow: inset 0 0 0 1px rgba(255,255,255,0.09);
-  font-size: 0.66rem; font-weight: 600; letter-spacing: 0.15em;
+  font-size: 0.66rem; font-weight: 600; letter-spacing: 0.16em;
   text-transform: uppercase; color: var(--ink-3);
   pointer-events: none;
+  transition: opacity 400ms var(--ease), transform 400ms var(--ease);
+}
+.travel-cue span { font-size: 0.8rem; animation: cue 1.9s ease-in-out infinite; }
+@keyframes cue { 0%, 100% { transform: translateY(-2px); } 50% { transform: translateY(2px); } }
+html[data-scrolled] .travel-cue { opacity: 0; transform: translate(-50%, 8px); }
+html:not([data-travel]) .travel-cue { display: none; }
+@media (prefers-reduced-motion: reduce) {
+  .travel-cue span { animation: none; }
+  .rail::after { transition: none; }
 }

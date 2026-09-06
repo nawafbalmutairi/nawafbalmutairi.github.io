@@ -8,6 +8,7 @@ import * as WQ from '../content/water-quality.js';
 import { panel, initParallax, initEnvironment } from '../spatial/panel.js';
 import { pipelines } from '../content/pipelines.js';
 import { buildJourney } from '../spatial/pipeline.js';
+import { initTravel } from './travel.js';
 
 /* ── tiny DOM helper ─────────────────────────────────────────────── */
 function h(tag, props = {}, ...kids) {
@@ -469,6 +470,9 @@ function openStudy(id) {
       text: 'Read the full case study ↗' }),
   ].filter(Boolean));
   study.dataset.open = '';
+  // The page is a scroll track now, so the wheel would travel the room behind
+  // the overlay. Lock it while the study is open; scrollY is preserved.
+  document.documentElement.style.overflow = 'hidden';
   document.querySelector('.study-close').focus();
   addEventListener('keydown', onStudyKey);
 }
@@ -486,6 +490,7 @@ function studyWaterQuality() {
 
 function closeStudy() {
   delete study.dataset.open;
+  document.documentElement.style.overflow = '';
   removeEventListener('keydown', onStudyKey);
   if (lastFocus) lastFocus.focus();
 }
@@ -515,7 +520,10 @@ function fitScene(scene) {
 function fitActive() { fitScene(field.querySelector('.scene[data-active]')); }
 addEventListener('resize', fitActive, { passive: true });
 
-function go(id, push = true) {
+let travel = null;
+
+/** Marks a destination current. Does not move anything — see go(). */
+function mark(id, push = true) {
   if (!destinations.some(d => d.id === id)) id = destinations[0].id;
   active = id;
   for (const s of field.children) {
@@ -523,13 +531,26 @@ function go(id, push = true) {
     else delete s.dataset.active;
   }
   railButtons.forEach((b, k) => b.setAttribute('aria-current', String(k === id)));
-  const sc = field.querySelector('.scene[data-active]');
-  if (sc) { sc.scrollTop = 0; fitScene(sc); }
-  if (push && location.hash.slice(1) !== id) history.pushState({ id }, '', '#' + id);
+  if (push && location.hash.slice(1) !== id) history.replaceState({ id }, '', '#' + id);
   document.title = `${destinations.find(d => d.id === id).label} — Nawaf Almutairi`;
 }
 
+/** Goes to a destination. On a wide screen that means scrolling there, so the
+    rail and the scrollbar always agree about where you are. */
+function go(id, push = true) {
+  const i = destinations.findIndex(d => d.id === id);
+  if (travel && travel.enabled && i >= 0) {
+    travel.goTo(i);
+    return;
+  }
+  mark(id, push);
+  const sc = field.querySelector('.scene[data-active]');
+  if (sc) { sc.scrollTop = 0; fitScene(sc); }
+}
+
 addEventListener('popstate', () => go(location.hash.slice(1) || destinations[0].id, false));
+// The journey's own panels change height as stages are picked.
+addEventListener('pj:resize', () => travel?.remeasure());
 
 // Arrow keys move between destinations when focus is not in a control.
 addEventListener('keydown', e => {
@@ -549,7 +570,26 @@ field.append(sceneIdentity(), sceneWork(), sceneStack(), sceneJourney(), sceneCo
 stage.append(buildRail(), field, buildDock());
 document.body.append(buildStudy());
 
-go(location.hash.slice(1) || destinations[0].id, false);
+const scenes = [...field.children];
+
+// One cue, at the start, that leaves as soon as you move.
+document.body.append(h('div', { class: 'travel-cue' }, 'Scroll to travel', h('span', {}, '↓')));
+addEventListener('scroll', () => {
+  if (scrollY > 40) document.documentElement.dataset.scrolled = '';
+  else delete document.documentElement.dataset.scrolled;
+}, { passive: true });
+
+travel = initTravel({
+  field, scenes, destinations,
+  env: document.getElementById('env'),
+  onEnter: id => mark(id, true),
+});
+
+// A hash on load lands you at that destination rather than at the top.
+const startId = location.hash.slice(1) || destinations[0].id;
+const startAt = destinations.findIndex(d => d.id === startId);
+if (travel.enabled && startAt > 0) travel.goTo(startAt, false);
+else mark(startId, false);
 
 const env = document.getElementById('env');
 initEnvironment(env, {
