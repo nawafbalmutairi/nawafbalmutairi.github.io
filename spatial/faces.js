@@ -102,7 +102,8 @@ function faceMatrix(x, item) {
       rr(x, GX + c * cw + 3, GY + r * ch + 3, cw - 6, ch - 6, 5); x.fill();
       f(x, 17, 600);
       x.fillStyle = 'rgba(255,255,255,0.9)';
-      const s = (v > 0 ? '+' : '') + v.toFixed(2);
+      // 3dp, as the study publishes them — 2dp turned +0.785 into +0.79.
+      const s = (v > 0 ? '+' : '') + v.toFixed(3);
       x.fillText(s, GX + c * cw + cw / 2 - x.measureText(s).width / 2, GY + r * ch + ch / 2 + 6);
     });
   });
@@ -251,7 +252,7 @@ function faceVersus(x, item) {
 
   f(x, 15, 500);
   x.fillStyle = 'rgba(214,223,234,0.5)';
-  x.fillText('Accuracy; precision and recall track it across all four runs.', CX, H - 96);
+  x.fillText('Accuracy shown; precision and recall match it to within 0.005.', CX, H - 96);
 }
 
 /* ═══ 04 · conference — an architecture blueprint ═════════════════ */
@@ -351,8 +352,11 @@ function faceRegister(x, item) {
     const ry = RY + i * 56;
     x.fillStyle = i % 2 ? 'rgba(255,255,255,0.03)' : 'rgba(255,255,255,0.055)';
     rr(x, RX, ry, RW, 46, 8); x.fill();
+    // Row numbers, not identifiers. An earlier pass wrote CI-1024, CI-1061 and
+    // so on, which read as real configuration items — that study publishes no
+    // such IDs, so they were invented.
     f(x, 15, 600); x.fillStyle = 'rgba(214,223,234,0.55)';
-    x.fillText('CI-' + String(1024 + i * 37), RX + 16, ry + 29);
+    x.fillText(String(i + 1).padStart(2, '0'), RX + 16, ry + 29);
     x.fillStyle = 'rgba(219,227,236,0.85)';
     f(x, 16, 500);
     x.fillText('KPI ' + (i + 1), RX + 130, ry + 29);
@@ -429,11 +433,11 @@ function faceDials(x, item) {
     x.beginPath(); x.arc(cx, DY, R, Math.PI * 0.75, Math.PI * 0.75 + Math.PI * 1.5 * v); x.stroke();
     x.lineCap = 'butt';
     f(x, 15, 600); x.fillStyle = 'rgba(214,223,234,0.62)';
-    x.fillText('INDICATOR ' + (i + 1), cx - 48, DY + R + 40);
+    x.fillText('INDICATOR', cx - 40, DY + R + 40);
   });
   f(x, 17, 500);
   x.fillStyle = 'rgba(214,223,234,0.5)';
-  x.fillText('Indicator levels are illustrative of the dashboard layout.', DX, DY + R + 78);
+  x.fillText('Indicator count and levels shown schematically.', DX, DY + R + 78);
   bigStat(x, item, H - 132);
 }
 
