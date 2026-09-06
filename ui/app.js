@@ -9,6 +9,7 @@ import { panel, initParallax, initEnvironment } from '../spatial/panel.js';
 import { pipelines } from '../content/pipelines.js';
 import { buildJourney } from '../spatial/pipeline.js';
 import { initTravel } from './travel.js';
+import { buildGallery } from '../spatial/gallery.js';
 
 /* ── tiny DOM helper ─────────────────────────────────────────────── */
 function h(tag, props = {}, ...kids) {
@@ -122,100 +123,45 @@ function sceneIdentity() {
 /* ═══ 02 — WORK ════════════════════════════════════════════════════
    Each case leads with its own artefact, per the reference: the thing
    the project actually produced, not an abstract stand-in. */
-function caseTile(c) {
-  const visual = h('div', { class: 'case-visual', data: { accent: c.accent } });
-  if (c.visual.kind === 'figure') {
-    visual.append(h('img', {
-      src: c.visual.src, alt: c.visual.alt, loading: 'lazy', decoding: 'async',
-    }));
-  } else if (c.visual.kind === 'matrix') {
-    visual.append(miniMatrix());
-  } else {
-    visual.append(archMini(c));
-  }
-
-  return h('article', {
-    class: 'case', tabindex: '0', role: 'button',
-    'aria-label': `${c.title} — open case study`,
-    onclick: () => openStudy(c.id),
-    onkeydown: e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openStudy(c.id); } },
-  },
-    h('div', { class: 't-label' }, `${c.index} · ${c.kind}`),
-    visual,
-    h('div', {},
-      h('h3', { class: 't-h3', style: 'margin-bottom:6px', text: c.title }),
-      h('p', { class: 't-small', text: c.lede })),
-    h('div', { class: 'case-figs' },
-      c.figures.slice(0, 3).map(f =>
-        h('div', { class: 'fig-chip' },
-          h('b', { class: 't-num', text: f.v }),
-          h('span', { text: f.k })))),
-  );
-}
-
 function sceneWork() {
   const s = h('section', { class: 'scene', data: { id: 'work' }, 'aria-label': 'Work' });
 
-  // The heading is signage in the room, like the name on Identity — not a
-  // title bar bolted to the top of a panel.
   s.append(h('div', { class: 'sig sig-work' },
-    h('h2', { class: 't-h1' }, 'Three systems,', h('span', { class: 'l2' }, 'measured.')),
-    h('div', { class: 'disc', text: 'Every figure measured, not estimated' })));
+    h('h2', { class: 't-h1' }, 'Three systems,', h('span', { class: 'l2' }, 'measured.'))));
 
-  const depth = [
-    { plane: 'near', tilt: -3, rot: -0.4 },
-    { plane: 'mid',  tilt: 3,  rot: 0.6 },
-    { plane: 'mid',  tilt: -5, rot: 0 },
+  // Everything shippable, in one gallery: the three case studies lead, the six
+  // further projects follow. Figures that exist are used as textures; the two
+  // projects with no figure of their own are drawn from their numbers.
+  const IMG = {
+    'water-quality': './assets/case-water.webp',
+    'nvidia-bi':     './assets/case-nvidia.webp',
+  };
+  const HEX = { teal: '#5fe0cc', ochre: '#f0b357', violet: '#b49cff', ember: '#ff8a4c' };
+  // The rail needs a name, not the headline — the full title is in the detail.
+  const SHORT = {
+    'water-quality': 'Water quality',
+    'nvidia-bi': 'NVIDIA supply chain',
+    'face-classifier': 'Face classification',
+  };
+
+  const items = [
+    ...cases.map(c => ({
+      id: c.id, kicker: c.kind.split(' · ')[0], title: c.title, lede: c.lede,
+      stat: c.figures[0].v, statLabel: c.figures[0].k,
+      short: SHORT[c.id], accent: c.accent, hex: HEX[c.accent], image: IMG[c.id], open: c.id,
+    })),
+    ...further.map(f => ({
+      id: f.title, kicker: f.y, title: f.title, lede: f.note,
+      stat: f.tags[0], statLabel: 'stack',
+      accent: 'ember', hex: HEX.ember, href: f.href,
+    })),
   ];
 
-  cases.forEach((c, i) => {
-    const p = panel({ ...depth[i], interactive: true, tag: 'article' });
-    p.id = 'p-case-' + i;
-    p.setAttribute('role', 'button');
-    p.setAttribute('aria-label', `${c.title} — open case study`);
-    p.addEventListener('click', () => openStudy(c.id));
-    p.addEventListener('keydown', e => {
-      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openStudy(c.id); }
-    });
-    p.content.append(caseBody(c));
-    s.append(p);
-  });
-
-  const fw = panel({ plane: 'far', tilt: 4 });
-  fw.id = 'p-further';
-  fw.content.append(
-    h('div', { class: 't-label', text: 'Further work · six projects' }),
-    h('div', { class: 'further' },
-      further.map(f => h('a', { href: f.href, target: '_blank', rel: 'noopener' },
-        h('span', { class: 'y', text: f.y }),
-        h('span', { class: 't', text: f.title })))),
-  );
-  s.append(fw);
+  const p = panel({ plane: 'near' });
+  p.id = 'p-gallery';
+  p.content.append(buildGallery(items, { onOpen: openStudy }));
+  s.append(p);
   return s;
-}
-
-function caseBody(c) {
-  const visual = h('div', { class: 'case-visual', data: { accent: c.accent } });
-  if (c.visual.kind === 'figure') {
-    visual.append(h('img', { src: c.visual.src, alt: c.visual.alt, loading: 'lazy', decoding: 'async' }));
-  } else if (c.visual.kind === 'matrix') {
-    visual.append(miniMatrix());
-  } else {
-    visual.append(archMini(c));
-  }
-
-  return h('div', { class: 'case' },
-    h('div', { class: 't-label' }, `${c.index} · ${c.kind}`),
-    visual,
-    h('h3', { class: 't-h3', text: c.title }),
-    h('p', { class: 't-small', style: 'margin:0', text: c.lede }),
-    h('div', { class: 'case-figs' },
-      c.figures.slice(0, 3).map(f =>
-        h('div', { class: 'fig-chip' },
-          h('b', { class: 't-num', text: f.v }),
-          h('span', { text: f.k })))),
-    h('div', { class: 'open-hint t-label', text: 'Open case study →' }),
-  );
 }
 
 /* ═══ 03 — STACK ═══════════════════════════════════════════════════
@@ -364,20 +310,6 @@ function r2Colour(r) {
   return `rgba(255, 122, 106, ${0.08 + t * 0.36})`;
 }
 
-function miniMatrix() {
-  const g = h('div', {
-    style: 'display:grid;grid-template-columns:repeat(4,1fr);gap:2px;padding:8px;height:100%',
-  });
-  WQ.results.forEach((row, ti) =>
-    row.forEach((cell, mi) => {
-      const isBest = ti === WQ.best.target && mi === WQ.best.model;
-      g.append(h('div', {
-        style: `border-radius:3px;background:${isBest ? 'var(--accent)' : r2Colour(cell.r2)}`,
-      }));
-    }));
-  return g;
-}
-
 function fullMatrix() {
   const wrap = h('div', { style: 'overflow-x:auto' });
   const t = h('table', {
@@ -412,15 +344,6 @@ function fullMatrix() {
 
 // The face-classifier panel has no figure in its repo, so it renders the
 // architecture comparison from the numbers instead of a screenshot.
-function archMini() {
-  const g = h('div', { style: 'display:grid;place-items:center;height:100%;gap:6px' });
-  g.append(
-    h('div', { class: 't-num', style: 'font-size:1.6rem;color:var(--violet)', text: '86.7%' }),
-    h('div', { class: 't-label', text: 'DenseNet · test' }),
-  );
-  return g;
-}
-
 /* ═══ CASE STUDY OVERLAY ═══════════════════════════════════════════ */
 let study, studyPanel, lastFocus;
 
@@ -579,17 +502,18 @@ addEventListener('scroll', () => {
   else delete document.documentElement.dataset.scrolled;
 }, { passive: true });
 
+// A hash on load lands you at that destination rather than at the top.
+const startId = location.hash.slice(1) || destinations[0].id;
+const startAt = Math.max(0, destinations.findIndex(d => d.id === startId));
+
 travel = initTravel({
   field, scenes, destinations,
   env: document.getElementById('env'),
   onEnter: id => mark(id, true),
+  startIndex: startAt,
 });
 
-// A hash on load lands you at that destination rather than at the top.
-const startId = location.hash.slice(1) || destinations[0].id;
-const startAt = destinations.findIndex(d => d.id === startId);
-if (travel.enabled && startAt > 0) travel.goTo(startAt, false);
-else mark(startId, false);
+mark(startId, false);
 
 const env = document.getElementById('env');
 initEnvironment(env, {

@@ -1,0 +1,100 @@
+/* ═══════════════════════════════════════════════════════════════════
+   WORK GALLERY
+   The planes are the presentation; the rail and the detail below are
+   the content. Without WebGL the canvas is simply never built and the
+   section is a project list that reads perfectly well.
+   ═══════════════════════════════════════════════════════════════════ */
+.gal { --g: var(--ember); display: grid; gap: 14px; height: 100%; grid-template-rows: 1fr auto auto; min-height: 0; }
+.gal[data-accent='teal']   { --g: var(--teal); }
+.gal[data-accent='ochre']  { --g: var(--ochre); }
+.gal[data-accent='violet'] { --g: var(--violet); }
+
+.gal-stage { position: relative; min-height: 0; border-radius: 18px; overflow: hidden; }
+.gal-canvas { display: block; width: 100%; height: 100%; touch-action: pan-y; }
+.gal-hint {
+  position: absolute; right: 14px; bottom: 12px;
+  font-size: 0.6rem; font-weight: 600; letter-spacing: 0.16em;
+  text-transform: uppercase; color: var(--ink-4);
+  pointer-events: none; opacity: 0;
+  transition: opacity 400ms var(--ease);
+}
+.gal[data-gl] .gal-hint { opacity: 1; }
+
+/* Every project, as a real button. */
+.gal-rail {
+  display: flex; gap: 6px; overflow-x: auto; overscroll-behavior-x: contain;
+  padding-bottom: 4px; scrollbar-width: thin;
+}
+.gal-rail::-webkit-scrollbar { height: 6px; }
+.gal-rail::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.18); border-radius: 3px; }
+.gal-tab {
+  flex: 0 0 auto; display: inline-flex; align-items: baseline; gap: 7px;
+  padding: 8px 13px; border: 0; border-radius: 999px;
+  background: rgba(255,255,255,0.055); color: var(--ink-3);
+  font: inherit; font-size: 0.79rem; white-space: nowrap; cursor: pointer;
+  transition: background-color 200ms var(--ease), color 200ms var(--ease);
+}
+.gal-tab:hover { background: rgba(255,255,255,0.1); }
+.gal-tab-n {
+  font-size: 0.6rem; font-weight: 600; letter-spacing: 0.1em;
+  color: var(--ink-4); text-transform: uppercase;
+}
+.gal-tab[data-on] { background: var(--g); color: #10141a; font-weight: 600; }
+.gal-tab[data-on] .gal-tab-n { color: rgba(16,20,26,0.72); }
+
+.gal-detail {
+  padding: 16px 18px; border-radius: 16px;
+  background: rgba(0,0,0,0.32);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.06);
+}
+.gal-detail-head {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 14px; margin-bottom: 8px;
+}
+.gal-kick {
+  font-size: 0.63rem; font-weight: 600; letter-spacing: 0.16em;
+  text-transform: uppercase; color: var(--g);
+}
+.gal-navs { display: flex; gap: 6px; }
+.gal-nav {
+  width: 29px; height: 29px; border: 0; border-radius: 50%;
+  background: rgba(255,255,255,0.08); color: var(--ink);
+  cursor: pointer; font-size: 0.82rem; line-height: 1;
+  transition: background-color 180ms var(--ease), opacity 180ms var(--ease);
+}
+.gal-nav:hover:not(:disabled) { background: rgba(255,255,255,0.16); }
+.gal-nav:disabled { opacity: 0.25; cursor: default; }
+
+.gal-title { margin: 0 0 6px; font-size: 1.14rem; font-weight: 600; letter-spacing: -0.024em; }
+.gal-lede { margin: 0 0 12px; font-size: 0.9rem; line-height: 1.55; color: var(--ink-2); max-width: 80ch; }
+
+.gal-foot { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+.gal-figs { display: flex; align-items: baseline; gap: 10px; }
+.gal-stat {
+  font-size: 1.2rem; font-weight: 600; letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums; color: var(--g);
+}
+.gal-statlabel {
+  font-size: 0.62rem; font-weight: 600; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--ink-4);
+}
+.gal-open {
+  border: 0; border-radius: 999px; cursor: pointer;
+  padding: 10px 18px; font: inherit; font-size: 0.84rem; font-weight: 600;
+  background: var(--g); color: #10141a;
+  transition: filter 200ms var(--ease), transform 200ms var(--ease);
+}
+.gal-open:hover { filter: brightness(1.12); transform: translateY(-1px); }
+
+#p-gallery { left: 0; right: 0; top: 0; bottom: 0; }
+#p-gallery .panel-in { height: 100%; display: flex; flex-direction: column; padding: 20px; }
+
+@media (max-width: 1100px) {
+  .gal { height: auto; grid-template-rows: none; }
+  .gal-stage { display: none; }
+  #p-gallery .panel-in { height: auto; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .gal-stage { display: none; }
+  .gal-tab, .gal-nav, .gal-open { transition: none; }
+}

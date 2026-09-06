@@ -23,7 +23,7 @@ function ramp(a, b, x) {
   return t * t * (3 - 2 * t);
 }
 
-export function initTravel({ field, scenes, destinations, env, onEnter }) {
+export function initTravel({ field, scenes, destinations, env, onEnter, startIndex = 0 }) {
   const wide = matchMedia('(min-width: 1101px)');
   const reduced = matchMedia('(prefers-reduced-motion: reduce)');
 
@@ -37,6 +37,22 @@ export function initTravel({ field, scenes, destinations, env, onEnter }) {
   let current = -1;
   let enabled = false;
   let raf = 0;
+
+  // A deep link has to survive three things: the browser restoring scroll on
+  // load, the track height not being final until fonts and images settle, and
+  // our own remeasures. So the target is re-applied after every measure until
+  // the reader takes over or it has clearly landed.
+  let pending = startIndex > 0 ? startIndex : null;
+  if (pending != null && 'scrollRestoration' in history) history.scrollRestoration = 'manual';
+
+  function applyPending() {
+    if (pending == null) return;
+    const want = offsetOf(pending);
+    if (Math.abs(scrollY - want) > 2) scrollTo({ top: want, behavior: 'instant' });
+  }
+  addEventListener('wheel', () => { pending = null; }, { passive: true, once: true });
+  addEventListener('pointerdown', () => { pending = null; }, { passive: true, once: true });
+  setTimeout(() => { pending = null; }, 2500);
 
   const frameH = () => scenes[0].clientHeight || innerHeight;
 
@@ -139,6 +155,7 @@ export function initTravel({ field, scenes, destinations, env, onEnter }) {
     enabled = true;
     document.documentElement.dataset.travel = '';
     measure();
+    applyPending();
     apply();
     addEventListener('scroll', onScroll, { passive: true });
   }
@@ -160,8 +177,12 @@ export function initTravel({ field, scenes, destinations, env, onEnter }) {
   wide.addEventListener('change', sync);
   addEventListener('resize', () => { if (enabled) { measure(); apply(); } }, { passive: true });
   // Fonts and images settle after first layout and change the content height.
-  if (document.fonts?.ready) document.fonts.ready.then(() => { if (enabled) { measure(); apply(); } });
-  addEventListener('load', () => { if (enabled) { measure(); apply(); } });
+  if (document.fonts?.ready) document.fonts.ready.then(() => {
+    if (enabled) { measure(); applyPending(); apply(); }
+  });
+  addEventListener('load', () => {
+    if (enabled) { measure(); applyPending(); apply(); }
+  });
 
   sync();
 
