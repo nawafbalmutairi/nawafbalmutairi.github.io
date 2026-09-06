@@ -1,0 +1,358 @@
+/* ═══════════════════════════════════════════════════════════════════
+   COMPOSITION
+   A fixed room. Chrome floats nearest the camera; each destination
+   arranges its panels across the near and mid planes. Nothing is a
+   grid of equal rectangles, and no section shares another's rhythm.
+   ═══════════════════════════════════════════════════════════════════ */
+
+.stage {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-mid);
+  display: block;
+  overflow: hidden;
+}
+
+/* ─── nav rail: destinations as objects in the room, not a top bar ── */
+.rail {
+  left: clamp(18px, 2.4vw, 40px);
+  top: 50%;
+  transform: translateY(-50%);
+  padding: 12px;
+  border-radius: 22px;
+  width: 212px;
+}
+.rail-mark {
+  display: flex; align-items: baseline; gap: 8px;
+  padding: 10px 12px 14px;
+  border-bottom: 1px solid var(--panel-line);
+  margin-bottom: 8px;
+}
+.rail-mark b { font-weight: 600; font-size: 0.94rem; color: var(--ink); letter-spacing: -0.02em; }
+.rail-mark span { font-size: 0.62rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-4); }
+
+.rail ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
+.rail button {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 26px 1fr;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 12px;
+  border: 0;
+  border-radius: 13px;
+  background: transparent;
+  color: var(--ink-3);
+  font: inherit;
+  font-size: 0.92rem;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 240ms var(--ease), color 240ms var(--ease);
+}
+.rail button .n {
+  font-size: 0.62rem; letter-spacing: 0.1em; color: var(--ink-4);
+  font-variant-numeric: tabular-nums;
+}
+.rail button:hover { background: rgba(255, 255, 255, 0.06); color: var(--ink-2); }
+.rail button[aria-current='true'] {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--ink);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.16);
+}
+.rail button[aria-current='true'] .n { color: var(--accent); }
+
+/* ─── contact dock: persistent, low in the frame, its own plane ───── */
+.dock {
+  left: 50%;
+  bottom: clamp(16px, 2.6vh, 30px);
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 7px;
+  border-radius: 999px;
+}
+.dock a {
+  padding: 9px 18px;
+  border-radius: 999px;
+  font-size: 0.88rem;
+  color: var(--ink-2);
+  white-space: nowrap;
+  transition: background-color 220ms var(--ease), color 220ms var(--ease);
+}
+.dock a:hover { background: rgba(255, 255, 255, 0.1); color: var(--ink); }
+.dock .sep { width: 1px; height: 18px; background: var(--panel-line); margin: 0 4px; }
+
+/* ─── the field where destinations compose ───────────────────────── */
+.field { position: absolute; inset: 0; }
+
+:root {
+  --gutter-l: clamp(252px, 19vw, 296px);   /* rail + breathing room */
+  --gutter-r: clamp(24px, 3vw, 64px);
+  --gutter-t: clamp(24px, 4vh, 52px);
+  --gutter-b: clamp(92px, 11vh, 124px);    /* dock + breathing room */
+}
+
+/* Absolutely positioned children resolve against the PADDING box, so padding
+   here would not move a single panel. The scene is inset instead: every panel
+   inside it is already clear of the rail and the dock. */
+.scene {
+  position: absolute;
+  top: var(--gutter-t); right: var(--gutter-r);
+  bottom: var(--gutter-b); left: var(--gutter-l);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 460ms var(--ease), visibility 0s linear 460ms;
+}
+.scene[data-active] {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 520ms var(--ease), visibility 0s;
+}
+/* Departing scenes fall back into the room rather than cutting. */
+.scene:not([data-active]) .panel { --p-scale: 0.965; --p-lift: -14px; }
+
+/* Panels are placed, not flowed: absolute within the scene so each
+   destination composes its own depth arrangement. */
+.scene .panel { position: absolute; }
+.panel-in { padding: clamp(22px, 2.4vw, 38px); }
+
+/* Long content scrolls inside its panel; the room never scrolls away. */
+.scroller {
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255,255,255,0.22) transparent;
+}
+.scroller::-webkit-scrollbar { width: 8px; }
+.scroller::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 4px; }
+
+/* ═══ 01 IDENTITY ═══
+   The name is signage in the room: display type set into the space at
+   the far left, with the identity panel overlapping it. Deliberately
+   not a centred block floating over a backdrop. */
+.sig {
+  position: absolute;
+  left: 0;
+  top: 2%;
+  z-index: 1;
+  pointer-events: none;
+  max-width: 60%;
+}
+.sig .t-display { color: rgba(255, 255, 255, 0.97); text-shadow: 0 18px 60px rgba(0,0,0,0.6); }
+.sig .t-display .l2 { display: block; padding-left: clamp(16px, 4vw, 64px); }
+.sig .disc {
+  margin-top: 18px;
+  padding-left: clamp(16px, 4vw, 64px);
+  font-size: 0.72rem; letter-spacing: 0.34em; text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+#p-identity  { right: 0;   top: 6%;   width: min(430px, 37vw); z-index: 3; }
+#p-intent    { right: 14%; bottom: 0;  width: min(470px, 40vw); z-index: 2; }
+#p-status    { left: 0;   bottom: 4%; width: min(320px, 28vw); z-index: 2; }
+
+.kv { display: grid; gap: 12px; }
+.kv > div { display: grid; gap: 2px; }
+.kv dt, .kv .k { font-size: 0.64rem; letter-spacing: 0.17em; text-transform: uppercase; color: var(--ink-4); }
+.kv dd, .kv .v { margin: 0; font-size: 0.94rem; color: var(--ink); }
+
+.live { display: inline-flex; align-items: center; gap: 8px; }
+.live::before {
+  content: ''; width: 7px; height: 7px; border-radius: 50%;
+  background: var(--accent); box-shadow: 0 0 0 4px var(--accent-dim);
+}
+
+/* ═══ 02 WORK ═══
+   Cases lead with their own artefact, at three different depths. */
+/* Each case is its own object in the room, at its own depth and angle.
+   Deliberately not a grid of equal rectangles. */
+/* Depth is carried by offset, angle and plane — but panels only ever overlap
+   at their EDGES. An earlier arrangement stacked them far enough to bury each
+   other's headings, which trades away the one thing that outranks composition. */
+#p-case-0  { left: 0;     top: 15%;  width: 33%; z-index: 3; }
+#p-case-1  { left: 35.5%; top: 30%;  width: 32%; z-index: 2; }
+#p-case-2  { right: 0;    top: 5%;   width: 29%; z-index: 2; }
+#p-further { right: 0;    bottom: 0; width: 31%; z-index: 1; }
+
+.case { display: grid; gap: 10px; }
+.case-visual {
+  position: relative; border-radius: 12px; overflow: hidden;
+  aspect-ratio: 16 / 9; background: rgba(0, 0, 0, 0.34);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.07);
+}
+.case-visual img {
+  width: 100%; height: 100%; object-fit: cover; display: block;
+  /* Bright artefacts (a Power BI page is mostly white) would otherwise punch a
+     hole in a dim room. Seated here, lifted back to full on hover. */
+  filter: brightness(0.82) saturate(0.92) contrast(1.04);
+  transition: filter 320ms var(--ease);
+}
+.panel[data-interactive]:hover .case-visual img { filter: none; }
+.case-visual[data-accent='teal']   { box-shadow: inset 0 0 0 1px rgba(95,224,204,0.24); }
+.case-visual[data-accent='ochre']  { box-shadow: inset 0 0 0 1px rgba(240,179,87,0.24); }
+.case-visual[data-accent='violet'] { box-shadow: inset 0 0 0 1px rgba(180,156,255,0.24); }
+
+.case-figs { display: flex; flex-wrap: wrap; gap: 6px; }
+.fig-chip {
+  display: inline-grid; gap: 1px; padding: 6px 10px; border-radius: 9px;
+  background: rgba(0, 0, 0, 0.3);
+}
+.fig-chip b { font-size: 0.94rem; font-weight: 600; }
+.fig-chip span { font-size: 0.6rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-4); }
+
+.tags { display: flex; flex-wrap: wrap; gap: 5px; }
+.tag {
+  font-size: 0.68rem; padding: 4px 9px; border-radius: 7px;
+  background: rgba(255, 255, 255, 0.07); color: var(--ink-3);
+}
+
+/* Compact enough to sit in the gap under the first case without
+   pushing into it: six links, wrapped, not a second card grid. */
+.further { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 9px; }
+.further a {
+  display: inline-flex; align-items: baseline; gap: 6px;
+  padding: 6px 10px; border-radius: 9px;
+  background: rgba(255, 255, 255, 0.05);
+  transition: background-color 220ms var(--ease);
+}
+.further a:hover { background: rgba(255, 255, 255, 0.085); }
+.further .y { font-size: 0.6rem; letter-spacing: 0.12em; color: var(--ink-4); font-variant-numeric: tabular-nums; }
+.further .t { font-size: 0.78rem; color: var(--ink-2); }
+
+/* ═══ 03 STACK ═══
+   Weight decides depth: the tools actually used daily sit nearest. */
+#p-stack-a { left: 0;   top: 4%;   width: min(400px, 31vw); }
+#p-stack-b { left: 30%; top: 30%;  width: min(380px, 29vw); }
+#p-stack-c { right: 8%; top: 6%;   width: min(360px, 28vw); }
+#p-stack-d { right: 0;  bottom: 6%; width: min(370px, 29vw); }
+
+.tools { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 12px; }
+.tool { border-radius: 9px; color: var(--ink-2); background: rgba(255,255,255,0.055); }
+.tool[data-w='3'] { font-size: 1.0rem;  padding: 8px 14px; color: var(--ink); background: rgba(255,255,255,0.115); font-weight: 500; }
+.tool[data-w='2'] { font-size: 0.86rem; padding: 6px 11px; }
+.tool[data-w='1'] { font-size: 0.75rem; padding: 5px 9px;  color: var(--ink-3); background: rgba(255,255,255,0.035); }
+
+/* ═══ 04 JOURNEY ═══
+   A track you move along, not a list you read down. */
+/* Height follows the track rather than stretching to the frame: a panel that
+   reaches the floor with nothing in the bottom half reads as a mistake. */
+#p-journey { left: 0; right: 0; top: 13%; }
+#p-journey .panel-in { display: grid; gap: 20px; }
+#p-certs   { left: 0; bottom: 0; width: min(430px, 38%); }
+
+/* A spine you travel along, with each stop hanging off it. The track scrolls
+   horizontally and says so — an edge that simply cuts off reads as a bug. */
+.track-wrap { position: relative; }
+.track-wrap::after {
+  content: ''; position: absolute; top: 0; right: 0; bottom: 0; width: 88px;
+  pointer-events: none;
+  background: linear-gradient(to right, transparent, rgba(11, 16, 22, 0.72));
+  border-radius: 0 var(--r-md) var(--r-md) 0;
+}
+.track {
+  position: relative;
+  display: flex; gap: 14px; align-items: flex-start;
+  overflow-x: auto; overscroll-behavior-x: contain;
+  padding: 30px 2px 14px;
+  scroll-snap-type: x proximity;
+}
+.track::before {
+  content: ''; position: absolute; top: 9px; left: 0; right: 0; height: 1px;
+  background: linear-gradient(to right, transparent, var(--panel-edge) 4%,
+              var(--panel-edge) 92%, transparent);
+}
+.stop {
+  position: relative; flex: 0 0 clamp(214px, 21vw, 272px);
+  display: grid; gap: 8px; align-content: start;
+  padding: 16px; border-radius: var(--r-md);
+  background: rgba(255, 255, 255, 0.05);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.1), inset 0 0 0 1px rgba(255,255,255,0.045);
+  scroll-snap-align: start;
+}
+/* the drop from the spine into each stop */
+.stop::before {
+  content: ''; position: absolute; top: -21px; left: 22px;
+  width: 1px; height: 21px; background: var(--panel-edge);
+}
+.stop::after {
+  content: ''; position: absolute; top: -25px; left: 18px;
+  width: 9px; height: 9px; border-radius: 50%;
+  background: var(--ink-4); box-shadow: 0 0 0 4px rgba(11, 16, 22, 0.85);
+}
+.stop[data-kind='now'] {
+  background: rgba(255, 138, 76, 0.13);
+  box-shadow: inset 0 0 0 1px rgba(255,138,76,0.34);
+}
+.stop[data-kind='now']::after {
+  background: var(--accent); box-shadow: 0 0 0 4px rgba(255, 138, 76, 0.2);
+}
+.stop .t { font-size: 0.66rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--accent); }
+.stop h3 { font-size: 0.98rem; }
+.track-hint {
+  position: absolute; right: 0; bottom: -2px; z-index: 2;
+  font-size: 0.64rem; letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--ink-4);
+}
+
+/* ═══ 05 CONTACT ═══ */
+#p-contact { left: 0; top: 6%; width: min(560px, 47vw); }
+#p-reach   { right: 0; bottom: 6%; width: min(400px, 34vw); }
+#p-contact .t-display { font-size: clamp(2.4rem, 5.2vw, 4.6rem); }
+.reach { display: grid; gap: 10px; margin-top: 24px; }
+.reach a {
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  padding: 14px 18px; border-radius: var(--r-md);
+  background: rgba(255, 255, 255, 0.05);
+  transition: background-color 220ms var(--ease), transform 220ms var(--ease);
+}
+.reach a:hover { background: rgba(255, 255, 255, 0.1); transform: translateX(4px); }
+.reach .h { color: var(--ink-3); font-size: 0.86rem; }
+
+/* ═══ case study overlay — the deeper spatial read ═══ */
+.study {
+  position: fixed; inset: 0; z-index: var(--z-near);
+  display: grid; place-items: center;
+  padding: clamp(16px, 3vh, 40px);
+  background: rgba(5, 8, 12, 0.5);
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+  opacity: 0; visibility: hidden;
+  transition: opacity 380ms var(--ease), visibility 0s linear 380ms;
+}
+.study[data-open] { opacity: 1; visibility: visible; transition: opacity 380ms var(--ease), visibility 0s; }
+.study .panel { width: min(1120px, 94vw); max-height: 92vh; --p-scale: 0.97; }
+.study[data-open] .panel { --p-scale: 1; }
+.study .panel-in { max-height: 92vh; overflow-y: auto; }
+
+.study-close {
+  position: absolute; top: 14px; right: 16px; z-index: 4;
+  width: 36px; height: 36px; border-radius: 50%;
+  border: 0; cursor: pointer;
+  background: rgba(255,255,255,0.1); color: var(--ink);
+  font-size: 1rem; line-height: 1;
+}
+.study-close:hover { background: rgba(255,255,255,0.18); }
+
+.noscript-shell { position: relative; z-index: 5; max-width: 680px; margin: 12vh auto; padding: 32px; }
+.noscript-shell h1 { font-size: 2.4rem; margin-bottom: 12px; }
+.noscript-shell a { color: var(--accent); text-decoration: underline; }
+.noscript-shell li { margin-bottom: 6px; }
+
+/* ─── work signage + case affordance ─────────────────────────────── */
+.sig-work { top: 0; max-width: 42%; }
+.sig-work .t-h1 { line-height: 1.0; color: var(--ink); text-shadow: 0 14px 44px rgba(0,0,0,0.55); }
+.sig-work .l2 { display: block; padding-left: clamp(14px, 3vw, 44px); }
+.sig-work .disc { display: none; }   /* the cases say this themselves */
+
+#p-case-0 .panel-in, #p-case-1 .panel-in, #p-case-2 .panel-in { padding: 18px; }
+.open-hint {
+  color: var(--accent);
+  opacity: 0;
+  transform: translateY(-3px);
+  transition: opacity 260ms var(--ease), transform 260ms var(--ease);
+}
+.panel[data-interactive]:hover .open-hint,
+.panel[data-interactive]:focus-visible .open-hint { opacity: 1; transform: translateY(0); }
+
+#p-further .panel-in { padding: 18px 20px; }
