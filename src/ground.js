@@ -68,6 +68,7 @@ export function initGround() {
     root.style.setProperty('--bg', `rgb(${rgb[0]},${rgb[1]},${rgb[2]})`);
   }
 
+  let last = 0;
   function onScroll() {
     const now = performance.now();
     if (now - last < 16) return;
