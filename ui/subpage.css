@@ -412,3 +412,42 @@ html[data-reveal] .fade-in { animation: none; opacity: 1; transform: none; }
   .read-progress { transition: none; }
   html[data-reveal] .rv { opacity: 1; transform: none; transition: none; }
 }
+
+
+/* ─── the project's own face, at the head of its page ─────────────── */
+.hero-band {
+  position: relative;
+  margin: 26px 0 34px;
+  height: clamp(260px, 34vw, 420px);
+  border-radius: 18px;
+  overflow: hidden;
+  background: rgba(0, 0, 0, 0.28);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+  opacity: 0;
+  transition: opacity 520ms var(--ease);
+}
+.hero-band[data-gl] { opacity: 1; }
+.hero-canvas { display: block; width: 100%; height: 100%; }
+@media (max-width: 900px) { .hero-band { display: none; } }
+@media (prefers-reduced-motion: reduce) { .hero-band { display: none; } }
+
+
+/* ─── wireframe chips in the UCD screens ──────────────────────────────
+   Their backgrounds are literals from the old palette — rgba(118,255,122)
+   and rgba(79,195,247) — that no token ever reached, while the ink on them
+   was re-keyed to the new hues. Teal on pale green at 10px measured
+   3.79:1. The fills go dark so the labels have a ground to sit on. */
+.screen-el, .btn-el, .nav-el, .header-el, .screen-el.btn-el, .screen-el.header-el {
+  background: rgba(0, 0, 0, 0.42) !important;
+  border-color: rgba(255, 255, 255, 0.14) !important;
+}
+.btn-el, .screen-el.btn-el { color: #8ff0c8 !important; }
+.header-el, .screen-el.header-el { color: #a9d8ff !important; }
+.nav-el { color: var(--text-sub, rgba(233,238,245,.82)) !important; }
+
+
+/* The phone body was a 6% white wash, which over the warm room composited to
+   a light brown ground; 9px muted labels on it measured 4.4:1. A phone is
+   dark anyway. */
+.screen-mockup { background: rgba(6, 10, 14, 0.72) !important; }
+.screen-nav, .screen-nav span { color: var(--ink-2, rgba(233,238,245,.82)) !important; }
