@@ -9,10 +9,14 @@
    ═══════════════════════════════════════════════════════════════════ */
 :root {
   /* ink — measured against the panel tint below, not against the photo */
+  /* Alphas are set by measurement, not by eye. At 0.38 the label ink resolved
+     to about rgb(90,95,100) over the panel tint — 2.8:1, well under AA — so
+     every label on the site failed. Hierarchy is carried by size, tracking and
+     case instead, which costs nothing in contrast. */
   --ink:    rgba(255, 255, 255, 0.97);
-  --ink-2:  rgba(233, 238, 245, 0.78);
-  --ink-3:  rgba(214, 223, 234, 0.56);
-  --ink-4:  rgba(206, 217, 230, 0.38);
+  --ink-2:  rgba(233, 238, 245, 0.82);
+  --ink-3:  rgba(219, 227, 236, 0.70);
+  --ink-4:  rgba(212, 222, 234, 0.63);
 
   /* panel material — tint sampled from the plate's mid shadow */
   --panel:      rgba(16, 22, 30, 0.56);

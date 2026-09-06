@@ -392,7 +392,9 @@ function openStudy(id) {
   const c = cases.find(x => x.id === id);
   if (!c) return;
   lastFocus = document.activeElement;
-  studyPanel.content.replaceChildren(
+  // replaceChildren stringifies null into a literal "null" text node, unlike
+  // h() which skips it — so the optional blocks are filtered out first.
+  studyPanel.content.replaceChildren(...[
     h('div', { class: 't-label' }, `${c.index} · ${c.kind} · ${c.meta}`),
     h('h2', { class: 't-h1', style: 'margin:10px 0 14px', text: c.title }),
     h('p', { class: 't-lede', style: 'margin:0 0 10px', text: c.lede }),
@@ -417,7 +419,7 @@ function openStudy(id) {
     h('a', { class: 'tag', href: c.href, target: '_blank', rel: 'noopener',
       style: 'display:inline-block;padding:11px 18px;font-size:.9rem',
       text: 'Read the full case study ↗' }),
-  );
+  ].filter(Boolean));
   study.dataset.open = '';
   document.querySelector('.study-close').focus();
   addEventListener('keydown', onStudyKey);
