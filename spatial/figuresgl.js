@@ -24,15 +24,26 @@ const HUE = {
 const VERT = `
 uniform float uVel;
 uniform float uHover;
+uniform vec2  uSize;      // the figure's size in CSS pixels
 varying vec2 vUv;
 void main() {
   vUv = uv;
   vec3 p = position;
   float bend = sin(uv.x * 3.14159265);
-  // A standing curve, deeper while the page is moving, and easing flat as the
-  // figure is looked at directly.
-  p.z += bend * (26.0 + abs(uVel) * 150.0) * (1.0 - uHover * 0.55);
-  p.y += (uv.x - 0.5) * uVel * 46.0;
+  // A standing curve, deeper while the page is moving, and easing nearly flat
+  // as the figure is looked at directly so it can be read.
+  // Bows AWAY from the camera, not toward it. Bent forward, the centre grew
+  // under perspective and the plane escaped its own frame — at speed it
+  // covered the paragraph above and the heading below. Receding, the curve is
+  // just as legible and can never overlap the prose around it.
+  // The geometry is a 1x1 plane scaled to the figure's pixel size, so a
+  // displacement written in local space gets multiplied by that size. Only z
+  // is safe (its scale is 1); x and y must be divided by the size or a 34px
+  // shear becomes 34 * height and the figure shears off the screen.
+  p.z -= bend * (46.0 + abs(uVel) * 330.0) * (1.0 - uHover * 0.72);
+  // The trailing edge lags the leading one, which is what actually reads as
+  // bending rather than merely as depth.
+  p.y += (uv.x - 0.5) * uVel * 46.0 / max(uSize.y, 1.0);
   gl_Position = projectionMatrix * modelViewMatrix * vec4(p, 1.0);
 }`;
 
@@ -64,6 +75,12 @@ export async function mountFigures(blocks, accent) {
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
   renderer.setPixelRatio(dpr);
   renderer.outputColorSpace = THREE.SRGBColorSpace;
+  // Each figure is clipped to its own frame. Two reasons: a deep bend would
+  // otherwise reach outside the figure and cover the prose around it, and a
+  // native scroll moves the page on the compositor between reading the rect
+  // and painting — so the plane can lag a frame behind its <img>. Clipping
+  // means neither can ever paint over a paragraph.
+  renderer.localClippingEnabled = true;
 
   const scene = new THREE.Scene();
   // A perspective camera positioned so one world unit is one CSS pixel at z=0,
@@ -85,18 +102,27 @@ export async function mountFigures(blocks, accent) {
   for (const b of blocks) {
     const img = b.querySelector('img');
     if (!img) continue;
+    // right, left, bottom, top — kept in world space, refreshed every frame
+    const clip = [
+      new THREE.Plane(new THREE.Vector3(-1, 0, 0), 0),
+      new THREE.Plane(new THREE.Vector3(1, 0, 0), 0),
+      new THREE.Plane(new THREE.Vector3(0, 1, 0), 0),
+      new THREE.Plane(new THREE.Vector3(0, -1, 0), 0),
+    ];
     const mat = new THREE.ShaderMaterial({
       vertexShader: VERT, fragmentShader: FRAG, transparent: true,
+      clipping: true, clippingPlanes: clip,
       uniforms: {
         uTex: { value: null }, uHue: { value: hue },
         uVel: { value: 0 }, uHover: { value: 0 },
+        uSize: { value: new THREE.Vector2(1, 1) },
       },
     });
     const mesh = new THREE.Mesh(new THREE.PlaneGeometry(1, 1, 36, 22), mat);
     mesh.visible = false;
     scene.add(mesh);
 
-    const it = { img, mesh, mat, hover: 0, ready: false };
+    const it = { img, mesh, mat, clip, hover: 0, ready: false };
     items.push(it);
 
     loader.load(img.currentSrc || img.src, tex => {
@@ -132,6 +158,15 @@ export async function mountFigures(blocks, accent) {
         -(r.top + r.height / 2 - H / 2),
         0,
       );
+      // the figure's own box, in the same pixel-world the planes live in
+      const l = r.left - W / 2, rt = r.right - W / 2;
+      const t = -(r.top - H / 2), bt = -(r.bottom - H / 2);
+      it.clip[0].constant = rt;    // x <= right
+      it.clip[1].constant = -l;    // x >= left
+      it.clip[2].constant = -bt;   // y >= bottom
+      it.clip[3].constant = t;     // y <= top
+
+      it.mat.uniforms.uSize.value.set(r.width, r.height);
       it.mat.uniforms.uVel.value = vel;
       it.mat.uniforms.uHover.value += (it.hover - it.mat.uniforms.uHover.value) * 0.18;
     }
@@ -151,7 +186,10 @@ export async function mountFigures(blocks, accent) {
     size();
     const dy = scrollY - lastY;
     lastY = scrollY;
-    vel += (Math.max(-1, Math.min(1, dy / 90)) - vel) * 0.25;
+    const want = Math.max(-1, Math.min(1, dy / 55));
+    // Builds quickly, eases out slowly: at the old rate the curve had already
+    // collapsed by the time the eye reached it.
+    vel += (want - vel) * (Math.abs(want) > Math.abs(vel) ? 0.34 : 0.12);
     if (Math.abs(vel) < 0.002) vel = 0;
 
     const settling = items.some(it =>
