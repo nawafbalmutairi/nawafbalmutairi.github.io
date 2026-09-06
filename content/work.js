@@ -80,6 +80,14 @@ export const cases = [
   {
     id: 'face-classifier',
     face: 'versus',
+    // src(ai-face-recognition/docs — results table): all four configurations,
+    // precision / recall / accuracy. DenseNet leads ResNet in both modes.
+    configs: [
+      { model: 'DenseNet', mode: 'Training pipeline',   precision: 0.8000, recall: 0.8000, accuracy: 0.8000 },
+      { model: 'ResNet',   mode: 'Training pipeline',   precision: 0.7376, recall: 0.7333, accuracy: 0.7333 },
+      { model: 'DenseNet', mode: 'Real-time inference', precision: 0.8667, recall: 0.8667, accuracy: 0.8667 },
+      { model: 'ResNet',   mode: 'Real-time inference', precision: 0.8000, recall: 0.8000, accuracy: 0.8000 },
+    ],
     index: '03',
     kind: 'Deep Learning · Computer Vision',
     // src(pre-redesign index.html #case-03)

@@ -159,7 +159,7 @@ function sceneWork() {
       tags: c.stack.slice(0, 4),
       accent: c.accent, hex: HEX[c.accent],
       face: c.face,
-      metrics: c.figures,
+      metrics: c.figures, configs: c.configs,
       models: WQ.models,
       targets: WQ.targets.map(t => t.key),
       matrix: WQ.results.map(r => r.map(v => v.r2)),

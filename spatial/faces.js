@@ -150,54 +150,108 @@ function faceKpis(x, item) {
   });
 }
 
-/* ═══ 03 · face classifier — a head-to-head ═══════════════════════ */
+/* ═══ 03 · face classifier — the head-to-head, measured ═══════════
+   Both architectures, in both modes, with the numbers the study actually
+   published. The earlier face showed DenseNet's score and nothing to
+   compare it against, which is the one thing a comparison needs. */
 function faceVersus(x, item) {
   chrome(x, item);
-  title(x, item, 54, W * 0.7, 196);
+  title(x, item, 50, W * 0.32, 190);
 
-  const MID = W / 2, TOP = 300, BOT = H - 150;
-  x.strokeStyle = 'rgba(255,255,255,0.10)'; x.lineWidth = 1;
-  x.beginPath(); x.moveTo(MID, TOP - 30); x.lineTo(MID, BOT); x.stroke();
-  f(x, 22, 600);
-  x.fillStyle = 'rgba(214,223,234,0.6)';
-  x.fillText('VS', MID - 14, (TOP + BOT) / 2);
+  const cfg = item.configs || [];
+  const best = cfg.reduce((a, b) => (b.accuracy > (a ? a.accuracy : -1) ? b : a), null);
 
-  const column = (x0, label, dense, hex, score) => {
-    const n = 5;
-    const pts = Array.from({ length: n }, (_, i) => [x0, TOP + 40 + i * 78]);
-    x.lineWidth = 1.5;
+  f(x, 21, 400);
+  x.fillStyle = 'rgba(233,238,245,0.72)';
+  let ty = 320;
+  for (const l of wrap(x, item.brief, W * 0.28).slice(0, 4)) { x.fillText(l, PAD, ty); ty += 32; }
+
+  if (best) {
+    f(x, 88, 600);
+    x.fillStyle = item.hex;
+    x.fillText((best.accuracy * 100).toFixed(2) + '%', PAD, H - 150);
+    f(x, 19, 600);
+    x.fillStyle = 'rgba(214,223,234,0.74)';
+    x.fillText((best.model + ' · ' + best.mode).toUpperCase(), PAD, H - 112);
+  }
+
+  /* the identifying glyph for each architecture: dense connectivity
+     against residual shortcuts, drawn small next to its name */
+  const glyph = (gx, gy, dense) => {
+    const n = 4, step = 13;
+    const pts = Array.from({ length: n }, (_, i) => [gx + i * step, gy]);
+    x.lineWidth = 1.4;
+    x.strokeStyle = dense ? item.hex + 'cc' : 'rgba(219,227,236,0.6)';
     if (dense) {
-      x.strokeStyle = hex + '77';
       for (let i = 0; i < n; i++) for (let j = i + 1; j < n; j++) {
-        x.beginPath(); x.moveTo(...pts[i]);
-        x.quadraticCurveTo(x0 + 92, (pts[i][1] + pts[j][1]) / 2, ...pts[j]); x.stroke();
+        x.beginPath();
+        x.moveTo(...pts[i]);
+        x.quadraticCurveTo((pts[i][0] + pts[j][0]) / 2, gy - 13, ...pts[j]);
+        x.stroke();
       }
     } else {
-      x.strokeStyle = 'rgba(219,227,236,0.45)';
       for (let i = 0; i < n - 1; i++) { x.beginPath(); x.moveTo(...pts[i]); x.lineTo(...pts[i + 1]); x.stroke(); }
-      for (let i = 0; i < n - 2; i += 2) {
-        x.beginPath(); x.moveTo(...pts[i]);
-        x.quadraticCurveTo(x0 - 88, (pts[i][1] + pts[i + 2][1]) / 2, ...pts[i + 2]); x.stroke();
-      }
+      x.beginPath(); x.moveTo(...pts[0]);
+      x.quadraticCurveTo(gx + step * 1.5, gy - 15, ...pts[2]); x.stroke();
     }
     pts.forEach(([px, py]) => {
-      x.fillStyle = dense ? hex : 'rgba(219,227,236,0.9)';
-      x.beginPath(); x.arc(px, py, 8, 0, 7); x.fill();
+      x.fillStyle = dense ? item.hex : 'rgba(219,227,236,0.85)';
+      x.beginPath(); x.arc(px, py, 3.2, 0, 7); x.fill();
     });
-    f(x, 22, 600);
-    x.fillStyle = dense ? hex : 'rgba(214,223,234,0.7)';
-    x.fillText(label, x0 - x.measureText(label).width / 2, TOP - 6);
-    if (score) {
-      f(x, 62, 600);
-      x.fillStyle = hex;
-      x.fillText(score, x0 - x.measureText(score).width / 2, BOT + 46);
-    }
   };
-  column(MID - 260, 'DENSENET', true, item.hex, item.stat);
-  column(MID + 260, 'RESNET', false, item.hex, '');
-  f(x, 19, 600);
-  x.fillStyle = 'rgba(214,223,234,0.7)';
-  x.fillText((item.statLabel || '').toUpperCase(), PAD, H - 60);
+
+  const CX = W * 0.42, CW = W - CX - PAD;
+  const BARMAX = CW - 168;
+  const modes = ['Training pipeline', 'Real-time inference'];
+
+  // the full-scale reference, so a shorter bar is read against a known 100%
+  x.strokeStyle = 'rgba(255,255,255,0.13)';
+  x.setLineDash([4, 5]); x.lineWidth = 1;
+  x.beginPath(); x.moveTo(CX + BARMAX, 196); x.lineTo(CX + BARMAX, H - 128); x.stroke();
+  x.setLineDash([]);
+  f(x, 14, 600); x.fillStyle = 'rgba(214,223,234,0.5)';
+  x.fillText('100%', CX + BARMAX - 18, 186);
+
+  modes.forEach((mode, gi) => {
+    const GY = 232 + gi * 268;
+    f(x, 17, 600);
+    x.fillStyle = 'rgba(214,223,234,0.66)';
+    x.fillText(mode.toUpperCase(), CX, GY);
+
+    cfg.filter(c => c.mode === mode).forEach((c, bi) => {
+      const dense = c.model === 'DenseNet';
+      const by = GY + 34 + bi * 92;
+      const bw = Math.max(4, c.accuracy * BARMAX);
+      const win = best && c.model === best.model && c.mode === best.mode;
+
+      x.fillStyle = 'rgba(255,255,255,0.045)';
+      rr(x, CX, by, BARMAX, 54, 8); x.fill();
+
+      const g = x.createLinearGradient(CX, 0, CX + bw, 0);
+      if (dense) { g.addColorStop(0, item.hex + '77'); g.addColorStop(1, item.hex); }
+      else { g.addColorStop(0, 'rgba(219,227,236,0.28)'); g.addColorStop(1, 'rgba(219,227,236,0.6)'); }
+      x.fillStyle = g;
+      rr(x, CX, by, bw, 54, 8); x.fill();
+
+      if (win) {
+        x.strokeStyle = '#ff8a4c'; x.lineWidth = 2.5;
+        rr(x, CX - 2, by - 2, bw + 4, 58, 10); x.stroke();
+      }
+
+      glyph(CX + 18, by + 27, dense);
+      f(x, 19, 600);
+      x.fillStyle = dense ? 'rgba(16,20,26,0.92)' : 'rgba(255,255,255,0.92)';
+      x.fillText(c.model, CX + 76, by + 34);
+
+      f(x, 26, 600);
+      x.fillStyle = win ? '#ff8a4c' : 'rgba(255,255,255,0.92)';
+      x.fillText((c.accuracy * 100).toFixed(2) + '%', CX + BARMAX + 20, by + 36);
+    });
+  });
+
+  f(x, 15, 500);
+  x.fillStyle = 'rgba(214,223,234,0.5)';
+  x.fillText('Accuracy; precision and recall track it across all four runs.', CX, H - 96);
 }
 
 /* ═══ 04 · conference — an architecture blueprint ═════════════════ */

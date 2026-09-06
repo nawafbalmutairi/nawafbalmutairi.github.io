@@ -25,7 +25,7 @@ export function itemFor(key) {
       stat: c.figures[0].v, statLabel: c.figures[0].k,
       tags: c.stack.slice(0, 4),
       accent: c.accent, hex: HEX[c.accent],
-      face: c.face, metrics: c.figures,
+      face: c.face, metrics: c.figures, configs: c.configs,
       models: WQ.models,
       targets: WQ.targets.map(t => t.key),
       matrix: WQ.results.map(r => r.map(v => v.r2)),
