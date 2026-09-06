@@ -60,8 +60,11 @@
     0 24px 48px -22px rgba(0, 0, 0, 0.75),
     0 60px 120px -60px rgba(0, 0, 0, 0.9);
 
+  /* --p-x/--p-y are written by the pointer parallax every frame; --p-dx/--p-dy
+     by a drag. They have to compose, so they are separate properties. */
   transform:
-    translate3d(var(--p-x, 0), calc(var(--p-y, 0px) - var(--p-lift)), 0)
+    translate3d(calc(var(--p-x, 0px) + var(--p-dx, 0px)),
+                calc(var(--p-y, 0px) + var(--p-dy, 0px) - var(--p-lift)), 0)
     rotate(var(--p-rot))
     perspective(1600px) rotateY(var(--p-tilt))
     scale(var(--p-scale));
@@ -137,3 +140,33 @@
   .env { will-change: auto; }
   .panel[data-interactive]:hover { --p-lift: 0px; --p-scale: 1; }
 }
+
+
+/* ─── panels you can pick up ──────────────────────────────────────── */
+.panel[data-draggable] { cursor: grab; }
+.panel[data-draggable]:active { cursor: grabbing; }
+.panel[data-dragging] {
+  cursor: grabbing;
+  transition: none;                 /* the pointer is the animation */
+  z-index: 9;
+  box-shadow:
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.42),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.09),
+    0 6px 14px -4px rgba(0, 0, 0, 0.55),
+    0 60px 100px -34px rgba(0, 0, 0, 0.85);
+}
+/* A quiet hint, shown once the room has settled. */
+.panel[data-draggable]::after {
+  content: '';
+  position: absolute; top: 12px; right: 14px;
+  width: 16px; height: 10px; border-radius: 2px;
+  background:
+    radial-gradient(circle 1.2px at 3px 2px, var(--ink-4) 99%, transparent),
+    radial-gradient(circle 1.2px at 9px 2px, var(--ink-4) 99%, transparent),
+    radial-gradient(circle 1.2px at 3px 8px, var(--ink-4) 99%, transparent),
+    radial-gradient(circle 1.2px at 9px 8px, var(--ink-4) 99%, transparent);
+  opacity: 0; transition: opacity 240ms var(--ease);
+  pointer-events: none;
+}
+.panel[data-draggable]:hover::after { opacity: 0.7; }
+@media (prefers-reduced-motion: reduce) { .panel[data-dragging] { transition: none; } }

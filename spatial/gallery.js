@@ -69,11 +69,18 @@ export function buildGallery(items, { onOpen }) {
 
   let scene = null;
 
-  function open(i) {
+  /** Where a project actually goes, once the travel has landed. */
+  function arrive(i) {
     const it = items[i];
     if (!it) return;
     if (it.open) onOpen(it.open);
     else if (it.href) window.open(it.href, '_blank', 'noopener');
+  }
+
+  /** Asking to open: the scene flies into the project first, if it can. */
+  function open(i) {
+    if (scene) scene.open(i);
+    else arrive(i);
   }
 
   function select(i, drive = false) {
@@ -130,7 +137,7 @@ export function buildGallery(items, { onOpen }) {
       scene = await mod.createGallery({
         canvas, items,
         onFocus: (i, fromScene) => { if (fromScene) select(i); else select(i, true); },
-        onOpen: open,
+        onOpen: arrive,          // called when the fly-in lands
       });
       if (scene) { root.dataset.gl = ''; scene.focus(active); }
     } catch {

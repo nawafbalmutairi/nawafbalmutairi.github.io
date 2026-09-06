@@ -172,12 +172,18 @@ export async function createPipelineScene({ canvas, pipe, onPick }) {
   }, { passive: true });
 
   // ── the loop: runs only while something is actually moving ──
+  let lastT = performance.now();
   function frame() {
     raf = 0;
     size();
+    // Time-based, so the move takes the same wall-clock time on a 60Hz screen
+    // as on a 120Hz one.
+    const now = performance.now();
+    const dt = Math.min((now - lastT) / 1000, 0.05);
+    lastT = now;
     const delta = focus - shown;
     if (Math.abs(delta) > 0.001) {
-      shown += delta * 0.16;
+      shown += delta * (1 - Math.exp(-dt * 10));
       if (Math.abs(focus - shown) <= 0.001) shown = focus;
       dirty = true;
     }

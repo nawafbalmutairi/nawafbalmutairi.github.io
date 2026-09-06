@@ -110,3 +110,38 @@
   pointer-events: none;
 }
 .fig-frame img, figure img { transition: opacity 260ms var(--ease), filter 320ms var(--ease); }
+
+
+/* ═══ WORK, FULL BLEED ═══════════════════════════════════════════════
+   The gallery is a space, not a widget in a box: the panel's glass and
+   padding are dropped for this destination and the scene fills the
+   frame, with the readable layer floating over its lower edge. */
+#p-gallery {
+  background: transparent !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  box-shadow: none !important;
+}
+#p-gallery .panel-in { padding: 0; height: 100%; }
+#p-gallery .gal { grid-template-rows: 1fr auto; gap: 0; }
+#p-gallery .gal-stage { border-radius: 0; height: auto; min-height: 0; }
+
+/* the readable layer, floating over the foot of the scene */
+#p-gallery .gal-rail {
+  position: relative; z-index: 2;
+  margin: 0 0 8px; padding: 0 2px 4px;
+}
+#p-gallery .gal-detail {
+  position: relative; z-index: 2;
+  background: rgba(9, 13, 18, 0.72);
+  backdrop-filter: blur(26px) saturate(1.3);
+  -webkit-backdrop-filter: blur(26px) saturate(1.3);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.12), inset 0 0 0 1px rgba(255,255,255,0.05);
+}
+/* The face already carries the title and figure, so the strip underneath
+   stays to what the canvas cannot be: selectable, findable text. */
+#p-gallery .gal-lede { max-width: 92ch; }
+
+@media (max-width: 1100px) {
+  #p-gallery .gal { grid-template-rows: none; }
+}

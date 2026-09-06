@@ -6,6 +6,7 @@ import { cases, further } from '../content/work.js';
 import { groups, journey, certificates } from '../content/stack-journey.js';
 import * as WQ from '../content/water-quality.js';
 import { panel, initParallax, initEnvironment } from '../spatial/panel.js';
+import { makeDraggable } from '../spatial/drag.js';
 import { pipelines } from '../content/pipelines.js';
 import { buildJourney } from '../spatial/pipeline.js';
 import { initTravel } from './travel.js';
@@ -116,6 +117,9 @@ function sceneIdentity() {
         h('div', { class: 'v', text: profile.affiliation }))),
   );
 
+  // The room is a place, so its panels can be picked up and moved.
+  for (const el of [bio, intent, status]) makeDraggable(el);
+
   s.append(bio, intent, status);
   return s;
 }
@@ -144,16 +148,27 @@ function sceneWork() {
     'face-classifier': 'Face classification',
   };
 
+  // Each project carries what its face needs: the motif is drawn from that
+  // project's own data, so no two look alike.
+  const MOTIF = { 'water-quality': 'matrix', 'nvidia-bi': 'flow', 'face-classifier': 'wiring' };
+
   const items = [
     ...cases.map(c => ({
-      id: c.id, kicker: c.kind.split(' · ')[0], title: c.title, lede: c.lede,
+      id: c.id, index: c.index, kind: c.kind.split(' · ')[0],
+      kicker: c.kind.split(' · ')[0], short: SHORT[c.id],
+      title: c.title, lede: c.lede, brief: c.lede,
       stat: c.figures[0].v, statLabel: c.figures[0].k,
-      short: SHORT[c.id], accent: c.accent, hex: HEX[c.accent], image: IMG[c.id], open: c.id,
+      tags: c.stack.slice(0, 4),
+      accent: c.accent, hex: HEX[c.accent],
+      motif: MOTIF[c.id], matrix: WQ.results.map(r => r.map(x => x.r2)),
+      image: IMG[c.id], open: c.id,
     })),
-    ...further.map(f => ({
-      id: f.title, kicker: f.y, title: f.title, lede: f.note,
-      stat: f.tags[0], statLabel: 'stack',
-      accent: 'ember', hex: HEX.ember, href: f.href,
+    ...further.map((f, i) => ({
+      id: f.title, index: String(i + 4).padStart(2, '0'), kind: f.y,
+      kicker: f.y, title: f.title, lede: f.note, brief: f.note,
+      stat: f.tags[0], statLabel: 'built with',
+      tags: f.tags, accent: 'ember', hex: HEX.ember,
+      motif: 'field', href: f.href,
     })),
   ];
 
