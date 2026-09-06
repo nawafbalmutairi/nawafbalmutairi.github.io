@@ -51,7 +51,7 @@ export const journey = [
   { t: '2024', title: 'US Retail Sales Analysis',
     d: '2,121 transactions through a Python/Pandas ETL pipeline.', kind: 'work' },
   { t: '2024', title: 'Face classification — DenseNet vs ResNet',
-    d: 'Four configurations in Azure ML Designer. DenseNet reached 86.7%.', kind: 'work' },
+    d: 'Four configurations in Azure ML Designer. DenseNet reached 86.67% on real-time inference.', kind: 'work' },
   { t: '2025', title: 'NVIDIA AI-GPU supply chain BI',
     d: 'KV6011. Soft Systems Methodology through to a live Power BI dashboard, 96.4% forecast accuracy.', kind: 'work' },
   { t: '2025', title: 'Architecture, ITSM and UCD coursework',
