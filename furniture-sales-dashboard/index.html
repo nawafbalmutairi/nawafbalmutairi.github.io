@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>US Furniture Sales BI Dashboard — Nawaf Almutairi</title>
-<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300..800;1,6..72,300..800&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<meta name="description" content="Data fundamentals assessment covering data collection, descriptive statistics, data cleaning with imputation methods, and three analytical questions: sales trend analysis, discount–profit relationships, and state-level performance comparison.">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
   :root {
@@ -25,7 +25,7 @@
     --text:#f4f6f8;
     --text-muted:rgba(244,246,248,.46);
     --text-sub:rgba(244,246,248,.74);
-    --accent: #4fd6c4;;--ember:#ff6a3d;}
+    --accent: #4fd6c4;;--ember:#ff8a4c;}
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -523,12 +523,21 @@ body{padding-top:46px}
    (green/amber/red/blue/purple) keep their meanings untouched. */
 h1 span{color:var(--ember)}
 </style>
+<link rel="preload" href="../fonts/instrument-sans-latin-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../fonts/instrument-sans.css">
+<link rel="stylesheet" href="../ui/subpage.css">
+<style>.env{background-image:url("../assets/env-1920.webp")}
+/* The retired display serif is aliased onto the shipped sans, so any
+   component still asking for it renders in the one family rather than
+   falling back to Georgia. */
+@font-face{font-family:'Newsreader';src:url("../fonts/instrument-sans-latin-normal.woff2") format('woff2');font-weight:100 900;font-style:normal;font-display:swap}</style>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 60'><rect width='60' height='60' fill='%2305070a'/><path d='M16 26L16 12L21 12L33 23L33 12L38 12L38 26L33 26L21 15L21 26Z' fill='%23e8eaf0'/><line x1='6' y1='33' x2='54' y2='33' stroke='%23e64d2e' stroke-width='2'/><text x='30' y='53' text-anchor='middle' font-family='Georgia' font-style='italic' font-weight='900' font-size='22' fill='%23e64d2e'>A</text></svg>">
 </head>
-<body>
+<body data-hue="ember">
+<div class="env" aria-hidden="true"></div>
 <a class="home-link" href="https://nawafbalmutairi.github.io/"><span class="hl-mark">Nawaf <em>Almutairi</em></span><span class="hl-back">&#8592; back to portfolio</span></a>
 
-<div class="wrapper">
+<main class="wrapper">
 
   <!-- ═══════ HEADER ═══════ -->
   <header class="fade-in">
@@ -982,7 +991,7 @@ h1 span{color:var(--ember)}
     </div>
   </footer>
 
-</div>
+</main>
 
 <!-- ═══════════════════════════════════════════════════ -->
 <!-- CHART SCRIPTS                                       -->
@@ -1217,5 +1226,15 @@ const scKeys = ['Chairs','Tables','Bookcases','Furnishings'];
   });
 })();
 </script>
+
+<nav class="subdock" aria-label="Contact">
+  <a href="https://github.com/nawafbalmutairi" target="_blank" rel="noopener">GitHub</a>
+  <span class="sep" aria-hidden="true"></span>
+  <a href="https://www.linkedin.com/in/nawaf-almutairi-907766290/" target="_blank" rel="noopener">LinkedIn</a>
+  <span class="sep" aria-hidden="true"></span>
+  <a href="mailto:NawafBAlmutairi@outlook.sa">Email</a>
+  <span class="sep" aria-hidden="true"></span>
+  <a href="tel:+966501649447">Phone</a>
+</nav>
 </body>
 </html>
