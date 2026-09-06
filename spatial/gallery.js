@@ -84,7 +84,7 @@ export function buildGallery(items, { onOpen }) {
     dLede.textContent = it.lede;
     dStat.textContent = it.stat || '';
     dLabel.textContent = it.statLabel || '';
-    openBtn.textContent = it.open ? 'Open case study →' : 'Read study ↗';
+    openBtn.textContent = it.openLabel || (it.open ? 'Open case study →' : 'Read study ↗');
     prev.disabled = active === 0;
     next.disabled = active === items.length - 1;
     root.dataset.accent = it.accent;

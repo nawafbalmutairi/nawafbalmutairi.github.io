@@ -98,3 +98,20 @@
   .gal-stage { display: none; }
   .gal-tab, .gal-nav, .gal-open { transition: none; }
 }
+
+
+/* ─── the figure gallery on a case-study page ────────────────────── */
+.fig-gallery { margin: 34px 0 40px; }
+.fig-gallery-head { margin-bottom: 14px; }
+.fig-gallery-label {
+  font-size: 0.66rem; font-weight: 600; letter-spacing: 0.19em;
+  text-transform: uppercase; color: var(--mute, rgba(216,225,236,.72));
+}
+.fig-gallery-title {
+  margin-top: 8px; font-size: clamp(1.15rem, 1.7vw, 1.5rem);
+  font-weight: 500; letter-spacing: -0.028em;
+}
+/* On a document page the gallery sizes to its content rather than filling a
+   destination frame the way it does on the homepage. */
+.fig-gallery .gal { height: auto; grid-template-rows: none; }
+.fig-gallery .gal-stage { height: clamp(260px, 34vw, 400px); }
