@@ -1,123 +1,69 @@
-// The Work gallery, rendered in WebGL.
-//
-// Projects stand on an arc in a dark space over a receding grid floor. Each
-// plane is bent by a vertex shader — a standing cylindrical curve, plus extra
-// curvature and twist proportional to how fast you are moving through the
-// gallery — and each face is a composition drawn for that project from its own
-// data (see faces.js), not a shared card template.
-//
-// Clicking the focused project travels into it: the plane comes forward, the
-// rest of the room falls away, and the case study opens at the end of the move.
-//
-// Nothing animates at rest. The loop runs only while something is moving.
-
-import { drawFace } from './faces.js';
+// Full-width project ribbon. Each project has its own designed composition.
+// GPU deformation keeps animation light; a matching proxy is updated only for picking.
+import { drawGalleryFace } from './galleryfaces.js';
 
 const THREE_URL = 'https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js';
 
-/** The project's NAME, drawn white on transparent, to hang under its panel.
- *
- *  Separate from the face texture on purpose: the face already carries the
- *  project's HEADLINE at its top-left ("Four models, five parameters..."),
- *  which is a different thing from its name. The reference labels each panel
- *  with the name and nothing else, so that is what this draws. Keeping it off
- *  the face also means it can never collide with a composition. */
-const LABEL_FONT = '"Instrument Sans", system-ui, -apple-system, sans-serif';
-const LABEL_PX = 56;
-
-/** A small circled arrow, drawn to hang at a panel's edge.
- *
- *  Purely indicative: it points and guides, it is not a control. It lives
- *  inside the canvas, which is aria-hidden, so it is invisible to assistive
- *  tech and unreachable by keyboard by construction — which is exactly what a
- *  decoration should be. Moving between projects is the wheel, a drag, the
- *  arrow keys, or the project list. */
-function arrowCanvas(dir, dpr) {
-  const S = 68;
-  const c = document.createElement('canvas');
-  c.width = c.height = Math.round(S * dpr);
-  const x = c.getContext('2d');
-  x.scale(dpr, dpr);
-  x.strokeStyle = 'rgba(255,255,255,0.42)';
-  x.lineWidth = 1.4;
-  x.beginPath(); x.arc(S / 2, S / 2, S / 2 - 3, 0, 7); x.stroke();
-  x.strokeStyle = 'rgba(255,255,255,0.86)';
-  x.lineWidth = 1.8;
-  x.lineCap = 'round'; x.lineJoin = 'round';
-  const m = S / 2, r = 9 * dir;
-  x.beginPath();
-  x.moveTo(m - r, m); x.lineTo(m + r, m);
-  x.moveTo(m + r - 6 * dir, m - 6); x.lineTo(m + r, m); x.lineTo(m + r - 6 * dir, m + 6);
-  x.stroke();
-  return { canvas: c, s: S };
-}
-
-function labelCanvas(text, dpr) {
-  const c = document.createElement('canvas');
-  const probe = c.getContext('2d');
-  probe.font = `500 ${LABEL_PX}px ${LABEL_FONT}`;
-  const pad = 10;
-  const w = Math.ceil(probe.measureText(text).width) + pad * 2;
-  const h = Math.ceil(LABEL_PX * 1.42);
-  c.width = Math.round(w * dpr); c.height = Math.round(h * dpr);
-  const x = c.getContext('2d');
-  x.scale(dpr, dpr);
-  x.font = `500 ${LABEL_PX}px ${LABEL_FONT}`;
-  x.textBaseline = 'middle';
-  // A soft drop so the name holds over a light artefact as well as a dark one.
-  x.shadowColor = 'rgba(0,0,0,0.55)'; x.shadowBlur = 14; x.shadowOffsetY = 2;
-  x.fillStyle = 'rgba(255,255,255,0.97)';
-  x.fillText(text, pad, h / 2);
-  return { canvas: c, w, h };
-}
-
-const HUE = {
-  teal:   [0.37, 0.88, 0.80],
-  ochre:  [0.94, 0.70, 0.34],
-  violet: [0.71, 0.61, 1.00],
-  ember:  [1.00, 0.54, 0.30],
-};
-
 const VERT = `
+uniform float uCenter;
 uniform float uVel;
 uniform float uOpen;
+uniform float uLift;
+uniform float uExpand;
+uniform vec2 uSize;
+uniform float uHalfWidth;
+uniform float uHover;
 varying vec2 vUv;
+varying float vDepth;
 void main() {
   vUv = uv;
-  vec3 p = position;
-  float bend = sin(uv.x * 3.14159265);
-  // The standing curve relaxes as a project opens, so you end up looking at a
-  // flat page rather than a bent one.
-  p.z += bend * 0.46 * (1.0 - uOpen);
-  p.z += bend * uVel * 1.15;
-  p.y += (uv.x - 0.5) * uVel * 0.42;
-  gl_Position = projectionMatrix * modelViewMatrix * vec4(p, 1.0);
+  vec3 p = vec3(position.xy * uSize, 0.0);
+  p.x += uCenter;
+  float across = p.x / uHalfWidth;
+  float q = across * 1.15 - 0.2;
+  float envelope = exp(-q*q);
+  float wave = sin(3.14159265*q)*envelope;
+  float slope = (3.14159265*cos(3.14159265*q)-2.0*q*sin(3.14159265*q))*envelope;
+  float speed = abs(uVel);
+  float roll = (-0.16*slope/3.14159265 + 1.8*speed*smoothstep(0.3,0.9,abs(across))*sign(across))*(1.0-uOpen);
+  float bankY = p.y;
+  p.y = bankY*cos(roll);
+  float ramp = clamp(across,-1.0,1.0);
+  ramp = ramp*(1.5-0.5*ramp*ramp);
+  float rear = (1.0-smoothstep(-1.0,0.3,across))*speed;
+  float depth = -uHalfWidth*0.2*(1.0+1.1*speed)*wave;
+  p.z = bankY*sin(roll) + (depth-uHalfWidth*0.12*ramp+uHalfWidth*0.2*rear)*(1.0-uOpen);
+  p.y += (0.03*p.x+uHalfWidth*0.1*rear)*(1.0-uOpen);
+  vec2 dome = 1.0-pow(uv*2.0-1.0,vec2(2.0));
+  p.z -= dome.x*dome.y*uHover*uSize.y*0.07*(1.0-uOpen);
+  vDepth = clamp((uHalfWidth*0.2-depth)/(uHalfWidth*0.4),0.0,1.0)*(1.0-uOpen);
+  vec4 clip = projectionMatrix * modelViewMatrix * vec4(p, 1.0);
+  vec2 expanded = (uv - 0.5) * vec2(1.868, 1.904);
+  clip.xy = mix(clip.xy, expanded * clip.w, uExpand);
+  gl_Position = clip;
 }`;
-
 const FRAG = `
-uniform vec2  uPan;
-uniform float uZoom;
 uniform sampler2D uTex;
-uniform vec3  uHue;
 uniform float uFocus;
 uniform float uHover;
 uniform float uFade;
+uniform float uOpen;
+uniform vec2 uSize;
 varying vec2 vUv;
+varying float vDepth;
 void main() {
-  // Ken Burns. The reference's panels are never still because each one plays a
-  // looping video of the project; we have no video and no honest way to make
-  // one, so the face is sampled through a window that slowly pans and breathes
-  // instead. uZoom > 1 leaves margin so the pan can never expose an edge.
-  vec2 uv = (vUv - 0.5) / uZoom + 0.5 + uPan;
-  vec3 c = texture2D(uTex, uv).rgb;
-  c *= 0.52 + uFocus * 0.44 + uHover * 0.10;
-  float edge = smoothstep(0.0, 0.012, vUv.x) * smoothstep(1.0, 0.988, vUv.x)
-             * smoothstep(0.0, 0.019, vUv.y) * smoothstep(1.0, 0.981, vUv.y);
-  c = mix(uHue * (0.30 + uFocus * 0.45), c, edge);
-  float v = smoothstep(1.15, 0.30, length(vUv - 0.5));
-  c *= 0.74 + 0.26 * v;
-  gl_FragColor = vec4(c, uFade);
+  float ratio = uSize.y / uSize.x;
+  vec2 p = abs((vUv - 0.5) * vec2(1.0, ratio)) - vec2(0.465, ratio*0.5-0.035);
+  float d = length(max(p, 0.0)) + min(max(p.x, p.y), 0.0) - 0.035;
+  float alpha = (1.0 - smoothstep(-0.0015, 0.0015, d)) * uFade;
+  if (alpha < 0.01) discard;
+  vec3 c = texture2D(uTex, vUv).rgb * (1.0-vDepth*0.28);
+  c = mix(c, vec3(1.0), smoothstep(0.15, 0.9, uOpen));
+  gl_FragColor = vec4(c, alpha);
+  #include <tonemapping_fragment>
+  #include <colorspace_fragment>
 }`;
+
 
 export async function createGallery({ canvas, items, onFocus, onOpen }) {
   const THREE = await import(/* @vite-ignore */ THREE_URL);
@@ -129,267 +75,139 @@ export async function createGallery({ canvas, items, onFocus, onOpen }) {
 
   const scene = new THREE.Scene();
   // Depth cue for the floor: the grid dissolves rather than ending at an edge.
-  scene.fog = new THREE.Fog(0x090d12, 9, 26);
+  scene.fog = new THREE.Fog(0x000000, 8, 28);
 
-  // Close, and wide. Distance is what makes the perspective steep, so the
-  // camera stays near the drum; the field is what decides how much of the room
-  // comes with it. At 46° one panel took three quarters of the frame and was
-  // cropped by the stage.
-  //
-  // Re-solved when the plane went 4:3. docs/motion-spec.md §4 measures the
-  // reference's cell at 0.435 × viewport height, confirmed to three decimals at
-  // 1280/1440/1920. Our plane is now 3.255 world units tall (was 2.728), so the
-  // frame has to be 3.255 / 0.435 = 7.483 units and at a camera distance of
-  // 5.35 that is 2·atan(7.483 / (2·5.35)) = 69.9°. Wide, deliberately: it is
-  // what puts the floor across the bottom third the way the reference does.
-  const camera = new THREE.PerspectiveCamera(69.9, 2, 0.1, 120);
-  const CAM_Z = 5.35, CAM_Y = 0.05;
+  // Match the reference ribbon height against the full viewport.
+  const camera = new THREE.PerspectiveCamera(53.4, 2, 0.1, 120);
+  const CAM_Z = 6.5, CAM_Y = 0;
   camera.position.set(0, CAM_Y, CAM_Z);
 
   /* ── the floor: a grid running away under the work ──────────────── */
-  // Half-unit cells over a wide floor. The cell size is what sells the depth:
-  // at 3.4 units a cell was 600px across and read as a backdrop, not a floor.
-  // Fog dissolves the far rows, so the grid ends in air rather than at an edge
-  // — and it thins out about a sixth of the way down the frame, which is where
-  // a real horizon would sit for an eye 2.1 units above the ground.
-  const grid = new THREE.GridHelper(120, 240, 0x44536a, 0x2b3646);
-  grid.position.y = -2.05;
+  const grid = new THREE.GridHelper(100, 100, 0x282727, 0x282727);
+  grid.position.y = -2.08;
+  grid.rotation.y = 0.13;
   grid.material.transparent = true;
-  grid.material.opacity = 0.78;
+  grid.material.opacity = 0.65;
   grid.material.fog = true;
   scene.add(grid);
 
-  // A drum you stand inside, not an arc you look at from across a room.
-  //
-  // The radius is barely larger than a panel, so one turn of the drum is about
-  // 46° — the neighbour is hard on its edge and steeply foreshortened, and the
-  // two panels meet with a few pixels between them instead of floating apart
-  // with empty room in between. STEP a shade under the plane's own angular
-  // width (PW / R) is what closes that last gap once perspective is applied.
-  //
-  // The 0.966 is solved, not chosen. docs/motion-spec.md §4 gives the one
-  // gap ratio that survives a redesign: gap ÷ cell height = 0.0182–0.0272.
-  // Against a cell height of 0.435 × 900 = 391.5px that is a 7.1–10.6px gap at
-  // 1440×900. Projecting the neighbour's near edge through the camera puts
-  // 0.966 at 9.5px (ratio 0.0243), mid-band. The curve is steep — 0.96 gives
-  // 6.5px and 1.00 gives 26px — so this is worth carrying as a solved number
-  // rather than an eyeballed one.
-  const PW = 4.34, PH = PW * 3 / 4;   // 4:3, per docs/work-redesign-plan.md
-  const R = 5.2;
-  const STEP = (PW / R) * 0.966;
-  // Left of centre, so the project turning in has the right of the frame.
-  //
-  // This used to be a bare 0.55 with a comment claiming the rail could never
-  // stand on a face. That claim was false the moment the rail went back to its
-  // real size: 0.55 was tuned against a 152px transparent rail, and the real
-  // one is 212px of glass. Worse, the stage bleeds by calc(var(--gutter-l) * -1)
-  // from a box that already starts at --gutter-l, so the two cancel and the
-  // drum is centred on the WINDOW at every width — widening the gutter bought
-  // exactly zero clearance. Measured overlap: -34px at 1101x820, -38px at
-  // 1280x1024. It is aspect-driven, so no single constant fixes it.
-  //
-  // So it is solved per layout instead, in size(): the focused plane's left
-  // edge must clear the rail's right edge by RAIL_GAP. See reoffset().
-  const OFFSET = 0.55;          // the composition we want when there is room
-  const RAIL_GAP = 26;          // px of daylight between the rail and a face
-
+  const aspects = {matrix:1.6,kpis:1.78,versus:1.33,blueprint:1.7,analytics:1.6,register:1.45,screens:1.33,dials:1.78,commits:1.65};
+  let PH = 3, halfWidth = 6, trackLength = 0;
+  let centers = [], widths = [], gap = 0.08;
   const planes = [];
-  const labels = [];
-  const arrows = [];
   const group = new THREE.Group();
-  group.position.x = -OFFSET;
-  // Lifted just clear of the readable strip along the foot of the room, so the
-  // face's own bottom line is never hidden behind it.
-  group.position.y = 0.22;
+  group.position.x = 0;
+  group.position.y = 0;
   scene.add(group);
 
-  // Three projects lead with a real artefact, so those three images are waited
-  // for. A failed load is not fatal: that project falls back to its drawn
-  // composition, which is what every other project uses anyway.
-  const art = await Promise.all(items.map(it => new Promise(res => {
-    if (!it.art) return res(null);
-    const im = new Image();
-    im.decoding = 'async';
-    im.onload = () => res(im);
-    im.onerror = () => res(null);
-    im.src = it.art;
-  })));
+  await document.fonts.ready;
 
+  function paint(item, time = 0, existing = null) {
+    const face = drawGalleryFace(item, 1, time, existing);
+    const x = face.getContext('2d'), w = face.width, h = face.height;
+    x.resetTransform();
+    x.textAlign = 'left';
+    const shade = x.createLinearGradient(0, h * 0.68, 0, h);
+    shade.addColorStop(0, 'rgba(0,0,0,0)'); shade.addColorStop(1, 'rgba(0,0,0,0.78)');
+    x.fillStyle = shade; x.fillRect(0, h * 0.68, w, h * 0.32);
+    x.font = '500 ' + (w * 0.035) + 'px "Instrument Sans", sans-serif';
+    x.fillStyle = '#fff'; x.textBaseline = 'middle';
+    x.fillText(item.short || item.title, w * 0.04, h * 0.944, w * 0.78);
+    const ax = w * 0.942, ay = h * 0.938;
+    x.fillStyle = '#050505'; x.beginPath(); x.arc(ax, ay, w * 0.027, 0, Math.PI * 2); x.fill();
+    x.fillStyle = '#fff'; x.textAlign = 'center'; x.font = (w * 0.021) + 'px sans-serif'; x.fillText('↗', ax, ay);
+    return face;
+  }
   items.forEach((item, i) => {
-    const face = drawFace(item, art[i], dpr);
+    const face = paint(item);
     const tex = new THREE.CanvasTexture(face);
     tex.colorSpace = THREE.SRGBColorSpace;
-    tex.anisotropy = 4;
+    tex.anisotropy = Math.min(8, renderer.capabilities.getMaxAnisotropy());
 
     const mat = new THREE.ShaderMaterial({
       vertexShader: VERT, fragmentShader: FRAG,
       transparent: true, side: THREE.DoubleSide, depthWrite: false,
       uniforms: {
         uTex:   { value: tex },
-        uHue:   { value: new THREE.Vector3(...(HUE[item.accent] || HUE.ember)) },
         uVel:   { value: 0 }, uFocus: { value: i === 0 ? 1 : 0 },
         uHover: { value: 0 }, uFade: { value: 1 }, uOpen: { value: 0 },
-        uPan: { value: new THREE.Vector2(0, 0) }, uZoom: { value: 1.03 },
+        uCenter: { value: 0 }, uLift: { value: 0 },
+        uExpand: { value: 0 },
+        uSize: { value: new THREE.Vector2(1,1) }, uHalfWidth: { value: 6 },
       },
     });
-    const mesh = new THREE.Mesh(new THREE.PlaneGeometry(PW, PH, 44, 26), mat);
+    const mesh = new THREE.Mesh(new THREE.PlaneGeometry(1, 1, 80, 12), mat);
     mesh.userData.index = i;
+    mesh.frustumCulled = false; // The shader moves vertices beyond the base bounds.
     mesh.renderOrder = 2;
     group.add(mesh);
     planes[i] = mesh;
 
-    // The name hangs just under the panel's lower-left corner and is parented
-    // to the panel, so it turns with the drum instead of floating in screen
-    // space. One face pixel is PW / 1400 world units, which is what keeps the
-    // label the same optical size as type drawn onto the face.
-    const lab = labelCanvas(item.short || item.title, dpr);
-    const ltex = new THREE.CanvasTexture(lab.canvas);
-    ltex.colorSpace = THREE.SRGBColorSpace;
-    ltex.anisotropy = 4;
-    const U = PW / 1400;
-    const lw = lab.w * U, lh = lab.h * U;
-    const lmesh = new THREE.Mesh(
-      new THREE.PlaneGeometry(lw, lh),
-      new THREE.MeshBasicMaterial({ map: ltex, transparent: true, depthWrite: false }));
-    lmesh.position.set(-PW / 2 + lw / 2 + U * 26, -PH / 2 - lh * 0.62, 0.02);
-    lmesh.renderOrder = 3;
-    mesh.add(lmesh);
-    labels[i] = lmesh;
 
-    // one guide at each edge, pointing the way the drum turns
-    arrows[i] = [-1, 1].map(dir => {
-      const a = arrowCanvas(dir, dpr);
-      const t = new THREE.CanvasTexture(a.canvas);
-      t.colorSpace = THREE.SRGBColorSpace;
-      const size = a.s * U;
-      const am = new THREE.Mesh(
-        new THREE.PlaneGeometry(size, size),
-        new THREE.MeshBasicMaterial({ map: t, transparent: true, depthWrite: false }));
-      am.position.set(dir * (PW / 2 - size * 0.78), -PH / 2 + size * 1.05, 0.02);
-      am.renderOrder = 3;
-      mesh.add(am);
-      return am;
-    });
   });
 
-  // Every panel drifts, all the time, not only the one you are pointing at —
-  // which is what the reference actually does, once you park the cursor away
-  // from it and watch. Each gets its own phase so the wall never moves in
-  // lockstep. Off entirely under reduced motion, where it would be exactly the
-  // kind of unrequested perpetual movement that setting exists to stop.
-  const DRIFT = !matchMedia('(prefers-reduced-motion: reduce)').matches;
-  // Budgeted against the face's own margin, not picked by eye. The
-  // compositions are drawn with PAD = 74 of 1400, so content starts 5.29% in.
-  // A zoom of Z crops (1 - 1/Z)/2 per side, so at the top of the breath
-  // (1.055) that is 2.61%, plus 1.0% of pan = 3.6% — clear of 5.29% with room
-  // to spare. At 1.075 + 2.0% it was 5.49% and it was slicing the headline
-  // figure off the bottom-left of every face.
-  const PAN_X = 0.010, PAN_Y = 0.008;
-  const ZOOM_MID = 1.030, ZOOM_SWING = 0.025;   // breathes 1.005 … 1.055
-  const phase = items.map((_, i) => i * 2.399963);   // golden angle, in radians
-
   let target = 0, shown = 0, vel = 0, hovered = -1;
+  let coast = 0, pointerTime = 0;
   let running = true, raf = 0, dirty = true;
   let opening = -1, openT = 0;
+  let closing = false, delivered = false;
+  let transitionStart = 0, closeFrom = 1;
+  let elapsed = 0, lastPaint = -1;
+  const animated = !matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const sceneElement = canvas.closest('.scene');
+  const isVisible = () => !document.hidden && (!sceneElement || sceneElement.hasAttribute('data-active'));
 
-  const clamp = v => Math.min(Math.max(v, 0), items.length - 1);
+  const wrap = v => (v % items.length + items.length) % items.length;
+  const relative = v => v - Math.round(v / items.length) * items.length;
+  function scrollPosition(pos) {
+    const whole = Math.floor(pos), i = wrap(whole), cycle = Math.floor(whole/items.length);
+    const next = i === items.length-1 ? centers[0]+trackLength : centers[i+1];
+    return centers[i]+cycle*trackLength+(next-centers[i])*(pos-whole);
+  }
+  // Convert actual travel back into project coordinates, including unequal widths.
+  function shiftPixels(pos, pixels) {
+    let distance = scrollPosition(pos) + pixels * (2 * halfWidth / canvas.clientWidth);
+    const cycle = Math.floor((distance-centers[0])/trackLength);
+    distance -= cycle*trackLength;
+    let i = centers.length-1;
+    for (let j=0;j<centers.length-1;j++) {
+      if (distance < centers[j+1]) { i=j; break; }
+    }
+    const end = i===centers.length-1 ? centers[0]+trackLength : centers[i+1];
+    return cycle*items.length+i+(distance-centers[i])/(end-centers[i]);
+  }
 
-  function layout(pos) {
+  function layout(pos, dt = 1) {
     for (let i = 0; i < planes.length; i++) {
       const m = planes[i];
       if (!m) continue;
-      const a = (i - pos) * STEP;
-      const d = Math.abs(i - pos);
+      const distance = relative(i - pos);
+      const d = Math.abs(distance);
       const isOpening = i === opening;
-
-      const turn = Math.abs(a);
-
-      m.position.x = Math.sin(a) * R;
-      m.position.z = Math.cos(a) * R - R + (isOpening ? openT * 3.4 : 0);
-      m.position.y = 0;
-      m.rotation.y = -a * (1 - (isOpening ? openT : 0));
-      // Every panel is the same size on the drum. Shrinking the neighbours as
-      // well as turning them made them read as small cards at a distance;
-      // perspective alone is what should be doing that work.
-      m.scale.setScalar(1 + (isOpening ? openT * 0.16 : 0));
-
-      // A panel leaves by turning past you, not by shrinking into the dark:
-      // it holds full strength until it is 54° over and is gone by 74°, before
-      // it can present its own back. Three panels are in the room at rest —
-      // the one you are at, the one turning away, the one turning in.
-      const facing = Math.max(0, Math.min(1, (1.30 - turn) / 0.35));
-
+      let center = centers[i]-scrollPosition(pos);
+      center -= Math.round(center/trackLength)*trackLength;
+      center -= halfWidth*0.08;
+      const facing = d < 2.6 ? 1 : 0;
       const u = m.material.uniforms;
-      if (DRIFT) {
-        const t = clock + phase[i];
-        u.uPan.value.set(Math.sin(t * 0.11) * PAN_X, Math.cos(t * 0.083) * PAN_Y);
-        u.uZoom.value = ZOOM_MID + Math.sin(t * 0.067) * ZOOM_SWING;
-        if (i === Math.round(shown)) {
-          // exposed so the drift can be measured rather than eyeballed
-          const z = u.uZoom.value, pan = u.uPan.value;
-          window.__galDbg = {
-            zoom: +z.toFixed(4),
-            panX: +pan.x.toFixed(4), panY: +pan.y.toFixed(4),
-            cropPct: +(((1 - 1 / z) / 2 + Math.max(Math.abs(pan.x), Math.abs(pan.y))) * 100).toFixed(2),
-            padPct: +(74 / 1400 * 100).toFixed(2),
-          };
-        }
-      }
+      u.uSize.value.set(widths[i],PH);
+      u.uHalfWidth.value = halfWidth;
       u.uFocus.value = Math.max(0, 1 - d * 0.55);
       u.uVel.value = vel;
-      u.uHover.value = hovered === i ? 1 : 0;
-      u.uOpen.value = isOpening ? openT : 0;
+      u.uHover.value += ((hovered === i ? 1 : 0) - u.uHover.value) * (1 - Math.exp(-dt * 12));
+      const easedOpen = openT * openT * (3 - 2 * openT);
+      u.uOpen.value = isOpening ? easedOpen : 0;
+      u.uExpand.value = isOpening ? easedOpen : 0;
+      u.uCenter.value = center;
+      u.uLift.value = 0;
       // Everything except the project you chose falls away.
-      u.uFade.value = (isOpening ? 1 : facing * (opening < 0 ? 1 : 1 - openT));
+      u.uFade.value = isOpening ? 1 : facing * (1 - openT * 0.7);
+      m.renderOrder = isOpening ? 3 : 2;
       m.visible = (facing > 0.004) || isOpening;
 
-      const lab = labels[i];
-      if (lab) {
-        // The name reads only for the project you are actually at; the ones
-        // turning away would otherwise stack up into a row of floating words.
-        lab.material.opacity = u.uFade.value * Math.max(0, 1 - d * 1.6);
-        lab.visible = lab.material.opacity > 0.01;
-      }
-
-      const pair = arrows[i];
-      if (pair) {
-        // Only on the project you are at, and only towards a project that
-        // exists — a guide pointing at the end of the drum is a lie.
-        const near = Math.max(0, 1 - d * 2.4) * u.uFade.value;
-        pair[0].material.opacity = i > 0 ? near : 0;
-        pair[1].material.opacity = i < items.length - 1 ? near : 0;
-        pair[0].visible = pair[0].material.opacity > 0.01;
-        pair[1].visible = pair[1].material.opacity > 0.01;
-      }
     }
-    grid.material.opacity = 0.78 * (opening < 0 ? 1 : 1 - openT);
+    grid.material.opacity = 0.65 * (opening < 0 ? 1 : 1 - openT);
   }
 
-  // The rail is a solid object standing in the same window the drum is centred
-  // on, so how far left the drum may sit depends on where the rail actually
-  // ends — which changes with viewport width (it is a clamp()) and with aspect
-  // ratio (which decides how many pixels a world unit is worth). Reading the
-  // real rect beats hardcoding either.
-  const railEl = () => document.querySelector('.rail');
-  function reoffset() {
-    let off = OFFSET;
-    const r = railEl()?.getBoundingClientRect();
-    const c = canvas.getBoundingClientRect();
-    if (r && r.width > 0 && c.width > 0 && c.height > 0) {
-      const visH = 2 * Math.tan(camera.fov * Math.PI / 360) * CAM_Z;
-      const k = c.width / (visH * (c.width / c.height));   // px per world unit
-      // panelLeft = c.x + c.width/2 + (-off - PW/2) * k  >=  r.right + RAIL_GAP
-      const max = (c.x + c.width / 2 - (PW / 2) * k - (r.right + RAIL_GAP)) / k;
-      off = Math.max(-0.5, Math.min(OFFSET, max));
-    }
-    if (Math.abs(-off - group.position.x) > 0.001) {
-      group.position.x = -off;
-      dirty = true;
-    }
-    // Exposed so the collision test can measure the offset actually in force
-    // rather than assume the constant.
-    window.__galOffset = off;
-  }
 
   function size() {
     const w = canvas.clientWidth || 900, h = canvas.clientHeight || 460;
@@ -397,9 +215,16 @@ export async function createGallery({ canvas, items, onFocus, onOpen }) {
       renderer.setSize(w, h, false);
       camera.aspect = w / h;
       camera.updateProjectionMatrix();
-      // Only here, not every frame: this reads layout, and the rail's edge can
-      // only move when the viewport does.
-      reoffset();
+      const worldHeight = 2*Math.tan(camera.fov*Math.PI/360)*CAM_Z;
+      halfWidth = worldHeight*w/h/2;
+      const root = Math.max(5,w/150);
+      PH = Math.min(h*0.435,55*root)*worldHeight/h;
+      gap = root*worldHeight/h;
+      widths = items.map(it=>PH*(aspects[it.face]||1.6));
+      let offset = 0;
+      centers = widths.map(width=>{ const center=offset+width/2; offset+=width+gap; return center; });
+      trackLength = offset;
+      grid.position.y = -PH/2-worldHeight*0.06;
       dirty = true;
     }
   }
@@ -407,31 +232,75 @@ export async function createGallery({ canvas, items, onFocus, onOpen }) {
   /* ── input ─────────────────────────────────────────────────────── */
   const ray = new THREE.Raycaster();
   const ndc = new THREE.Vector2();
+  const pickGeometry = new THREE.PlaneGeometry(1, 1, 80, 12);
+  const pickOriginal = pickGeometry.attributes.position.array.slice();
+  const pickMaterial = new THREE.MeshBasicMaterial({ side: THREE.DoubleSide });
+  const pickMesh = new THREE.Mesh(pickGeometry, pickMaterial);
+  pickMesh.position.y = group.position.y;
+  pickMesh.updateMatrixWorld();
 
   function hit(ev) {
     const r = canvas.getBoundingClientRect();
     ndc.x = ((ev.clientX - r.left) / r.width) * 2 - 1;
     ndc.y = -((ev.clientY - r.top) / r.height) * 2 + 1;
     ray.setFromCamera(ndc, camera);
-    const h = ray.intersectObjects(planes.filter(p => p && p.visible), false)[0];
-    return h ? h.object.userData.index : -1;
+    let h = null, index = -1;
+    // Mirror the vertex shader on one reusable mesh, only when the pointer
+    // needs a hit. The animation itself never uploads vertex buffers.
+    for (const plane of planes) {
+      if (!plane.visible) continue;
+      const u = plane.material.uniforms;
+      const p = pickGeometry.attributes.position;
+      for (let v = 0; v < p.count; v++) {
+        const x = pickOriginal[v * 3]*u.uSize.value.x + u.uCenter.value;
+        const y = pickOriginal[v*3+1]*u.uSize.value.y;
+        const flatten = 1 - u.uOpen.value;
+        const a=x/halfWidth,q=a*1.15-0.2,e=Math.exp(-q*q),sin=Math.sin(Math.PI*q);
+        const smooth=(l,r,z)=>{const t=Math.max(0,Math.min(1,(z-l)/(r-l)));return t*t*(3-2*t);};
+        const speed=Math.abs(u.uVel.value);
+        const roll=(-0.16*(Math.PI*Math.cos(Math.PI*q)-2*q*sin)*e/Math.PI+1.8*speed*smooth(0.3,0.9,Math.abs(a))*Math.sign(a))*flatten;
+        const r=Math.max(-1,Math.min(1,a)),ramp=r*(1.5-0.5*r*r);
+        const rear=(1-smooth(-1,0.3,a))*speed;
+        const dent=(1-4*pickOriginal[v*3]**2)*(1-4*pickOriginal[v*3+1]**2)*u.uHover.value*u.uSize.value.y*0.07*flatten;
+        p.setXYZ(v,x,y*Math.cos(roll)+(0.03*x+halfWidth*0.1*rear)*flatten,
+          y*Math.sin(roll)+(-halfWidth*0.2*(1+1.1*speed)*sin*e-halfWidth*0.12*ramp+halfWidth*0.2*rear)*flatten-dent);
+      }
+      pickGeometry.computeBoundingSphere();
+      const candidate = ray.intersectObject(pickMesh, false)[0];
+      if (candidate && (!h || candidate.distance < h.distance)) { h = candidate; index = plane.userData.index; }
+    }
+    if (!h) return -1;
+    const px = Math.abs(h.uv.x - 0.5) - 0.465;
+    const ratio = PH/widths[index];
+    const py = Math.abs(h.uv.y - 0.5)*ratio-(ratio*0.5-0.035);
+    const corner = Math.hypot(Math.max(px, 0), Math.max(py, 0)) + Math.min(Math.max(px, py), 0);
+    return corner <= 0.035 ? index : -1;
   }
 
   let dragging = false, dragX = 0, moved = 0;
+  const events = new AbortController();
+  const listen = (type, handler, options = {}) =>
+    canvas.addEventListener(type, handler, { ...options, signal: events.signal });
 
-  canvas.addEventListener('pointerdown', ev => {
-    if (opening >= 0) return;
+  listen('pointerdown', ev => {
+    if (opening >= 0 || ev.button !== 0) return;
     dragging = true; moved = 0; dragX = ev.clientX;
+    coast = 0; pointerTime = performance.now();
     canvas.setPointerCapture(ev.pointerId);
     canvas.style.cursor = 'grabbing';
   });
-  canvas.addEventListener('pointermove', ev => {
+  listen('pointermove', ev => {
     if (opening >= 0) return;
     if (dragging) {
       const dx = ev.clientX - dragX;
       dragX = ev.clientX;
       moved += Math.abs(dx);
-      target = clamp(target - dx / 190);
+      const now = performance.now();
+      const elapsed = Math.max((now - pointerTime) / 1000, 0.008);
+      const shift = shiftPixels(target, -dx) - target;
+      target += shift;
+      coast += (Math.max(-5, Math.min(5, shift / elapsed)) - coast) * (1 - Math.exp(-elapsed * 22));
+      pointerTime = now;
       kick();
     } else {
       const i = hit(ev);
@@ -447,58 +316,43 @@ export async function createGallery({ canvas, items, onFocus, onOpen }) {
     canvas.style.cursor = 'grab';
     if (moved < 6) {
       const i = hit(ev);
-      if (i >= 0) (Math.abs(i - target) < 0.5 ? travelInto : onFocus)(i);
+      if (i >= 0) travelInto(i);
     } else {
-      target = clamp(Math.round(target));
+      if (performance.now() - pointerTime > 100) coast = 0;
       kick();
     }
   };
-  canvas.addEventListener('pointerup', endDrag);
-  canvas.addEventListener('pointercancel', endDrag);
+  listen('pointerup', endDrag);
+  listen('pointercancel', () => { dragging = false; coast = 0; kick(); });
+  listen('pointerleave', () => { hovered = -1; dirty = true; kick(); });
 
-  // Scrolling advances the drum one project at a time. A continuous mapping
-  // let you sit halfway between two projects looking at neither; a step lands
-  // you on one, and the follow below is what makes the step a move rather than
-  // a cut. Trackpad inertia arrives as a long tail of small deltas, so a step
-  // closes the gate until the wheel has been quiet for a moment.
-  let acc = 0, gate = 0;
-  // 96px so one notch of a discrete mouse wheel (100–120px) is one project,
-  // while a trackpad's opening few pixels still are not.
-  const STEP_PX = 96, QUIET_MS = 280;
-
-  canvas.addEventListener('wheel', ev => {
+  // Preserve every trackpad delta, including its native inertial tail.
+  listen('wheel', ev => {
     if (opening >= 0) return;
-    const d = Math.abs(ev.deltaX) > Math.abs(ev.deltaY) ? ev.deltaX : ev.deltaY;
-    const at = Math.round(target);
-    const dir = Math.sign(d);
-    // At either end the gallery has nowhere to go, so the event belongs to the
-    // page and the room scrolls on to the next destination.
-    if ((at <= 0 && dir < 0) || (at >= items.length - 1 && dir > 0)) { acc = 0; return; }
+    const unit = ev.deltaMode === 1 ? 16 : ev.deltaMode === 2 ? canvas.clientHeight : 1;
+    const d = (Math.abs(ev.deltaX) > Math.abs(ev.deltaY) ? ev.deltaX : ev.deltaY) * unit;
     ev.preventDefault();
-
-    const now = performance.now();
-    if (now < gate) return;               // still riding out the last flick
-    if (Math.sign(acc) !== dir) acc = 0;  // a reversal starts its own gesture
-    acc += d;
-    if (Math.abs(acc) < STEP_PX) return;
-
-    acc = 0;
-    gate = now + QUIET_MS;
-    target = clamp(at + dir);
+    coast = 0;
+    target = shiftPixels(target, d);
     kick();
   }, { passive: false });
 
   /* ── travelling into a project ─────────────────────────────────── */
   function travelInto(i) {
     if (opening >= 0) return;
+    coast = 0;
+    target = shown;
     opening = i; openT = 0;
+    closing = false; delivered = false;
+    transitionStart = performance.now();
+    document.documentElement.dataset.galleryOpening = '';
     canvas.style.cursor = 'default';
     kick();
   }
 
   /* ── the loop ──────────────────────────────────────────────────── */
-  let lastAt = 0, lastT = performance.now(), clock = 0;
-  const OPEN_SECONDS = 0.62;
+  let lastAt = 0, lastT = performance.now();
+  const OPEN_SECONDS = 1;
   function frame() {
     raf = 0;
     size();
@@ -509,29 +363,35 @@ export async function createGallery({ canvas, items, onFocus, onOpen }) {
     const now = performance.now();
     const dt = Math.min((now - lastT) / 1000, 0.05);
     lastT = now;
-    clock += dt;
-    if (DRIFT) dirty = true;
+    elapsed += dt;
 
     if (opening >= 0) {
-      openT = Math.min(1, openT + dt / OPEN_SECONDS);
-      camera.position.z = CAM_Z - openT * 2.1;
+      const progress = (now - transitionStart) / (OPEN_SECONDS * 1000);
+      openT = closing ? Math.max(0, closeFrom - progress) : Math.min(1, progress);
       dirty = true;
-      if (openT >= 1) {
-        const which = opening;
-        opening = -1; openT = 0;
-        camera.position.z = CAM_Z;
-        layout(shown);
-        renderer.render(scene, camera);
-        onOpen(which);              // the case study opens as the move lands
-        return;
+      if (!closing && !delivered && openT >= 0.55) {
+        delivered = true;
+        onOpen(opening); // Crossfade the project page over the expanding surface.
+      }
+      if (closing && openT <= 0) {
+        opening = -1; closing = false; delivered = false;
+        delete document.documentElement.dataset.galleryOpening;
       }
     } else {
+      if (!dragging && Math.abs(coast) > 0.001) {
+        const decay = Math.exp(-dt * 5.5);
+        target += coast * (1 - decay) / 5.5;
+        coast *= decay;
+      }
       const d = target - shown;
-      if (Math.abs(d) > 0.0005) {
+      if (Math.abs(d) > 0.00001) {
         // Exponential follow, frame-rate independent: heavier than a snap, so
         // the carousel carries its own weight.
-        shown += d * (1 - Math.exp(-dt * 5.0));
-        vel = Math.max(-1, Math.min(1, d * 0.55));
+        const before = shown;
+        shown += d * (1 - Math.exp(-dt * (dragging ? 15 : 7)));
+        const speed = (scrollPosition(shown)-scrollPosition(before)) / Math.max(dt, 0.001) * canvas.clientWidth/(2*halfWidth);
+        const response = Math.tanh(speed/550);
+        vel += (response*Math.abs(response) - vel) * (1 - Math.exp(-dt * 9));
         dirty = true;
       } else if (Math.abs(vel) > 0.0005) {
         shown = target;
@@ -540,28 +400,43 @@ export async function createGallery({ canvas, items, onFocus, onOpen }) {
       } else vel = 0;
     }
 
-    if (dirty) { layout(shown); renderer.render(scene, camera); dirty = false; }
+    const hoverMoving = planes.some(p => Math.abs(p.material.uniforms.uHover.value - (hovered === p.userData.index ? 1 : 0)) > 0.001);
+    if (animated && isVisible() && opening < 0 && elapsed - lastPaint >= 1 / 24) {
+      lastPaint = elapsed;
+      for (const mesh of planes) {
+        if (!mesh.visible) continue;
+        const texture = mesh.material.uniforms.uTex.value;
+        paint(items[mesh.userData.index], elapsed + mesh.userData.index * 0.7, texture.image);
+        texture.needsUpdate = true;
+      }
+      dirty = true;
+    }
+    if (dirty || hoverMoving) { layout(shown, dt); renderer.render(scene, camera); dirty = false; }
 
-    const at = Math.round(shown);
+    const at = wrap(Math.round(shown));
     if (at !== lastAt && opening < 0) { lastAt = at; onFocus(at, true); }
 
-    // With drift on, the room is never at rest while it is on screen — but the
-    // IntersectionObserver still parks the whole loop the moment you travel to
-    // another destination, so nothing renders for a section you cannot see.
-    if (running && (DRIFT || opening >= 0
-        || Math.abs(target - shown) > 0.0005 || Math.abs(vel) > 0.0005)) {
+    if (running && isVisible() && !(delivered && !closing && openT === 1) && (animated || opening >= 0 || hoverMoving || Math.abs(coast) > 0.001
+        || Math.abs(target - shown) > 0.00001 || Math.abs(vel) > 0.0005)) {
       raf = requestAnimationFrame(frame);
     }
   }
-  function kick() { if (running && !raf) raf = requestAnimationFrame(frame); }
+  function kick() { if (running && !raf) { lastT = performance.now(); raf = requestAnimationFrame(frame); } }
 
-  addEventListener('resize', () => { dirty = true; kick(); }, { passive: true });
+  addEventListener('resize', () => { dirty = true; kick(); }, { passive: true, signal: events.signal });
+  addEventListener('study:close', () => {
+    if (opening < 0) return;
+    closeFrom = openT; transitionStart = performance.now(); closing = true; kick();
+  }, { signal: events.signal });
+  document.addEventListener('visibilitychange', () => { if (isVisible()) kick(); }, { signal: events.signal });
+  const visibility = new MutationObserver(() => { if (isVisible()) kick(); });
+  if (sceneElement) visibility.observe(sceneElement, { attributes: true, attributeFilter: ['data-active'] });
 
-  layout(0); size(); reoffset(); layout(shown); renderer.render(scene, camera);
+  size(); layout(shown); renderer.render(scene, camera);
   canvas.style.cursor = 'grab';
 
   return {
-    focus(i) { target = clamp(i); kick(); },
+    focus(i) { coast = 0; target = shown + relative(i - shown); kick(); },
     open(i) { travelInto(i); },
     setRunning(v) {
       running = v;
@@ -570,21 +445,16 @@ export async function createGallery({ canvas, items, onFocus, onOpen }) {
     },
     dispose() {
       running = false;
+      events.abort();
+      visibility.disconnect();
       if (raf) cancelAnimationFrame(raf);
       planes.forEach(m => {
         if (!m) return;
         m.material.uniforms.uTex.value?.dispose();
         m.material.dispose(); m.geometry.dispose();
       });
-      labels.forEach(l => {
-        if (!l) return;
-        l.material.map?.dispose(); l.material.dispose(); l.geometry.dispose();
-      });
-      arrows.flat().forEach(a => {
-        if (!a) return;
-        a.material.map?.dispose(); a.material.dispose(); a.geometry.dispose();
-      });
       grid.geometry.dispose(); grid.material.dispose();
+      pickGeometry.dispose(); pickMaterial.dispose();
       renderer.dispose();
     },
   };

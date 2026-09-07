@@ -11,7 +11,7 @@ import { pipelines } from '../content/pipelines.js';
 import { buildJourney } from '../spatial/pipeline.js';
 import { initTravel } from './travel.js';
 import { buildGallery } from '../spatial/gallery.js';
-import { drawFace } from '../spatial/faces.js';
+import { drawGalleryFace } from '../spatial/galleryfaces.js';
 import { itemFor } from '../spatial/faceitem.js';
 
 // The three projects that produced a real artefact. Module scope because both
@@ -370,7 +370,7 @@ function fullMatrix() {
 // The face-classifier panel has no figure in its repo, so it renders the
 // architecture comparison from the numbers instead of a screenshot.
 /* ═══ CASE STUDY OVERLAY ═══════════════════════════════════════════ */
-let study, studyPanel, lastFocus;
+let study, studyPanel, lastFocus, studyArtFrame = 0;
 
 let studyAside, studyMain, studyShell;
 
@@ -431,10 +431,11 @@ function openStudy(id) {
   const s = studySubject(id);
   if (!s) return;
   const c = s.c;
+  cancelAnimationFrame(studyArtFrame);
   lastFocus = document.activeElement;
   study.dataset.accent = s.accent;
 
-  // ── left: the name, one line about it, and the way out ──────────────
+  // Project header above the full-width artwork and details.
   studyAside.replaceChildren(...[
     h('h2', { class: 'study-title', text: s.title }),
     h('p', { class: 'study-lede', text: s.lede }),
@@ -445,23 +446,37 @@ function openStudy(id) {
       s.badge ? h('span', { class: 'study-pill', text: s.badge }) : null),
   ].filter(Boolean));
 
-  // ── right: the hero, then the project's own content ─────────────────
+  // Full-width hero, followed by the project's own content.
   // replaceChildren stringifies null into a literal "null" text node, unlike
   // h() which skips it — so the optional blocks are filtered out first.
-  const hero = s.art
-    ? h('img', { class: 'study-hero', src: s.art, alt: '', loading: 'lazy' })
-    : (() => {
+  const hero = (() => {
         // No artefact of its own, so its drawn face is the hero. Decorative:
         // every word on it is written in text elsewhere in this overlay.
         const fig = h('div', { class: 'study-hero study-hero-drawn', 'aria-hidden': 'true' });
-        const cv = drawFace(itemFor(id), null, Math.min(devicePixelRatio || 1, 2));
+        const source = itemFor(id);
+        const cv = drawGalleryFace({ ...source, stat: c ? c.figures[0].v : source.stat,
+          metrics: c?.figures, configs: c?.configs, figs: s.fw?.figures }, 1);
         cv.style.width = '100%'; cv.style.height = 'auto'; cv.style.display = 'block';
         fig.append(cv);
+        if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+          const item = { ...source, stat: c ? c.figures[0].v : source.stat,
+            metrics: c?.figures, configs: c?.configs, figs: s.fw?.figures };
+          let previous = 0;
+          const animate = now => {
+            if (!document.hidden && now - previous >= 1000 / 24) {
+              drawGalleryFace(item, 1, now / 1000, cv);
+              previous = now;
+            }
+            studyArtFrame = requestAnimationFrame(animate);
+          };
+          studyArtFrame = requestAnimationFrame(animate);
+        }
         return fig;
       })();
 
   studyMain.replaceChildren(...[
     hero,
+    s.art ? h('img', { class: 'study-hero', src: s.art, alt: 'Project results', loading: 'lazy', style: 'margin-top:32px' }) : null,
     c ? h('p', { class: 't-body', style: 'margin:22px 0 18px;max-width:74ch', text: c.body }) : null,
     c ? h('div', { style: 'display:flex;flex-wrap:wrap;gap:8px;margin-bottom:22px' },
       c.figures.map(f => h('div', { class: 'fig-chip', style: 'padding:10px 14px' },
@@ -485,6 +500,7 @@ function openStudy(id) {
   ].filter(Boolean));
 
   studyMain.scrollTop = 0;
+  studyShell.scrollTop = 0;
   study.dataset.open = '';
   // The page is a scroll track now, so the wheel would travel the room behind
   // the overlay. Lock it while the study is open; scrollY is preserved.
@@ -505,7 +521,9 @@ function studyWaterQuality() {
 }
 
 function closeStudy() {
+  cancelAnimationFrame(studyArtFrame);
   delete study.dataset.open;
+  dispatchEvent(new Event('study:close'));
   document.documentElement.style.overflow = '';
   removeEventListener('keydown', onStudyKey);
   if (lastFocus) lastFocus.focus();
