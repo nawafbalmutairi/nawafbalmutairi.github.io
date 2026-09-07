@@ -4,14 +4,15 @@ Task: port the reference site's *motion and grid geometry* onto our own visual
 identity. Reference: https://jesperlandberg.com/. Zero identity bleed.
 
 ## Current phase
-All four surfaces implemented, reviewed, and the review acted on. Agent D
-REJECTED with one blocking finding (B1) and five observations; all six are fixed
-in `4795803`. Nothing is in flight.
+A second, larger piece of work followed the first: the Work section was
+redesigned against the reference from scratch, decided through a full Q&A pass
+and written up in `docs/work-redesign-plan.md`. **Surface A (the carousel) and
+Surface B (the project overlay) are both built, verified and pushed.** Agent D
+is reviewing them adversarially; it has never seen either.
 
 ## Next single action
-Re-run Agent D against `4795803` for a second opinion on the fixes, or stop —
-the acceptance criteria are met except the ones listed under "Blockers", which
-need a human decision rather than more work.
+Act on Agent D's findings on Surfaces A and B. If it approves, the only open
+items are the ones under "Blockers" — none of which are code defects.
 
 ## Ground truth established before spawning
 - Repo: `nawafbalmutairi.github.io` (4-repo GitHub Pages portfolio, this is the main one).
@@ -115,6 +116,21 @@ need a human decision rather than more work.
   - Two of my own instruments were wrong and were fixed, not worked around:
     `identity.mjs` sampled an infinite keyframe at different phases; `contrast.mjs`
     read the ground behind glyphs an ancestor clips away.
+
+- **Surface A — the Work carousel**, commits `c4f6065` and `6046c00`. 4:3 panels
+  at the spec's 0.435 cell-height ratio (fov re-solved to 69.9 for the taller
+  plane), nine faces reformatted by a proportional `vy()` re-spacing, project
+  names drawn in 3D under each panel, the caption strip retired to keyboard
+  focus, decorative arrows, Ken Burns drift budgeted against the faces' own
+  padding, and the environment plate restored under a scrim instead of the
+  opaque black that was faking the reference. Three projects lead with a real
+  artefact; six keep drawn faces.
+- **Surface B — the project overlay**, commit `eda6e9b`. Two columns, opened in
+  place by all nine projects, near-opaque over the lit room, focus-trapped,
+  wheel scoped to the overlay, one column on a phone.
+- **Subpage hero bands re-verified** after `drawFace`'s signature and every
+  face's layout changed: all four in-repo subpages still render at the old 1.59
+  crop with no console errors. `H_BAND` pinning held.
 
 ## Criteria measured so far (evidence, not assertion)
 | Criterion | Result | Instrument |
