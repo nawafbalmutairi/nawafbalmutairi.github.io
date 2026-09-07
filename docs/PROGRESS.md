@@ -4,15 +4,14 @@ Task: port the reference site's *motion and grid geometry* onto our own visual
 identity. Reference: https://jesperlandberg.com/. Zero identity bleed.
 
 ## Current phase
-Phase 2 done. Surfaces 1 and 2 (nav bar, landing page) committed as `603618b`;
-a focus-trap fix found while measuring the criteria committed as `ed579ae`.
-Agent A still inspecting the reference for `docs/motion-spec.md`.
-Agent D reviewing surfaces 1-2 adversarially. Both still running.
+All four surfaces implemented and committed. Agent A delivered
+`docs/motion-spec.md` (~75 confirmed findings, 11 inferred, 3 explicit null
+results). Agent D still reviewing surfaces 1-2 adversarially.
 
 ## Next single action
-When `docs/motion-spec.md` lands, diff its GRID and SCROLL MODEL sections against
-what `spatial/gallery3d.js` and `ui/travel.js` already do, and close any numeric gap
-(surface 3). Do not touch the identity layer again — `identity.mjs` must stay at 0.
+Act on Agent D's findings when they land. If D approves, the remaining open item
+is the list of deliberate non-adoptions in "Blockers / not adopted" below — none
+are code defects; each is a scope or fidelity call that needs a human decision.
 
 ## Ground truth established before spawning
 - Repo: `nawafbalmutairi.github.io` (4-repo GitHub Pages portfolio, this is the main one).
@@ -78,6 +77,25 @@ what `spatial/gallery3d.js` and `ui/travel.js` already do, and close any numeric
   19 escaped, now 24 inside / 0 escaped. Found by measuring a criterion I had
   previously asserted without testing.
 
+- **Surface 3 — grid geometry**, commit `b3c2559`. `motion-spec.md` §4 gives two
+  `[confirmed]` ratios: cell height / viewport height = **0.435** (exact at 1280,
+  1440, 1920) and gap / cell height = **0.0182-0.0272**. Both solved for our
+  geometry rather than eyeballed: fov 55 -> **60.7** (2*atan(6.271/(2*5.35)),
+  where 6.271 = our 2.728-unit plane / 0.435), STEP factor 0.96 -> **0.966**
+  (9.5px gap, ratio 0.0243, mid-band; the curve is steep — 0.96 gives 6.5px and
+  1.00 gives 26px). Measured with a new instrument `grid.mjs` that derives the
+  plane's projected height from the declared camera contract, because a
+  screenshot measures the curved bounding box plus the accent glow — a different
+  quantity that would have shown this passing while it was not.
+  Result 0.435 at all four viewports; the spec's own table reads 348.0 at
+  1280x800 and 391.5 at 1440x900, we land within 0.1%.
+- **Surface 4 — motion policy**, commit `332e5f5`. §6 `[confirmed]`: the
+  reference gates its whole hover system behind `(hover: hover) and (pointer:
+  fine)`. Ours had 21 hover rules and zero gates, so a tap on a touch screen
+  applied `:hover` and it stuck. 20 moved into the gate; two rules that paired
+  `:hover` with `:focus-visible` were split so keyboard focus stays ungated.
+  Verified fine -> hover applies, coarse -> does not, focus ring present in both.
+
 ## Criteria measured so far (evidence, not assertion)
 | Criterion | Result | Instrument |
 |---|---|---|
@@ -107,5 +125,41 @@ Recorded now so surface 3 is a comparison, not a rediscovery.
   crossfade ramps `(0.02, 0.52)` out and `(0.46, 0.98)` in.
 - **Pointer parallax:** max 16px at the near plane, damping `0.075`/frame, env at 0.42x.
 
-## Open blockers
-_(none yet)_
+## Blockers / deliberately not adopted
+None are code defects. Each is a scope or fidelity call, listed as the brief asks.
+
+1. **The spec's nav and hero choreography are null results, so they cannot be
+   ported.** Agent A found `requestAnimationFrame` hard-throttled in the
+   inspection pane — 11 callbacks in 13 seconds — and because *all* expressive
+   motion on the reference is ticker-driven, none of it played. That single cause
+   blocks the intro sequence, nav entry animation, overlay choreography,
+   preloader fill, page transitions, pointer reaction and **every stagger
+   interval on the site**. Agent A logged them as measured-and-empty rather than
+   inventing values, which is right. **Consequence: the acceptance criterion
+   "same reveal sequence and stagger as spec" has no spec to match against.** It
+   is not implemented and must not be claimed. Fix costs ~2 minutes in a normal
+   focused browser (§10 has the recipe).
+2. **Scroll damping factor is `[inferred, +/-100%]`** (k ~ 0.06-0.12), same cause.
+   Our gallery already uses the dt-normalised exponential lerp that §5 says is
+   the part worth copying, so the architecture matches even though the constant
+   cannot be checked.
+3. **Fluid root font-size (`100vw/150`) — rejected, not deferred.** The brief
+   names type and spacing scale as identity. Ours is `clamp()`-based and already
+   fluid inside our own tokens; adopting their divisor would replace the type
+   scale wholesale. This is the correct call, not a gap.
+4. **One breakpoint at 650px — not adopted.** Ours are 1101 / 820 / 380 and each
+   marks a real change of layout mode (the 3D room needs >=1101). Rewriting the
+   responsive strategy late in the task is high risk for a stylistic gain.
+5. **Variable-width cells from intrinsic `aspect-ratio` — not adopted.** All nine
+   faces are drawn at 1400x880 by `spatial/faces.js`; variable aspect means
+   redrawing nine bespoke compositions. Uniform height is matched; variable width
+   is a content change, and it needs a decision, not a guess.
+6. **Their easing `cubic-bezier(0, 0, 0.2, 1)` — policy adopted, value not.**
+   Our `--ease` is already an ease-out with no overshoot and `--dur: 520ms` is
+   within 4% of their 0.5s state duration. One `ease-in-out` remains, on the
+   decorative `.travel-cue` ping-pong; a symmetric loop wants symmetric easing
+   and it is already `animation: none` under `prefers-reduced-motion`. Kept
+   deliberately.
+7. **Camera FOV of the reference is not observable from outside the page.** No
+   estimate was given anywhere and none was invented. Our 60.7 is derived from
+   the measured cell ratio, not copied.
