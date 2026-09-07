@@ -54,8 +54,29 @@ to buy visual hierarchy.** That is the exact mistake the comment exists to preve
 `ui/subpage.css` additionally defines `--ember: #ff8a4c` (the same value under a
 second name, for per-page `--hue`) and `--ember-d: #ffc3a3`.
 
-**These five hex literals are the entire licensed colour vocabulary of the site.**
-Any other hex in a diff is leakage.
+**CORRECTION (raised by review — the earlier claim here was wrong).** These five are
+the *tokenised* hues, not the whole vocabulary. Enumerated across every `ui/*.css` and
+`spatial/*.css` at the clean baseline `8bf87dd`, the site already contains **16** hex
+literals:
+
+```
+#0e141b #10141a #5fe0cc #7df0dc #8ff0c8 #97a1ac #a9d8ff #b49cff
+#e8eef5 #f0b357 #ff8a4c #ff9d6b #ff9d90 #ffc3a3 #ffc98a #fff
+```
+
+As first written, §6.1 ("reject any hex not in the list") would have rejected the clean
+baseline and sent the next reviewer chasing eleven false positives. The correct test is
+not membership of a five-item list — it is **whether the diff ADDS a hex**.
+
+The measured baseline for that test: the hex set in `ui/` + `spatial/` at HEAD is
+**byte-identical to the set at `8bf87dd`** — sixteen in, sixteen out, none added across
+the whole task. Reproduce with:
+
+```
+for f in $(git ls-tree -r --name-only 8bf87dd | grep -E '^(ui|spatial)/.*\.css$'); do
+  git show "8bf87dd:$f" | grep -oE "#[0-9a-fA-F]{3,8}"; done | sort -u
+grep -rhoE "#[0-9a-fA-F]{3,8}" ui/*.css spatial/*.css | sort -u
+```
 
 ### 1.4 Type
 
@@ -319,8 +340,17 @@ Measured deltas confirming the above (sample from the harness):
 `.rail li[n]` `width 126.562px → 152px`, `height 42.8125px → 30.3594px`.
 
 **Motion work from `6a30424` is kept** — `spatial/gallery3d.js`, `ui/travel.js`, the
-`spatial/gallery.js` `null`-append fix, the `.scene::before` mobile spacer fix. Only the
-identity layer reverts.
+`spatial/gallery.js` `null`-append fix, the `.scene::before` mobile spacer fix, **and
+the `ui/gallery.css` full-bleed room rework (+120 lines, the largest retained hunk —
+this was missing from the list when review checked it)**. Only the identity layer reverts.
+
+Five untokenised `rgba()` values arrived with that room rework and survive at HEAD:
+`ui/gallery.css` `rgba(11,15,21,1)` / `rgba(6,9,13,1)` / `rgba(4,6,9,1)` (the room's
+radial ground), `rgba(255,255,255,0.08)` (nav button), `rgba(6,9,13,0.66)` (the detail
+scrim, replacing the baseline's `rgba(9,13,18,0.72)`); plus two WebGL grid colours in
+`spatial/gallery3d.js` (`0x44536a`, `0x2b3646`, replacing `0x2a3542` / `0x1a212b`).
+They are part of the ported room, which §1.7's licence covers, but they are listed here
+rather than left for someone to find.
 
 ---
 
@@ -328,8 +358,9 @@ identity layer reverts.
 
 Reject on sight, at review:
 
-1. **Any hex literal that is not** `#ff8a4c`, `#5fe0cc`, `#f0b357`, `#b49cff`, `#ffc3a3`,
-   `#0e141b`. Any new `rgba()` outside the pre-existing set in §1.7.
+1. **Any hex literal the diff ADDS.** Not membership of a short list — see the
+   correction in §1.3. The baseline set is 16 and is enumerated there; compare sets,
+   don't spot-check. Likewise any `rgba()` the diff adds beyond §1.7.
 2. **Any `font-family` that is not `var(--sans)` / `var(--mono)`.** No second webfont.
 3. **Uppercase + tracked + transparent chrome.** Our chrome is glass panels with
    sentence-case labels. `text-transform: uppercase` on `.rail button` or `.dock a` is

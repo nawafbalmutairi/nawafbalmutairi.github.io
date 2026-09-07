@@ -114,9 +114,21 @@ export async function createGallery({ canvas, items, onFocus, onOpen }) {
   const PW = 4.34, PH = PW * 880 / 1400;
   const R = 5.2;
   const STEP = (PW / R) * 0.966;
-  // Left of centre, so the project turning in has the right of the frame — but
-  // far enough right that the destination rail never stands on a face.
-  const OFFSET = 0.55;
+  // Left of centre, so the project turning in has the right of the frame.
+  //
+  // This used to be a bare 0.55 with a comment claiming the rail could never
+  // stand on a face. That claim was false the moment the rail went back to its
+  // real size: 0.55 was tuned against a 152px transparent rail, and the real
+  // one is 212px of glass. Worse, the stage bleeds by calc(var(--gutter-l) * -1)
+  // from a box that already starts at --gutter-l, so the two cancel and the
+  // drum is centred on the WINDOW at every width — widening the gutter bought
+  // exactly zero clearance. Measured overlap: -34px at 1101x820, -38px at
+  // 1280x1024. It is aspect-driven, so no single constant fixes it.
+  //
+  // So it is solved per layout instead, in size(): the focused plane's left
+  // edge must clear the rail's right edge by RAIL_GAP. See reoffset().
+  const OFFSET = 0.55;          // the composition we want when there is room
+  const RAIL_GAP = 26;          // px of daylight between the rail and a face
 
   const planes = [];
   const group = new THREE.Group();
@@ -194,12 +206,41 @@ export async function createGallery({ canvas, items, onFocus, onOpen }) {
     grid.material.opacity = 0.78 * (opening < 0 ? 1 : 1 - openT);
   }
 
+  // The rail is a solid object standing in the same window the drum is centred
+  // on, so how far left the drum may sit depends on where the rail actually
+  // ends — which changes with viewport width (it is a clamp()) and with aspect
+  // ratio (which decides how many pixels a world unit is worth). Reading the
+  // real rect beats hardcoding either.
+  const railEl = () => document.querySelector('.rail');
+  function reoffset() {
+    let off = OFFSET;
+    const r = railEl()?.getBoundingClientRect();
+    const c = canvas.getBoundingClientRect();
+    if (r && r.width > 0 && c.width > 0 && c.height > 0) {
+      const visH = 2 * Math.tan(camera.fov * Math.PI / 360) * CAM_Z;
+      const k = c.width / (visH * (c.width / c.height));   // px per world unit
+      // panelLeft = c.x + c.width/2 + (-off - PW/2) * k  >=  r.right + RAIL_GAP
+      const max = (c.x + c.width / 2 - (PW / 2) * k - (r.right + RAIL_GAP)) / k;
+      off = Math.max(-0.5, Math.min(OFFSET, max));
+    }
+    if (Math.abs(-off - group.position.x) > 0.001) {
+      group.position.x = -off;
+      dirty = true;
+    }
+    // Exposed so the collision test can measure the offset actually in force
+    // rather than assume the constant.
+    window.__galOffset = off;
+  }
+
   function size() {
     const w = canvas.clientWidth || 900, h = canvas.clientHeight || 460;
     if (canvas.width !== Math.round(w * dpr) || canvas.height !== Math.round(h * dpr)) {
       renderer.setSize(w, h, false);
       camera.aspect = w / h;
       camera.updateProjectionMatrix();
+      // Only here, not every frame: this reads layout, and the rail's edge can
+      // only move when the viewport does.
+      reoffset();
       dirty = true;
     }
   }
@@ -351,7 +392,7 @@ export async function createGallery({ canvas, items, onFocus, onOpen }) {
 
   addEventListener('resize', () => { dirty = true; kick(); }, { passive: true });
 
-  layout(0); size(); renderer.render(scene, camera);
+  layout(0); size(); reoffset(); layout(shown); renderer.render(scene, camera);
   canvas.style.cursor = 'grab';
 
   return {

@@ -173,9 +173,19 @@ html[data-travel] #p-gallery .gal[data-gl] .gal-stage {
    clipped list. The reference keeps its list off-screen entirely and moves
    you with the wheel; this does the same, and hands the list straight back
    the moment a keyboard reaches it. */
+/* Nine project names in a row ran off the edge of the frame and read as a
+   clipped list, so the list is held off-screen and handed straight back the
+   moment a keyboard reaches it.
+
+   Only its POSITION is overridden. It used to be restyled here as well —
+   0.64rem, 0.15em tracking, uppercase, no background — which is the exact
+   recipe theme-spec.md §6.3 rejects as the reference site's chrome signature,
+   and at 10.24px it was under the legibility floor too. On the keyboard-only
+   route, of all places. The list now looks like every other tab list on this
+   site: our pills, our type scale, sentence case. */
 #p-gallery .gal[data-gl] .gal-rail {
   position: absolute; z-index: 2; left: 0; right: 0; bottom: 44px;
-  margin: 0; padding: 0; gap: 0;
+  margin: 0; padding: 0; gap: 6px;
   height: 1px; overflow: hidden;
   clip-path: inset(50%); pointer-events: none;
 }
@@ -183,13 +193,6 @@ html[data-travel] #p-gallery .gal[data-gl] .gal-stage {
   height: auto; overflow-x: auto; clip-path: none; pointer-events: auto;
   padding: 0 2px 4px;
 }
-#p-gallery .gal[data-gl] .gal-tab {
-  padding: 6px 12px 6px 0; border-radius: 0; background: none;
-  font-size: 0.64rem; font-weight: 500;
-  letter-spacing: 0.15em; text-transform: uppercase; color: var(--ink-2);
-}
-#p-gallery .gal[data-gl] .gal-tab[data-on] { background: none; color: var(--ink); font-weight: 600; }
-#p-gallery .gal[data-gl] .gal-tab-n { display: none; }
 
 #p-gallery .gal[data-gl] .gal-detail {
   position: absolute; z-index: 2; left: 0; right: 0; bottom: 0;
@@ -199,12 +202,8 @@ html[data-travel] #p-gallery .gal[data-gl] .gal-stage {
   box-shadow: none;
 }
 #p-gallery .gal[data-gl] .gal-detail-head { margin: 0; }
-#p-gallery .gal[data-gl] .gal-kick { font-size: 0.6rem; }
-#p-gallery .gal[data-gl] .gal-title { margin: 3px 0 0; font-size: 0.95rem; font-weight: 500; }
-#p-gallery .gal[data-gl] .gal-nav {
-  width: 24px; height: 24px; font-size: 0.72rem;
-  background: rgba(255, 255, 255, 0.07);
-}
+#p-gallery .gal[data-gl] .gal-title { margin: 3px 0 0; }
+#p-gallery .gal[data-gl] .gal-nav { background: rgba(255, 255, 255, 0.08); }
 
 /* Present, not shown: the face is carrying these, and clicking the panel is
    how you open a project — the same gesture the reference uses. */
