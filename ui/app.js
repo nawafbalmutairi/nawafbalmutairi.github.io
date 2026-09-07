@@ -11,6 +11,16 @@ import { pipelines } from '../content/pipelines.js';
 import { buildJourney } from '../spatial/pipeline.js';
 import { initTravel } from './travel.js';
 import { buildGallery } from '../spatial/gallery.js';
+import { drawFace } from '../spatial/faces.js';
+import { itemFor } from '../spatial/faceitem.js';
+
+// The three projects that produced a real artefact. Module scope because both
+// the gallery panels and the project overlay need it.
+const ART = {
+  'water-quality': './assets/case-water-4x3.webp',
+  'nvidia-bi':     './assets/case-nvidia-4x3.webp',
+  'US Retail Sales Analysis': './assets/case-retail.webp',
+};
 
 /* ── tiny DOM helper ─────────────────────────────────────────────── */
 function h(tag, props = {}, ...kids) {
@@ -136,13 +146,6 @@ function sceneWork() {
   // Everything shippable, in one gallery: the three case studies lead, the six
   // further projects follow. Figures that exist are used as textures; the two
   // projects with no figure of their own are drawn from their numbers.
-  // The three projects that produced a real artefact. Cropped to the panel's
-  // 4:3 so nothing is letterboxed. Everything else draws its own face.
-  const ART = {
-    'water-quality': './assets/case-water-4x3.webp',
-    'nvidia-bi':     './assets/case-nvidia-4x3.webp',
-    'US Retail Sales Analysis': './assets/case-retail.webp',
-  };
   const HEX = { teal: '#5fe0cc', ochre: '#f0b357', violet: '#b49cff', ember: '#ff8a4c' };
   // The rail needs a name, not the headline — the full title is in the detail.
   const SHORT = {
@@ -175,7 +178,7 @@ function sceneWork() {
       stat: fw.tags[0], statLabel: 'built with',
       tags: fw.tags, accent: 'ember', hex: HEX.ember,
       face: fw.face, figs: fw.figures, art: ART[fw.title],
-      href: fw.href,
+      href: fw.href, open: fw.title,
     })),
   ];
 
@@ -369,51 +372,119 @@ function fullMatrix() {
 /* ═══ CASE STUDY OVERLAY ═══════════════════════════════════════════ */
 let study, studyPanel, lastFocus;
 
+let studyAside, studyMain, studyShell;
+
 function buildStudy() {
-  study = h('div', { class: 'study', role: 'dialog', 'aria-modal': 'true', 'aria-label': 'Case study' });
-  studyPanel = panel({ plane: 'near' });
-  study.append(studyPanel,
-    h('button', { class: 'study-close', type: 'button', 'aria-label': 'Close case study',
+  study = h('div', { class: 'study', role: 'dialog', 'aria-modal': 'true', 'aria-label': 'Project' });
+  studyAside = h('div', { class: 'study-aside' });
+  studyMain = h('div', { class: 'study-main' });
+  studyShell = h('div', { class: 'study-shell' }, studyAside, studyMain);
+  studyPanel = studyShell;          // what openStudy fills; kept for the old name
+  study.append(studyShell,
+    h('button', { class: 'study-close', type: 'button', 'aria-label': 'Close project',
       onclick: closeStudy, html: '&times;' }));
   study.addEventListener('click', e => { if (e.target === study) closeStudy(); });
   return study;
 }
 
+/** One shape for the overlay, whichever kind of project it is.
+ *
+ *  The three cases carry prose, a stack and measured figures; the six further
+ *  projects carry a note, tags and a small figures object. The overlay reads
+ *  from whichever exists rather than inventing the missing half. */
+function studySubject(key) {
+  const c = cases.find(x => x.id === key);
+  if (c) {
+    return {
+      c, title: c.title, lede: c.lede, href: c.href, accent: c.accent,
+      // The year lives inside meta ("KV6013 · 2026 · Final-year project").
+      // Pulled out rather than restated, so there is one source for it.
+      year: (c.meta.match(/\b(20\d{2})\b/) || [])[1] || null,
+      badge: c.kind.split(' · ')[0],
+      art: ART[c.id] || null,
+    };
+  }
+  const fw = further.find(f => f.title === key);
+  if (!fw) return null;
+  return {
+    fw, title: fw.title, lede: fw.note, href: fw.href, accent: 'ember',
+    year: fw.y,
+    // A further project has no discipline field; its leading tag is the
+    // nearest true thing, so that is what the second pill shows.
+    badge: fw.tags[0],
+    art: ART[fw.title] || null,
+  };
+}
+
+/** The figures object on a further project, rendered as what it is. */
+function furtherFigures(figs) {
+  const rows = Object.entries(figs || {}).filter(([, v]) => v != null);
+  if (!rows.length) return null;
+  return h('dl', { class: 'study-facts' },
+    rows.map(([k, v]) => [
+      h('dt', { text: k.replace(/([a-z])([A-Z])/g, '$1 $2') }),
+      h('dd', { text: Array.isArray(v) ? v.join(' · ') : String(v) }),
+    ]).flat());
+}
+
 function openStudy(id) {
-  const c = cases.find(x => x.id === id);
-  if (!c) return;
+  const s = studySubject(id);
+  if (!s) return;
+  const c = s.c;
   lastFocus = document.activeElement;
+  study.dataset.accent = s.accent;
+
+  // ── left: the name, one line about it, and the way out ──────────────
+  studyAside.replaceChildren(...[
+    h('h2', { class: 'study-title', text: s.title }),
+    h('p', { class: 'study-lede', text: s.lede }),
+    h('div', { class: 'study-meta' },
+      h('a', { class: 'study-out', href: s.href, target: '_blank', rel: 'noopener',
+        'aria-label': `Open ${s.title} in a new tab` }, '↗'),
+      s.year ? h('span', { class: 'study-pill', text: s.year }) : null,
+      s.badge ? h('span', { class: 'study-pill', text: s.badge }) : null),
+  ].filter(Boolean));
+
+  // ── right: the hero, then the project's own content ─────────────────
   // replaceChildren stringifies null into a literal "null" text node, unlike
   // h() which skips it — so the optional blocks are filtered out first.
-  studyPanel.content.replaceChildren(...[
-    h('div', { class: 't-label' }, `${c.index} · ${c.kind} · ${c.meta}`),
-    h('h2', { class: 't-h1', style: 'margin:10px 0 14px', text: c.title }),
-    h('p', { class: 't-lede', style: 'margin:0 0 10px', text: c.lede }),
-    h('p', { class: 't-body', style: 'margin:0 0 18px;max-width:74ch', text: c.body }),
-    h('div', { class: 'tags', style: 'margin-bottom:22px' },
-      c.stack.map(t => h('span', { class: 'tag', text: t }))),
+  const hero = s.art
+    ? h('img', { class: 'study-hero', src: s.art, alt: '', loading: 'lazy' })
+    : (() => {
+        // No artefact of its own, so its drawn face is the hero. Decorative:
+        // every word on it is written in text elsewhere in this overlay.
+        const fig = h('div', { class: 'study-hero study-hero-drawn', 'aria-hidden': 'true' });
+        const cv = drawFace(itemFor(id), null, Math.min(devicePixelRatio || 1, 2));
+        cv.style.width = '100%'; cv.style.height = 'auto'; cv.style.display = 'block';
+        fig.append(cv);
+        return fig;
+      })();
 
-    // Figures first: this is a portfolio of measurements.
-    h('div', { style: 'display:flex;flex-wrap:wrap;gap:8px;margin-bottom:22px' },
+  studyMain.replaceChildren(...[
+    hero,
+    c ? h('p', { class: 't-body', style: 'margin:22px 0 18px;max-width:74ch', text: c.body }) : null,
+    c ? h('div', { style: 'display:flex;flex-wrap:wrap;gap:8px;margin-bottom:22px' },
       c.figures.map(f => h('div', { class: 'fig-chip', style: 'padding:10px 14px' },
         h('b', { class: 't-num', style: 'font-size:1.3rem', text: f.v }),
         h('span', { text: f.k }),
-        h('span', { style: 'text-transform:none;letter-spacing:0;color:var(--ink-4)', text: f.n })))),
+        h('span', { style: 'text-transform:none;letter-spacing:0;color:var(--ink-4)', text: f.n })))) : null,
+    !c ? h('div', { style: 'margin:22px 0 18px' }, furtherFigures(s.fw.figures)) : null,
+    h('div', { class: 'tags', style: 'margin-bottom:22px' },
+      (c ? c.stack : s.fw.tags).map(t => h('span', { class: 'tag', text: t }))),
 
     // Every case gets its journey; the water-quality one also gets the
     // full evaluation matrix beneath it.
-    pipelines[c.id] ? buildJourney(pipelines[c.id]) : null,
-    c.id === 'water-quality' ? studyWaterQuality() : null,
-    c.visual.kind === 'figure' ? h('figure', { style: 'margin:0 0 18px' },
+    c && pipelines[c.id] ? buildJourney(pipelines[c.id]) : null,
+    c && c.id === 'water-quality' ? studyWaterQuality() : null,
+    c && c.visual.kind === 'figure' ? h('figure', { style: 'margin:0 0 18px' },
       h('img', { src: c.visual.src, alt: c.visual.alt, loading: 'lazy',
         style: 'width:100%;height:auto;border-radius:12px;display:block' }),
       h('figcaption', { class: 't-small', style: 'margin-top:8px', text: c.visual.cap })) : null,
 
-    c.note ? h('p', { class: 't-small', style: 'margin:0 0 18px;color:var(--ink-3)', text: c.note }) : null,
-    h('a', { class: 'tag', href: c.href, target: '_blank', rel: 'noopener',
-      style: 'display:inline-block;padding:11px 18px;font-size:.9rem',
-      text: 'Read the full case study ↗' }),
+    c && c.note ? h('p', { class: 't-small', style: 'margin:0 0 18px;color:var(--ink-3)', text: c.note }) : null,
   ].filter(Boolean));
+
+  studyMain.scrollTop = 0;
   study.dataset.open = '';
   // The page is a scroll track now, so the wheel would travel the room behind
   // the overlay. Lock it while the study is open; scrollY is preserved.

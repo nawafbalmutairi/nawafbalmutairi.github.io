@@ -329,23 +329,121 @@
   position: fixed; inset: 0; z-index: var(--z-near);
   display: grid; place-items: center;
   padding: clamp(16px, 3vh, 40px);
-  background: rgba(5, 8, 12, 0.5);
-  backdrop-filter: blur(3px);
+  background: rgba(5, 8, 12, 0.68);
+  backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(3px);
   opacity: 0; visibility: hidden;
   transition: opacity 380ms var(--ease), visibility 0s linear 380ms;
 }
 .study[data-open] { opacity: 1; visibility: visible; transition: opacity 380ms var(--ease), visibility 0s; }
-.study .panel { width: min(1120px, 94vw); max-height: 92vh; --p-scale: 0.97; }
-.study[data-open] .panel { --p-scale: 1; }
-.study .panel-in { max-height: 92vh; overflow-y: auto; }
+/* ─── the project overlay ─────────────────────────────────────────
+   Two columns, per docs/work-redesign-plan.md Surface B: the name and the way
+   out hold still on the left while the project's own material scrolls on the
+   right. The room stays mounted behind it, dimmed, so closing returns you to
+   the exact panel you left. Their layout, our glass. */
+.study-shell {
+  --g: var(--accent);
+  width: min(1180px, 94vw); max-height: 90vh;
+  display: grid;
+  grid-template-columns: minmax(0, 0.38fr) minmax(0, 0.62fr);
+  /* The row has to be constrained too. With it left implicit it sized to the
+     tallest column — 2155px of case study — and both columns simply overflowed
+     the 810px shell instead of one of them scrolling. min-height:0 on the
+     children cannot fix a row that is itself auto-sized to its content. */
+  grid-template-rows: minmax(0, 1fr);
+  border-radius: var(--r-lg);
+  /* Near-opaque, unlike every other panel on the site. --panel-near is 0.66
+     alpha, which is right over a photographic plate and quite wrong over a
+     lit 3D room: the drum read straight through the overlay and neither was
+     legible. The blur and the lit lip keep it our material; only the tint is
+     turned up. */
+  background: linear-gradient(180deg, rgba(19, 26, 35, 0.975), rgba(12, 17, 24, 0.985));
+  backdrop-filter: blur(30px) saturate(1.3);
+  -webkit-backdrop-filter: blur(30px) saturate(1.3);
+  box-shadow:
+    inset 0 1px 0 0 var(--panel-lip),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.06),
+    0 34px 80px -30px rgba(0, 0, 0, 0.85);
+  overflow: hidden;
+  /* rise and fade, ~0.4s */
+  transform: translateY(18px);
+  opacity: 0;
+  transition: transform 400ms var(--ease), opacity 400ms var(--ease);
+}
+.study[data-open] .study-shell { transform: translateY(0); opacity: 1; }
+.study[data-accent='teal']   .study-shell { --g: var(--teal); }
+.study[data-accent='ochre']  .study-shell { --g: var(--ochre); }
+.study[data-accent='violet'] .study-shell { --g: var(--violet); }
+
+.study-aside {
+  /* min-height:0 on both columns, or grid's default min-height:auto refuses to
+     let them shrink below their content and .study-main never scrolls — it
+     just pushes the shell past its own max-height. */
+  min-height: 0;
+  padding: clamp(26px, 3vw, 42px);
+  border-right: 1px solid var(--panel-line);
+  display: flex; flex-direction: column; justify-content: flex-start;
+}
+.study-title {
+  margin: 0 0 14px;
+  font-size: clamp(1.7rem, 2.6vw, 2.5rem);
+  font-weight: 500; letter-spacing: -0.032em; line-height: 1.06;
+}
+.study-lede {
+  margin: 0 0 26px; max-width: 40ch;
+  font-size: clamp(0.96rem, 1.1vw, 1.06rem); line-height: 1.5; color: var(--ink-2);
+}
+.study-meta { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.study-out {
+  flex: 0 0 auto;
+  width: 40px; height: 40px; border-radius: 50%;
+  display: grid; place-items: center;
+  background: var(--g); color: #10141a;
+  font-size: 1rem; text-decoration: none;
+  transition: filter 200ms var(--ease);
+}
+.study-pill {
+  padding: 8px 15px; border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.07);
+  font-size: 0.74rem; font-weight: 600;
+  letter-spacing: 0.09em; text-transform: uppercase; color: var(--ink-2);
+  white-space: nowrap;
+}
+
+/* The right column is the only thing that scrolls; the wheel over the overlay
+   belongs to it, not to the travel track behind. */
+.study-main {
+  min-height: 0;
+  padding: clamp(26px, 3vw, 42px);
+  overflow-y: auto; overscroll-behavior: contain;
+  scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.22) transparent;
+}
+.study-main::-webkit-scrollbar { width: 8px; }
+.study-main::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 4px; }
+
+.study-hero {
+  display: block; width: 100%; height: auto;
+  border-radius: var(--r-md);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.07), 0 18px 40px -24px rgba(0,0,0,0.8);
+}
+.study-hero-drawn { overflow: hidden; }
+.study-hero-drawn canvas { border-radius: var(--r-md); }
+
+.study-facts { display: grid; grid-template-columns: auto 1fr; gap: 8px 20px; margin: 0; }
+.study-facts dt {
+  font-size: 0.66rem; font-weight: 600; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--ink-4); align-self: baseline;
+}
+.study-facts dd { margin: 0; font-size: 0.95rem; color: var(--ink-2); }
 
 .study-close {
-  position: absolute; top: 14px; right: 16px; z-index: 4;
-  width: 36px; height: 36px; border-radius: 50%;
+  position: absolute; top: clamp(18px, 3vh, 34px); right: clamp(18px, 3vw, 34px); z-index: 4;
+  width: 42px; height: 42px; border-radius: 50%;
   border: 0; cursor: pointer;
-  background: rgba(255,255,255,0.1); color: var(--ink);
-  font-size: 1rem; line-height: 1;
+  background: rgba(255,255,255,0.12); color: var(--ink);
+  font-size: 1.15rem; line-height: 1;
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
 }
 
 .noscript-shell { position: relative; z-index: 5; max-width: 680px; margin: 12vh auto; padding: 32px; }
@@ -481,8 +579,16 @@
   #p-contact .t-display { font-size: clamp(2.2rem, 11vw, 3rem); }
   .reach a { padding: 13px 15px; }
   .study { padding: 0; }
-  .study .panel { width: 100%; max-height: 100vh; border-radius: 0; }
-  .study .panel-in { max-height: 100vh; padding: 54px 16px 28px; }
+  /* One scrolling column on a phone: two columns on a 390px screen would give
+     each of them nothing. The aside stops being a fixed rail and becomes the
+     head of the same scroll. */
+  .study-shell {
+    width: 100%; max-height: 100vh; border-radius: 0;
+    grid-template-columns: minmax(0, 1fr); grid-template-rows: auto 1fr;
+    overflow-y: auto; overscroll-behavior: contain;
+  }
+  .study-aside { border-right: 0; border-bottom: 1px solid var(--panel-line); padding: 54px 18px 22px; }
+  .study-main { overflow: visible; padding: 22px 18px 32px; }
 }
 
 /* Very small screens: the dock's four links need to stay tappable. */

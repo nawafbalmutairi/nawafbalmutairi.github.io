@@ -80,6 +80,9 @@ export function buildGallery(items, { onOpen }) {
   function arrive(i) {
     const it = items[i];
     if (!it) return;
+    // Every project opens in place now, the three cases and the six further
+    // ones alike. The external link has not gone: it is the arrow in the
+    // overlay's metadata row, which is where the reference puts it too.
     if (it.open) onOpen(it.open);
     else if (it.href) window.open(it.href, '_blank', 'noopener');
   }

@@ -3,7 +3,9 @@
 Settled through a Q&A pass on 2026-09-07. Reference: jesperlandberg.com.
 Rule throughout: **their design and their animation, our theme.**
 
-Nothing here is built yet. This document is the thing to check.
+**Status: both surfaces built.** Surface A in `c4f6065` + `6046c00`, Surface B in
+the commit that carries this line. What follows is the agreed plan, kept as written
+so the decisions and their reasons stay legible.
 
 ---
 
@@ -140,6 +142,28 @@ title and discipline. Tapping opens the same overlay as a **single scrolling col
   the nav rail and landing page are not in scope and must not move.
 
 ---
+
+## What actually happened, against the plan
+
+Built as agreed, with these deviations and discoveries recorded rather than quietly
+absorbed:
+
+- **The field of view was re-solved twice.** Going 4:3 made the plane taller, so
+  the 0.435 cell-height constraint required 69.9°, not the 60.7° that satisfied it
+  at 1.59.
+- **The retail capture nearly went circular.** The page's largest canvas is our own
+  hero band, drawing the very face it was meant to replace. Excluded explicitly.
+- **Artefact panels carry less chrome than drawn ones.** The first pass kept the
+  full marks plus a heavy foot scrim so the headline figure would hold over a white
+  chart; it worked by burying the bottom two rows of the heatmap. The reference's
+  panels carry no chrome at all, so ours gives way to the artwork.
+- **The overlay's grid row had to be constrained**, not just its children.
+  `min-height: 0` on the columns cannot stop a row that is auto-sized to 2155px of
+  content; the columns simply overflowed an 810px shell.
+- **The overlay is near-opaque**, unlike every other panel here. `--panel-near` at
+  0.66 is right over a photographic plate and wrong over a lit 3D room.
+- **Ken Burns amplitude is budgeted against the faces' own padding**, not chosen by
+  eye — at the first values it was slicing the headline figure off every face.
 
 ## Known costs and risks
 
