@@ -436,7 +436,33 @@ function closeStudy() {
   removeEventListener('keydown', onStudyKey);
   if (lastFocus) lastFocus.focus();
 }
-function onStudyKey(e) { if (e.key === 'Escape') closeStudy(); }
+// aria-modal="true" is a promise that focus cannot leave the dialog. It was
+// not being kept: with the overlay open, 19 of 24 Tab presses walked straight
+// out into the rail, the dock and the gallery behind it. Escape alone is not
+// a focus trap.
+const FOCUSABLE = 'a[href], button:not([disabled]), input:not([disabled]), ' +
+                  'select:not([disabled]), textarea:not([disabled]), ' +
+                  '[tabindex]:not([tabindex="-1"])';
+
+function onStudyKey(e) {
+  if (e.key === 'Escape') { closeStudy(); return; }
+  if (e.key !== 'Tab') return;
+
+  // getClientRects() rather than offsetParent: everything in here descends
+  // from a position:fixed overlay, where offsetParent is never null and so
+  // would count hidden controls as focusable.
+  const items = [...study.querySelectorAll(FOCUSABLE)]
+    .filter(el => el.getClientRects().length > 0);
+  if (!items.length) return;
+
+  const first = items[0], last = items[items.length - 1];
+  const at = document.activeElement;
+  const outside = !study.contains(at);
+  if (e.shiftKey ? (at === first || outside) : (at === last || outside)) {
+    e.preventDefault();
+    (e.shiftKey ? last : first).focus();
+  }
+}
 
 /* ═══ NAVIGATION ═══════════════════════════════════════════════════
    Destinations are addressable, back/forward works, and the rail is a
