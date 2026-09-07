@@ -136,9 +136,12 @@ function sceneWork() {
   // Everything shippable, in one gallery: the three case studies lead, the six
   // further projects follow. Figures that exist are used as textures; the two
   // projects with no figure of their own are drawn from their numbers.
-  const IMG = {
-    'water-quality': './assets/case-water.webp',
-    'nvidia-bi':     './assets/case-nvidia.webp',
+  // The three projects that produced a real artefact. Cropped to the panel's
+  // 4:3 so nothing is letterboxed. Everything else draws its own face.
+  const ART = {
+    'water-quality': './assets/case-water-4x3.webp',
+    'nvidia-bi':     './assets/case-nvidia-4x3.webp',
+    'US Retail Sales Analysis': './assets/case-retail.webp',
   };
   const HEX = { teal: '#5fe0cc', ochre: '#f0b357', violet: '#b49cff', ember: '#ff8a4c' };
   // The rail needs a name, not the headline — the full title is in the detail.
@@ -158,7 +161,7 @@ function sceneWork() {
       stat: c.figures[0].v, statLabel: c.figures[0].k,
       tags: c.stack.slice(0, 4),
       accent: c.accent, hex: HEX[c.accent],
-      face: c.face,
+      face: c.face, art: ART[c.id],
       metrics: c.figures, configs: c.configs,
       models: WQ.models,
       targets: WQ.targets.map(t => t.key),
@@ -171,7 +174,7 @@ function sceneWork() {
       kicker: fw.y, title: fw.title, lede: fw.note, brief: fw.note,
       stat: fw.tags[0], statLabel: 'built with',
       tags: fw.tags, accent: 'ember', hex: HEX.ember,
-      face: fw.face, figs: fw.figures,
+      face: fw.face, figs: fw.figures, art: ART[fw.title],
       href: fw.href,
     })),
   ];

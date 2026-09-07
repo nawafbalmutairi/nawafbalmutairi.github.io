@@ -203,10 +203,20 @@ export async function createGallery({ canvas, items, onFocus, onOpen }) {
   group.position.y = 0.22;
   scene.add(group);
 
-  // Every face is drawn from the project's own data, so there is nothing to
-  // wait on: no figure is fetched here any more.
+  // Three projects lead with a real artefact, so those three images are waited
+  // for. A failed load is not fatal: that project falls back to its drawn
+  // composition, which is what every other project uses anyway.
+  const art = await Promise.all(items.map(it => new Promise(res => {
+    if (!it.art) return res(null);
+    const im = new Image();
+    im.decoding = 'async';
+    im.onload = () => res(im);
+    im.onerror = () => res(null);
+    im.src = it.art;
+  })));
+
   items.forEach((item, i) => {
-    const face = drawFace(item, null, dpr);
+    const face = drawFace(item, art[i], dpr);
     const tex = new THREE.CanvasTexture(face);
     tex.colorSpace = THREE.SRGBColorSpace;
     tex.anisotropy = 4;

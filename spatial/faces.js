@@ -42,16 +42,19 @@ function wrap(x, text, max) {
   return out;
 }
 
-/** The shared ground and chrome. Everything else is per project. */
-function chrome(x, item) {
-  const hex = item.hex;
+/** The face's ground. One definition, used by both the drawn compositions and
+ *  the mounted artefacts — it was briefly written out twice. */
+function ground(x) {
   const g = x.createLinearGradient(0, 0, W * 0.8, H);
   g.addColorStop(0, '#141b24'); g.addColorStop(1, '#090d13');
   x.fillStyle = g; x.fillRect(0, 0, W, H);
+}
 
-  const glow = x.createRadialGradient(W * 0.84, H * 0.08, 0, W * 0.84, H * 0.08, H * 1.05);
-  glow.addColorStop(0, hex + '1f'); glow.addColorStop(1, hex + '00');
-  x.fillStyle = glow; x.fillRect(0, 0, W, H);
+/** The index, the kind and the OPEN — the marks every face carries, wherever
+ *  it is drawn. Split out of chrome() so they can also sit over a photograph
+ *  of a real artefact, which must not have a gradient painted over it. */
+function marks(x, item) {
+  const hex = item.hex;
   x.fillStyle = hex; x.fillRect(0, 0, W, 6);
 
   f(x, 24, 600);
@@ -63,6 +66,68 @@ function chrome(x, item) {
   x.fillStyle = hex;
   const o = 'OPEN →';
   x.fillText(o, W - PAD - x.measureText(o).width, H - 52);
+}
+
+/** The shared ground and chrome. Everything else is per project. */
+function chrome(x, item) {
+  const hex = item.hex;
+  ground(x);
+
+  const glow = x.createRadialGradient(W * 0.84, H * 0.08, 0, W * 0.84, H * 0.08, H * 1.05);
+  glow.addColorStop(0, hex + '1f'); glow.addColorStop(1, hex + '00');
+  x.fillStyle = glow; x.fillRect(0, 0, W, H);
+
+  marks(x, item);
+}
+
+/** A project that produced a real artefact leads with it.
+ *
+ *  Three of the nine did: the water-quality R2 heatmap, the NVIDIA Power BI
+ *  page, and the retail dashboard's own Chart.js histograms. The rest have no
+ *  photograph that is genuinely theirs — their pages render this same site's
+ *  template — so they keep a drawn composition rather than being padded out
+ *  with a screenshot of our own furniture. */
+function faceArtefact(x, item, img) {
+  // The project's own ground first, so the artefact is mounted on the face
+  // rather than bleeding off it.
+  ground(x);
+
+  // Inset 5%, which is deliberate and not decorative: the Ken Burns drift in
+  // gallery3d.js crops up to 3.5% off each edge, and at full bleed that was
+  // slicing the title clean off the top of the R2 heatmap. The margin is the
+  // drift's headroom. Both the face and the artefacts are 4:3, so the image
+  // lands in the inset rect exactly, with nothing cropped and nothing letterboxed.
+  const INSET = 0.05;
+  const ix = W * INSET, iy = H * INSET, iw = W * (1 - INSET * 2), ih = H * (1 - INSET * 2);
+  const s = Math.max(iw / img.width, ih / img.height);
+  const dw = img.width * s, dh = img.height * s;
+  x.save();
+  x.beginPath(); x.roundRect(ix, iy, iw, ih, 10); x.clip();
+  x.drawImage(img, ix + (iw - dw) / 2, iy + (ih - dh) / 2, dw, dh);
+  x.restore();
+
+  // One scrim, at the head, and nothing else.
+  //
+  // The first pass put a heavy gradient at the foot too, so the headline figure
+  // would stay legible over a white chart — and it did, by burying the bottom
+  // two rows of the heatmap. The artefact is the point of an artefact panel, so
+  // the chrome gives way instead of the artwork: no OPEN, no headline figure,
+  // just the index and the discipline over a scrim at the top. The figure is
+  // still in the detail strip for a screen reader, the project's name is the 3D
+  // label under the panel, and the arrow at the edge is the affordance. This is
+  // also what the reference does — its panels carry no chrome at all.
+  const top = x.createLinearGradient(0, 0, 0, H * 0.26);
+  top.addColorStop(0, 'rgba(9,13,19,0.90)');
+  top.addColorStop(0.52, 'rgba(9,13,19,0.62)');
+  top.addColorStop(1, 'rgba(9,13,19,0)');
+  x.fillStyle = top; x.fillRect(0, 0, W, H * 0.26);
+
+  const hex = item.hex;
+  x.fillStyle = hex; x.fillRect(0, 0, W, 6);
+  f(x, 24, 600);
+  x.fillStyle = hex; x.fillText(item.index, PAD, 120);
+  x.fillStyle = 'rgba(233,238,245,0.86)';
+  x.fillText(item.kind.toUpperCase(), PAD + 62, 120);
 }
 
 function title(x, item, size = 58, max = W * 0.6, top = 190) {
@@ -497,12 +562,13 @@ const FACES = {
   screens: faceScreens, dials: faceDials, commits: faceCommits,
 };
 
-export function drawFace(item, _img, dpr = 2, height = H_GALLERY) {
+export function drawFace(item, img, dpr = 2, height = H_GALLERY) {
   H = height;
   const c = document.createElement('canvas');
   c.width = W * dpr; c.height = H * dpr;
   const x = c.getContext('2d');
   x.scale(dpr, dpr);
-  (FACES[item.face] || faceBlueprint)(x, item);
+  if (img) faceArtefact(x, item, img);
+  else (FACES[item.face] || faceBlueprint)(x, item);
   return c;
 }
