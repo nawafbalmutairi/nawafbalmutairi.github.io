@@ -4,12 +4,15 @@ Task: port the reference site's *motion and grid geometry* onto our own visual
 identity. Reference: https://jesperlandberg.com/. Zero identity bleed.
 
 ## Current phase
-Phase 1 — specs. Agent A (inspector) re-running after a rate-limit kill.
-Theme audit being written in-session rather than by Agent B (see D3).
+Phase 2 done. Surfaces 1 and 2 (nav bar, landing page) committed as `603618b`;
+a focus-trap fix found while measuring the criteria committed as `ed579ae`.
+Agent A still inspecting the reference for `docs/motion-spec.md`.
+Agent D reviewing surfaces 1-2 adversarially. Both still running.
 
 ## Next single action
-Finish `docs/theme-spec.md` in-session, then revert the nav bar (surface 1) to the
-`8bf87dd` declarations and re-run `identity.mjs` until it reports 0 differences.
+When `docs/motion-spec.md` lands, diff its GRID and SCROLL MODEL sections against
+what `spatial/gallery3d.js` and `ui/travel.js` already do, and close any numeric gap
+(surface 3). Do not touch the identity layer again — `identity.mjs` must stay at 0.
 
 ## Ground truth established before spawning
 - Repo: `nawafbalmutairi.github.io` (4-repo GitHub Pages portfolio, this is the main one).
@@ -62,7 +65,47 @@ Finish `docs/theme-spec.md` in-session, then revert the nav bar (surface 1) to t
     must drive to 0.
 
 ## Completed surfaces
-_(none yet)_
+- **Surface 1 — nav bar** and **Surface 2 — landing page**, commit `603618b`.
+  Reverted the drift: the `@media (min-width: 1101px)` chrome-override block,
+  `--gutter-l`, the `#p-gallery-sig` off-scale heading override, and a literal
+  `z-index: 6` that pushed chrome below its own `--z-chrome` token.
+  **`identity.mjs`: 630 differences -> 0** at 1440x900 and 1280x720.
+  Contrast 171 runs / min 5.11:1 / 0 AA failures. Diff greps clean for new hex,
+  new font-family, `text-transform` on chrome, and reference-site strings.
+  Motion work from `6a30424` deliberately retained.
+- **Focus trap**, commit `ed579ae`. Not a surface, a criterion: the case-study
+  dialog declared `aria-modal="true"` but held no focus. 24 tabs -> 5 inside /
+  19 escaped, now 24 inside / 0 escaped. Found by measuring a criterion I had
+  previously asserted without testing.
+
+## Criteria measured so far (evidence, not assertion)
+| Criterion | Result | Instrument |
+|---|---|---|
+| Nav + landing identity unchanged | **0 differences** (from 630) | `identity.mjs`, 2 viewports, computed style + tokens |
+| Zero colours/fonts outside tokens | 0 new hex, 0 new `font-family`, 0 `text-transform` on chrome | grep over `git diff` |
+| No reference-site code/copy/assets | 0 matches | grep over `git diff` |
+| Contrast | 171 runs, min **5.11:1**, 0 AA failures | `contrast.mjs`, composited sampling |
+| 60fps desktop | **0 frames over 16.7ms** during a 40-step drag (n=445, median 2.60ms, p95 2.70ms) | `a11y.mjs` §4. Headless: a budget check, not a display-rate claim |
+| No long tasks | 0 under 4x CPU throttle | `perf.mjs` |
+| `prefers-reduced-motion` | hero opacity 1 @ 118.08px, 3 panels, rail navigates both ways | `rm.mjs` |
+| Keyboard + focus visible | outline `solid 2px` on `.rail button` and `.dock a` | `a11y.mjs` §1 |
+| Focus trap when open | 24/24 inside, Escape closes | `a11y.mjs` §2 |
+| Degrades gracefully | reduced motion / WebGL blocked / 1024 / 390 / no-JS / `#work` deep link all behave | `reg.mjs` |
+| Panel uncropped | 1280x720 -> 1920x1080, min margin 120px | `fit.mjs` |
+| Build / TS / lint | **N/A — no build step exists.** Substituted: `node --check` on touched JS, 0 console errors | see "Ground truth" above |
+
+## Our current motion + grid numbers (for numeric diffing against Agent A's spec)
+Recorded now so surface 3 is a comparison, not a rediscovery.
+- **Work drum:** plane 4.34 x 2.728 world units; radius 5.2; angular step `(PW/R)*0.96`
+  = 0.801 rad = 45.9deg; camera perspective fov 55, z 5.35, y 0.05; group offset x -0.55,
+  y +0.22. Panel occupies 46-51% of frame width, 63-66% of height across six viewports.
+- **Floor:** `GridHelper(120, 240)` = 0.5-unit cells, y -2.05; fog 9 -> 26.
+- **Advance:** one project per gesture, `STEP_PX` 96, `QUIET_MS` 280 gate.
+- **Follow:** time-based exponential `shown += d * (1 - exp(-dt * 5.0))`; velocity decay
+  `exp(-dt * 9)`.
+- **Destination travel:** segment `innerHeight * 0.42`; depth out 190px / in 230px;
+  crossfade ramps `(0.02, 0.52)` out and `(0.46, 0.98)` in.
+- **Pointer parallax:** max 16px at the near plane, damping `0.075`/frame, env at 0.42x.
 
 ## Open blockers
 _(none yet)_
