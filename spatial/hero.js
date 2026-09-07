@@ -45,7 +45,7 @@ const HUE = {
   ember:  [1.00, 0.54, 0.30],
 };
 
-const FACE_W = 1400, FACE_H = 880;
+const FACE_W = 1400, FACE_H = 880;   // the wide band; the gallery drum is 4:3
 const PLANE_W = 4.3, PLANE_H = PLANE_W * FACE_H / FACE_W;
 
 export async function mountHero(host, item, drawFace) {
@@ -65,7 +65,7 @@ export async function mountHero(host, item, drawFace) {
   const camera = new THREE.PerspectiveCamera(38, 2, 0.1, 60);
   camera.position.z = 4.42;
 
-  const tex = new THREE.CanvasTexture(drawFace(item, null, dpr));
+  const tex = new THREE.CanvasTexture(drawFace(item, null, dpr, FACE_H));
   tex.colorSpace = THREE.SRGBColorSpace;
   tex.anisotropy = 4;
 

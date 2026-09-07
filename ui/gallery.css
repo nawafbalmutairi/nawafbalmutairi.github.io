@@ -160,9 +160,14 @@ html[data-travel] #p-gallery .gal[data-gl] .gal-stage {
   right: calc(var(--gutter-r) * -1);
   bottom: calc(var(--gutter-b) * -1);
   left: calc(var(--gutter-l) * -1);
+  /* A scrim, not a lid. This used to be fully opaque, which hid the
+     environment plate and faked the reference's pure black — and the whole
+     point of this build is their design on our theme. The plate reads through
+     at roughly a third, which is enough for the room to still be the room and
+     dim enough that the floor grid holds. */
   background:
     radial-gradient(128% 104% at 58% 44%,
-      rgba(11,15,21,1) 0%, rgba(6,9,13,1) 50%, rgba(4,6,9,1) 100%);
+      rgba(6,9,13,0.58) 0%, rgba(5,7,11,0.70) 52%, rgba(4,6,9,0.78) 100%);
 }
 /* No z-index override here. The rail and the dock are chrome and already sit
    at --z-chrome (40), above every scene; the literal 6 that used to be here
@@ -194,12 +199,29 @@ html[data-travel] #p-gallery .gal[data-gl] .gal-stage {
   padding: 0 2px 4px;
 }
 
+/* The caption strip is gone from the room. The project's name is now drawn in
+   3D at its own panel's lower-left, the way the reference labels a panel, and a
+   strip repeating it along the bottom of the frame was saying the same thing
+   twice in two different type sizes.
+
+   It stays in the DOM in full — name, kind, lede, count, the open button — and
+   comes back the moment a keyboard reaches it, exactly like the project list
+   above. Nothing is lost to a screen reader or to find-in-page. */
 #p-gallery .gal[data-gl] .gal-detail {
   position: absolute; z-index: 2; left: 0; right: 0; bottom: 0;
-  padding: 0;
-  background: none;
+  padding: 0; background: none;
   backdrop-filter: none; -webkit-backdrop-filter: none;
   box-shadow: none;
+  height: 1px; overflow: hidden;
+  clip-path: inset(50%); pointer-events: none;
+}
+#p-gallery .gal[data-gl] .gal-detail:focus-within {
+  height: auto; overflow: visible; clip-path: none; pointer-events: auto;
+  padding: 13px 17px;
+  background: rgba(6, 9, 13, 0.72);
+  backdrop-filter: blur(26px) saturate(1.3);
+  -webkit-backdrop-filter: blur(26px) saturate(1.3);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.12), inset 0 0 0 1px rgba(255,255,255,0.05);
 }
 #p-gallery .gal[data-gl] .gal-detail-head { margin: 0; }
 #p-gallery .gal[data-gl] .gal-title { margin: 3px 0 0; }
