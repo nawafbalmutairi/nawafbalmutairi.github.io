@@ -167,29 +167,11 @@ html[data-travel] #p-gallery .gal[data-gl] .gal-stage {
     radial-gradient(128% 104% at 58% 44%,
       rgba(11,15,21,1) 0%, rgba(6,9,13,1) 50%, rgba(4,6,9,1) 100%);
 }
-html[data-travel] .scene[data-id='work'] { z-index: 0; }
-html[data-travel] .rail, html[data-travel] .dock { z-index: 6; }
+/* No z-index override here. The rail and the dock are chrome and already sit
+   at --z-chrome (40), above every scene; the literal 6 that used to be here
+   pushed them BELOW their own token and was the last thing failing the
+   identity contract test. */
 
-/* The heading joins the room instead of sitting above it — the way the
-   reference keeps its wordmark in the top corner and gives the frame to
-   the work. */
-#p-gallery .gal[data-gl] ~ #p-gallery-sig,
-.scene[data-id='work']:has(.gal[data-gl]) #p-gallery-sig {
-  position: absolute; z-index: 3; top: 2px; left: 2px;
-  max-width: 30ch; pointer-events: none;
-}
-.scene[data-id='work']:has(.gal[data-gl]) #p-gallery-sig .t-h1 {
-  font-size: clamp(1.5rem, 2.5vw, 2.1rem); line-height: 1.12;
-}
-
-/* The readable layer, at chrome scale.
-
-   On the reference the project list is off-screen and the only thing you see
-   is the project's name at the foot of its own panel — the panel is the link,
-   and there is no button to press. Here the face already draws the title, the
-   brief and the headline figure, so the strip stops repeating them: what is
-   left is the name, the count, and a way through by keyboard. The rest stays
-   in the DOM for screen readers, find-in-page and anyone without the room. */
 /* Nine project names in a row ran off the edge of the frame and read as a
    clipped list. The reference keeps its list off-screen entirely and moves
    you with the wheel; this does the same, and hands the list straight back
