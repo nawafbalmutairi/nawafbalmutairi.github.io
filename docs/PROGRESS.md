@@ -4,14 +4,14 @@ Task: port the reference site's *motion and grid geometry* onto our own visual
 identity. Reference: https://jesperlandberg.com/. Zero identity bleed.
 
 ## Current phase
-All four surfaces implemented and committed. Agent A delivered
-`docs/motion-spec.md` (~75 confirmed findings, 11 inferred, 3 explicit null
-results). Agent D still reviewing surfaces 1-2 adversarially.
+All four surfaces implemented, reviewed, and the review acted on. Agent D
+REJECTED with one blocking finding (B1) and five observations; all six are fixed
+in `4795803`. Nothing is in flight.
 
 ## Next single action
-Act on Agent D's findings when they land. If D approves, the remaining open item
-is the list of deliberate non-adoptions in "Blockers / not adopted" below — none
-are code defects; each is a scope or fidelity call that needs a human decision.
+Re-run Agent D against `4795803` for a second opinion on the fixes, or stop —
+the acceptance criteria are met except the ones listed under "Blockers", which
+need a human decision rather than more work.
 
 ## Ground truth established before spawning
 - Repo: `nawafbalmutairi.github.io` (4-repo GitHub Pages portfolio, this is the main one).
@@ -96,13 +96,37 @@ are code defects; each is a scope or fidelity call that needs a human decision.
   `:hover` with `:focus-visible` were split so keyboard focus stays ungated.
   Verified fine -> hover applies, coarse -> does not, focus ring present in both.
 
+- **Review round 1**, commit `4795803`. Agent D rejected the state at `603618b`.
+  - **B1 (blocking, real):** the restored 212px glass rail stood on the focused
+    face at ~1101-1300px and on 5:4 displays. Mechanism the review caught and I
+    had missed: the stage bleeds `calc(var(--gutter-l) * -1)` from a box that
+    already starts at `--gutter-l`, so **the two cancel and the drum is centred
+    on the window at every width** — restoring the gutter bought zero clearance.
+    `OFFSET` had been tuned against the 152px transparent rail, and my own
+    comment beside it asserted the collision was impossible. Independently
+    re-measured (-34px at 1101x820, -38px at 1280x1024), then solved per layout
+    in `reoffset()` against the rail's real rect. All viewports now clear >=36px.
+  - **N2/N3:** the uppercase-tracked-transparent drift signature was still live
+    on the Work project list at 10.24px, on the keyboard-only route. Removed;
+    only the list's position is overridden now.
+  - **N4/N5:** two factual errors in `theme-spec.md`, both mine. Corrected.
+  - **N1:** `identity.mjs` was cited as proof at coverage that did not justify
+    it. Widened to ~55 properties, both pseudo-elements, eight viewports.
+  - Two of my own instruments were wrong and were fixed, not worked around:
+    `identity.mjs` sampled an infinite keyframe at different phases; `contrast.mjs`
+    read the ground behind glyphs an ancestor clips away.
+
 ## Criteria measured so far (evidence, not assertion)
 | Criterion | Result | Instrument |
 |---|---|---|
-| Nav + landing identity unchanged | **0 differences** (from 630) | `identity.mjs`, 2 viewports, computed style + tokens |
+| Nav + landing identity unchanged | **0 differences** (from 630) | `identity.mjs` — ~55 props incl. pseudo-elements, **8 viewports**, + all tokens |
 | Zero colours/fonts outside tokens | 0 new hex, 0 new `font-family`, 0 `text-transform` on chrome | grep over `git diff` |
 | No reference-site code/copy/assets | 0 matches | grep over `git diff` |
-| Contrast | 171 runs, min **5.11:1**, 0 AA failures | `contrast.mjs`, composited sampling |
+| Contrast | 135 painted runs, min **5.11:1**, 0 AA failures | `contrast.mjs`, composited + hit-tested |
+| Contrast, project list when painted | active **11.45:1**, inactive 7.26-7.73:1 | `focustab.mjs` |
+| Rail never stands on a face | >=36px clearance at 10 viewports | `collide.mjs` |
+| Grid ratio | **0.435** at 4 viewports, width inside the reference band | `grid.mjs` |
+| Hover gated on a hover-capable pointer | fine: applies, coarse: does not, focus ring in both | `hover.mjs` |
 | 60fps desktop | **0 frames over 16.7ms** during a 40-step drag (n=445, median 2.60ms, p95 2.70ms) | `a11y.mjs` §4. Headless: a budget check, not a display-rate claim |
 | No long tasks | 0 under 4x CPU throttle | `perf.mjs` |
 | `prefers-reduced-motion` | hero opacity 1 @ 118.08px, 3 panels, rail navigates both ways | `rm.mjs` |
