@@ -19,8 +19,13 @@ function h(tag, props = {}, ...kids) {
   return e;
 }
 
+// 1101px is where the stylesheet stops laying the destination out as a room,
+// so it is where the room stops being built. At 900 the scene booted a canvas
+// that CSS had already set to display:none, and every rule hung off [data-gl]
+// — the floating strip, the hidden project list — applied with no room behind
+// them to justify it.
 const wants3D = () =>
-  innerWidth >= 900 && !matchMedia('(prefers-reduced-motion: reduce)').matches;
+  innerWidth >= 1101 && !matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 /**
  * @param {Array} items  {id, kicker, title, lede, stat, statLabel, accent, hex,
@@ -65,7 +70,9 @@ export function buildGallery(items, { onOpen }) {
     h('div', { class: 'gal-foot' },
       h('div', { class: 'gal-figs' }, dStat, dLabel), openBtn));
 
-  root.append(stageEl, rail, detail);
+  // append() stringifies null, so without the filter every phone and every
+  // reduced-motion visitor got the word "null" printed above the project list.
+  root.append(...[stageEl, rail, detail].filter(Boolean));
 
   let scene = null;
 
@@ -100,7 +107,12 @@ export function buildGallery(items, { onOpen }) {
       t.tabIndex = n === active ? 0 : -1;
       if (n === active) t.dataset.on = ''; else delete t.dataset.on;
     });
-    tabs[active].scrollIntoView({ block: 'nearest', inline: 'center', behavior: 'smooth' });
+    // Only when the rail is actually on screen: asking a clipped element to
+    // scroll itself into view moves whatever ancestor can move, which here is
+    // the travel track.
+    if (rail.clientHeight > 4) {
+      tabs[active].scrollIntoView({ block: 'nearest', inline: 'center', behavior: 'smooth' });
+    }
     if (drive && scene) scene.focus(active);
   }
 

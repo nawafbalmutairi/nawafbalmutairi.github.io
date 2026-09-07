@@ -83,11 +83,69 @@
 .dock a:hover { background: rgba(255, 255, 255, 0.1); color: var(--ink); }
 .dock .sep { width: 1px; height: 18px; background: var(--panel-line); margin: 0 4px; }
 
+/* ─── chrome at the scale of chrome ───────────────────────────────
+   On the reference these are 8.5px uppercase labels sitting straight on
+   the room, with nothing behind them — the room is the page and the
+   navigation is a caption on it. Two glass cards were competing with the
+   work for the same attention. Kept larger than 8.5px: below about 11px
+   this type stops being legible and the target stops being hittable, and
+   the rail is the only way to the other four destinations.
+
+   Desktop only. On tablet and phone the rail is a docked bar with content
+   scrolling underneath it, where a background is doing real work. */
+@media (min-width: 1101px) {
+  .rail, .dock {
+    background: none;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    box-shadow: none;
+    border-radius: 0;
+  }
+
+  .rail { width: 152px; padding: 0; left: clamp(22px, 2.6vw, 46px); }
+  /* The glass is gone, so the padding that used to hold it off the edge is
+     just an indent — and it was leaving the progress line adrift of the
+     labels it belongs to. */
+  .rail .panel-in, .dock .panel-in { padding: 0; }
+  .rail-mark {
+    padding: 0 0 11px; margin-bottom: 11px;
+    border-bottom-color: rgba(255, 255, 255, 0.11);
+  }
+  .rail-mark b { font-size: 0.74rem; letter-spacing: 0.01em; }
+  .rail-mark span { font-size: 0.53rem; }
+
+  .rail ol { gap: 0; }
+  .rail button {
+    grid-template-columns: 19px 1fr; gap: 9px;
+    padding: 7px 0; border-radius: 0;
+    font-size: 0.66rem; font-weight: 500;
+    letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--ink-2);
+  }
+  .rail button .n { font-size: 0.55rem; letter-spacing: 0.08em; }
+  /* With no pill to fill, where you are is carried by weight and colour —
+     which is what aria-current is already saying. */
+  .rail button:hover { background: none; color: var(--ink-2); }
+  .rail button[aria-current='true'] { background: none; box-shadow: none; color: var(--ink); }
+  /* Outside the labels now that they start at the rail's own left edge —
+     a tick in the margin, not a rule through the words. */
+  .rail::after { left: -11px; width: 1px; opacity: 0.7; }
+  .rail { overflow: visible; }
+
+  .dock { padding: 0; gap: 0; bottom: clamp(14px, 2.2vh, 26px); }
+  .dock a {
+    padding: 7px 13px; font-size: 0.66rem; font-weight: 500;
+    letter-spacing: 0.15em; text-transform: uppercase; color: var(--ink-2);
+  }
+  .dock a:hover { background: none; color: var(--ink); }
+  .dock .sep { height: 10px; background: rgba(255, 255, 255, 0.15); margin: 0; }
+}
+
 /* ─── the field where destinations compose ───────────────────────── */
 .field { position: absolute; inset: 0; }
 
 :root {
-  --gutter-l: clamp(252px, 19vw, 296px);   /* rail + breathing room */
+  --gutter-l: clamp(196px, 15vw, 234px);   /* rail + breathing room */
   --gutter-r: clamp(24px, 3vw, 64px);
   --gutter-t: clamp(24px, 4vh, 52px);
   --gutter-b: clamp(92px, 11vh, 124px);    /* dock + breathing room */
@@ -503,6 +561,11 @@
 /* An in-flow spacer sized by fitScene() to the real content height. Without
    it, absolutely positioned panels stop the scroll ~24px short of themselves. */
 .scene::before { content: ''; display: block; height: var(--tail, 0px); pointer-events: none; }
+/* Only where the panels are absolutely positioned. Below 1101px they are in
+   flow, so the spacer sits above them and feeds its own height back into the
+   measurement that sizes it — every remeasure grew the gap, and a phone
+   opened a destination on 500px of nothing. */
+@media (max-width: 1100px) { .scene::before { content: none; } }
 
 /* A destination that scrolls says so, once, at the bottom edge. */
 .scene::-webkit-scrollbar { width: 9px; }

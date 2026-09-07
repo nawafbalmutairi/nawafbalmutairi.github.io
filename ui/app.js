@@ -130,7 +130,9 @@ function sceneIdentity() {
 function sceneWork() {
   const s = h('section', { class: 'scene', data: { id: 'work' }, 'aria-label': 'Work' });
 
-  s.append(h('div', { class: 'sig sig-work' },
+  // The heading sits inside the room for this destination, in the corner the
+  // rail leaves free, so the drum can have the frame. See ui/gallery.css.
+  s.append(h('div', { class: 'sig sig-work', id: 'p-gallery-sig' },
     h('h2', { class: 't-h1' }, 'Three systems,', h('span', { class: 'l2' }, 'measured.'))));
 
   // Everything shippable, in one gallery: the three case studies lead, the six

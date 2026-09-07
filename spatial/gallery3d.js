@@ -47,13 +47,13 @@ uniform float uFade;
 varying vec2 vUv;
 void main() {
   vec3 c = texture2D(uTex, vUv).rgb;
-  c *= 0.62 + uFocus * 0.30 + uHover * 0.14;
+  c *= 0.52 + uFocus * 0.44 + uHover * 0.10;
   float edge = smoothstep(0.0, 0.012, vUv.x) * smoothstep(1.0, 0.988, vUv.x)
              * smoothstep(0.0, 0.019, vUv.y) * smoothstep(1.0, 0.981, vUv.y);
   c = mix(uHue * (0.30 + uFocus * 0.45), c, edge);
   float v = smoothstep(1.15, 0.30, length(vUv - 0.5));
   c *= 0.74 + 0.26 * v;
-  gl_FragColor = vec4(c, uFade * (0.42 + uFocus * 0.58));
+  gl_FragColor = vec4(c, uFade);
 }`;
 
 export async function createGallery({ canvas, items, onFocus, onOpen }) {
@@ -66,25 +66,50 @@ export async function createGallery({ canvas, items, onFocus, onOpen }) {
 
   const scene = new THREE.Scene();
   // Depth cue for the floor: the grid dissolves rather than ending at an edge.
-  scene.fog = new THREE.Fog(0x090d12, 11, 30);
+  scene.fog = new THREE.Fog(0x090d12, 9, 26);
 
-  const camera = new THREE.PerspectiveCamera(42, 2, 0.1, 120);
-  const CAM_Z = 6.1, CAM_Y = 0.1;
+  // Close, and wide. Distance is what makes the perspective steep, so the
+  // camera stays near the drum; the field is what decides how much of the room
+  // comes with it. At 46° one panel took three quarters of the frame and was
+  // cropped by the stage; at 55° it takes about three fifths — the neighbours
+  // and a long run of floor come with it, which is the whole point.
+  const camera = new THREE.PerspectiveCamera(55, 2, 0.1, 120);
+  const CAM_Z = 5.35, CAM_Y = 0.05;
   camera.position.set(0, CAM_Y, CAM_Z);
 
   /* ── the floor: a grid running away under the work ──────────────── */
-  const grid = new THREE.GridHelper(64, 64, 0x2a3542, 0x1a212b);
-  grid.position.y = -2.35;
+  // Half-unit cells over a wide floor. The cell size is what sells the depth:
+  // at 3.4 units a cell was 600px across and read as a backdrop, not a floor.
+  // Fog dissolves the far rows, so the grid ends in air rather than at an edge
+  // — and it thins out about a sixth of the way down the frame, which is where
+  // a real horizon would sit for an eye 2.1 units above the ground.
+  const grid = new THREE.GridHelper(120, 240, 0x44536a, 0x2b3646);
+  grid.position.y = -2.05;
   grid.material.transparent = true;
-  grid.material.opacity = 0.55;
+  grid.material.opacity = 0.78;
   grid.material.fog = true;
   scene.add(grid);
 
-  const R = 11.5, STEP = 0.30, OFFSET = 2.5;
+  // A drum you stand inside, not an arc you look at from across a room.
+  //
+  // The radius is barely larger than a panel, so one turn of the drum is about
+  // 46° — the neighbour is hard on its edge and steeply foreshortened, and the
+  // two panels meet with a few pixels between them instead of floating apart
+  // with empty room in between. STEP a shade under the plane's own angular
+  // width (PW / R) is what closes that last gap once perspective is applied.
+  const PW = 4.34, PH = PW * 880 / 1400;
+  const R = 5.2;
+  const STEP = (PW / R) * 0.96;
+  // Left of centre, so the project turning in has the right of the frame — but
+  // far enough right that the destination rail never stands on a face.
+  const OFFSET = 0.55;
 
   const planes = [];
   const group = new THREE.Group();
   group.position.x = -OFFSET;
+  // Lifted just clear of the readable strip along the foot of the room, so the
+  // face's own bottom line is never hidden behind it.
+  group.position.y = 0.22;
   scene.add(group);
 
   // Every face is drawn from the project's own data, so there is nothing to
@@ -105,7 +130,7 @@ export async function createGallery({ canvas, items, onFocus, onOpen }) {
         uHover: { value: 0 }, uFade: { value: 1 }, uOpen: { value: 0 },
       },
     });
-    const mesh = new THREE.Mesh(new THREE.PlaneGeometry(4.3, 2.7, 44, 26), mat);
+    const mesh = new THREE.Mesh(new THREE.PlaneGeometry(PW, PH, 44, 26), mat);
     mesh.userData.index = i;
     mesh.renderOrder = 2;
     group.add(mesh);
@@ -126,23 +151,33 @@ export async function createGallery({ canvas, items, onFocus, onOpen }) {
       const d = Math.abs(i - pos);
       const isOpening = i === opening;
 
+      const turn = Math.abs(a);
+
       m.position.x = Math.sin(a) * R;
       m.position.z = Math.cos(a) * R - R + (isOpening ? openT * 3.4 : 0);
-      m.position.y = -d * 0.1;
+      m.position.y = 0;
       m.rotation.y = -a * (1 - (isOpening ? openT : 0));
-      const s = 1 - Math.min(d * 0.055, 0.28) + (isOpening ? openT * 0.16 : 0);
-      m.scale.setScalar(s);
+      // Every panel is the same size on the drum. Shrinking the neighbours as
+      // well as turning them made them read as small cards at a distance;
+      // perspective alone is what should be doing that work.
+      m.scale.setScalar(1 + (isOpening ? openT * 0.16 : 0));
+
+      // A panel leaves by turning past you, not by shrinking into the dark:
+      // it holds full strength until it is 54° over and is gone by 74°, before
+      // it can present its own back. Three panels are in the room at rest —
+      // the one you are at, the one turning away, the one turning in.
+      const facing = Math.max(0, Math.min(1, (1.30 - turn) / 0.35));
 
       const u = m.material.uniforms;
-      u.uFocus.value = Math.max(0, 1 - d * 0.85);
+      u.uFocus.value = Math.max(0, 1 - d * 0.55);
       u.uVel.value = vel;
       u.uHover.value = hovered === i ? 1 : 0;
       u.uOpen.value = isOpening ? openT : 0;
       // Everything except the project you chose falls away.
-      u.uFade.value = opening < 0 ? 1 : (isOpening ? 1 : 1 - openT);
-      m.visible = d < 4.5 || isOpening;
+      u.uFade.value = (isOpening ? 1 : facing * (opening < 0 ? 1 : 1 - openT));
+      m.visible = (facing > 0.004) || isOpening;
     }
-    grid.material.opacity = 0.55 * (opening < 0 ? 1 : 1 - openT);
+    grid.material.opacity = 0.78 * (opening < 0 ? 1 : 1 - openT);
   }
 
   function size() {
@@ -207,13 +242,35 @@ export async function createGallery({ canvas, items, onFocus, onOpen }) {
   canvas.addEventListener('pointerup', endDrag);
   canvas.addEventListener('pointercancel', endDrag);
 
+  // Scrolling advances the drum one project at a time. A continuous mapping
+  // let you sit halfway between two projects looking at neither; a step lands
+  // you on one, and the follow below is what makes the step a move rather than
+  // a cut. Trackpad inertia arrives as a long tail of small deltas, so a step
+  // closes the gate until the wheel has been quiet for a moment.
+  let acc = 0, gate = 0;
+  // 96px so one notch of a discrete mouse wheel (100–120px) is one project,
+  // while a trackpad's opening few pixels still are not.
+  const STEP_PX = 96, QUIET_MS = 280;
+
   canvas.addEventListener('wheel', ev => {
     if (opening >= 0) return;
     const d = Math.abs(ev.deltaX) > Math.abs(ev.deltaY) ? ev.deltaX : ev.deltaY;
-    const next = target + d / 420;
-    if (next < -0.02 || next > items.length - 0.98) return;   // let the page scroll on
+    const at = Math.round(target);
+    const dir = Math.sign(d);
+    // At either end the gallery has nowhere to go, so the event belongs to the
+    // page and the room scrolls on to the next destination.
+    if ((at <= 0 && dir < 0) || (at >= items.length - 1 && dir > 0)) { acc = 0; return; }
     ev.preventDefault();
-    target = clamp(next);
+
+    const now = performance.now();
+    if (now < gate) return;               // still riding out the last flick
+    if (Math.sign(acc) !== dir) acc = 0;  // a reversal starts its own gesture
+    acc += d;
+    if (Math.abs(acc) < STEP_PX) return;
+
+    acc = 0;
+    gate = now + QUIET_MS;
+    target = clamp(at + dir);
     kick();
   }, { passive: false });
 
@@ -257,7 +314,7 @@ export async function createGallery({ canvas, items, onFocus, onOpen }) {
       if (Math.abs(d) > 0.0005) {
         // Exponential follow, frame-rate independent: heavier than a snap, so
         // the carousel carries its own weight.
-        shown += d * (1 - Math.exp(-dt * 6.2));
+        shown += d * (1 - Math.exp(-dt * 5.0));
         vel = Math.max(-1, Math.min(1, d * 0.55));
         dirty = true;
       } else if (Math.abs(vel) > 0.0005) {

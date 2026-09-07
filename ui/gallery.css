@@ -113,9 +113,20 @@
 
 
 /* ═══ WORK, FULL BLEED ═══════════════════════════════════════════════
-   The gallery is a space, not a widget in a box: the panel's glass and
-   padding are dropped for this destination and the scene fills the
-   frame, with the readable layer floating over its lower edge. */
+   The gallery is a room, not a widget in a box.
+
+   This is where the section was actually losing: the stage was one row of a
+   grid that also had to hold the rail and the detail, so a 900px window gave
+   the drum a 410px-tall box and the panels came out looking like postcards.
+   Here the room takes the whole frame — bleeding past the destination's own
+   gutters, because a room has no margin — and the readable layer floats over
+   its foot. Everything the strip says is still text, still selectable, still
+   in the tab order; it has simply stopped pushing the room around.
+
+   All of it hangs off [data-gl], which the gallery sets only once the scene
+   has actually booted. Without that guard a blocked WebGL context left an
+   opaque, empty room with the strip stranded at the bottom of it.
+   ═══════════════════════════════════════════════════════════════════ */
 #p-gallery {
   background: transparent !important;
   backdrop-filter: none !important;
@@ -123,25 +134,120 @@
   box-shadow: none !important;
 }
 #p-gallery .panel-in { padding: 0; height: 100%; }
-#p-gallery .gal { grid-template-rows: 1fr auto; gap: 0; }
-#p-gallery .gal-stage { border-radius: 0; height: auto; min-height: 0; }
+#p-gallery .gal { position: relative; }
 
-/* the readable layer, floating over the foot of the scene */
-#p-gallery .gal-rail {
-  position: relative; z-index: 2;
-  margin: 0 0 8px; padding: 0 2px 4px;
+/* Desktop only, all of it. Below 1101px the destination is a scrolling
+   column and none of this applies — a stray :not() that outranked the
+   breakpoint override once pushed the whole section to the foot of a
+   phone screen. */
+@media (min-width: 1101px) {
+  /* No room: no floating. The section is a project list, and it reads. */
+  #p-gallery .gal:not([data-gl]) {
+    display: flex; flex-direction: column; justify-content: flex-end;
+    gap: 12px; height: 100%;
+  }
+  #p-gallery .gal:not([data-gl]) .gal-stage { display: none; }
+
+  #p-gallery .gal[data-gl] { display: block; height: 100%; gap: 0; }
+  #p-gallery .gal[data-gl] .gal-stage {
+    position: absolute; inset: 0; z-index: 0;
+    border-radius: 0; height: auto; min-height: 0;
+  }
 }
+
+/* Under travel the scene no longer clips, so the room runs to the edges of
+   the window and the rail and the dock float on it — the room is the window,
+   and the chrome is furniture standing in it. */
+html[data-travel] #p-gallery .gal[data-gl] .gal-stage {
+  top: calc(var(--gutter-t) * -1);
+  right: calc(var(--gutter-r) * -1);
+  bottom: calc(var(--gutter-b) * -1);
+  left: calc(var(--gutter-l) * -1);
+  background:
+    radial-gradient(128% 104% at 58% 44%,
+      rgba(11,15,21,1) 0%, rgba(6,9,13,1) 50%, rgba(4,6,9,1) 100%);
+}
+html[data-travel] .scene[data-id='work'] { z-index: 0; }
+html[data-travel] .rail, html[data-travel] .dock { z-index: 6; }
+
+/* The heading joins the room instead of sitting above it — the way the
+   reference keeps its wordmark in the top corner and gives the frame to
+   the work. */
+#p-gallery .gal[data-gl] ~ #p-gallery-sig,
+.scene[data-id='work']:has(.gal[data-gl]) #p-gallery-sig {
+  position: absolute; z-index: 3; top: 2px; left: 2px;
+  max-width: 30ch; pointer-events: none;
+}
+.scene[data-id='work']:has(.gal[data-gl]) #p-gallery-sig .t-h1 {
+  font-size: clamp(1.5rem, 2.5vw, 2.1rem); line-height: 1.12;
+}
+
+/* The readable layer, at chrome scale.
+
+   On the reference the project list is off-screen and the only thing you see
+   is the project's name at the foot of its own panel — the panel is the link,
+   and there is no button to press. Here the face already draws the title, the
+   brief and the headline figure, so the strip stops repeating them: what is
+   left is the name, the count, and a way through by keyboard. The rest stays
+   in the DOM for screen readers, find-in-page and anyone without the room. */
+/* Nine project names in a row ran off the edge of the frame and read as a
+   clipped list. The reference keeps its list off-screen entirely and moves
+   you with the wheel; this does the same, and hands the list straight back
+   the moment a keyboard reaches it. */
+#p-gallery .gal[data-gl] .gal-rail {
+  position: absolute; z-index: 2; left: 0; right: 0; bottom: 44px;
+  margin: 0; padding: 0; gap: 0;
+  height: 1px; overflow: hidden;
+  clip-path: inset(50%); pointer-events: none;
+}
+#p-gallery .gal[data-gl] .gal-rail:focus-within {
+  height: auto; overflow-x: auto; clip-path: none; pointer-events: auto;
+  padding: 0 2px 4px;
+}
+#p-gallery .gal[data-gl] .gal-tab {
+  padding: 6px 12px 6px 0; border-radius: 0; background: none;
+  font-size: 0.64rem; font-weight: 500;
+  letter-spacing: 0.15em; text-transform: uppercase; color: var(--ink-2);
+}
+#p-gallery .gal[data-gl] .gal-tab:hover { background: none; color: var(--ink); }
+#p-gallery .gal[data-gl] .gal-tab[data-on] { background: none; color: var(--ink); font-weight: 600; }
+#p-gallery .gal[data-gl] .gal-tab-n { display: none; }
+
+#p-gallery .gal[data-gl] .gal-detail {
+  position: absolute; z-index: 2; left: 0; right: 0; bottom: 0;
+  padding: 0;
+  background: none;
+  backdrop-filter: none; -webkit-backdrop-filter: none;
+  box-shadow: none;
+}
+#p-gallery .gal[data-gl] .gal-detail-head { margin: 0; }
+#p-gallery .gal[data-gl] .gal-kick { font-size: 0.6rem; }
+#p-gallery .gal[data-gl] .gal-title { margin: 3px 0 0; font-size: 0.95rem; font-weight: 500; }
+#p-gallery .gal[data-gl] .gal-nav {
+  width: 24px; height: 24px; font-size: 0.72rem;
+  background: rgba(255, 255, 255, 0.07);
+}
+
+/* Present, not shown: the face is carrying these, and clicking the panel is
+   how you open a project — the same gesture the reference uses. */
+#p-gallery .gal[data-gl] .gal-lede,
+#p-gallery .gal[data-gl] .gal-foot {
+  position: absolute; width: 1px; height: 1px;
+  margin: -1px; padding: 0; border: 0;
+  clip-path: inset(50%); overflow: hidden; white-space: nowrap;
+}
+/* …except to a keyboard, where the button is the only way in. */
+#p-gallery .gal[data-gl] .gal-foot:focus-within {
+  position: static; width: auto; height: auto;
+  margin: 8px 0 0; clip-path: none; white-space: normal;
+}
+
 #p-gallery .gal-detail {
-  position: relative; z-index: 2;
-  background: rgba(9, 13, 18, 0.72);
+  padding: 13px 17px;
+  background: rgba(6, 9, 13, 0.66);
   backdrop-filter: blur(26px) saturate(1.3);
   -webkit-backdrop-filter: blur(26px) saturate(1.3);
   box-shadow: inset 0 1px 0 rgba(255,255,255,0.12), inset 0 0 0 1px rgba(255,255,255,0.05);
 }
-/* The face already carries the title and figure, so the strip underneath
-   stays to what the canvas cannot be: selectable, findable text. */
 #p-gallery .gal-lede { max-width: 92ch; }
 
-@media (max-width: 1100px) {
-  #p-gallery .gal { grid-template-rows: none; }
-}

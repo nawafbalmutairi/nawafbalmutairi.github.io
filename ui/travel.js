@@ -14,8 +14,10 @@
 //   TRAVEL— a fixed run where this destination recedes into the distance and
 //           the next one comes forward out of it.
 
-const DEPTH_OUT = 620;   // px the leaving destination falls back
-const DEPTH_IN  = 700;   // px the arriving one starts in front of its resting place
+// Deliberately small. At 620/700 the move between destinations was a bigger
+// event than anything inside them, which is the wrong way round.
+const DEPTH_OUT = 190;   // px the leaving destination falls back
+const DEPTH_IN  = 230;   // px the arriving one starts in front of its resting place
 
 /** Eased ramp from a to b. */
 function ramp(a, b, x) {
@@ -67,7 +69,11 @@ export function initTravel({ field, scenes, destinations, env, onEnter, startInd
 
   function measure() {
     const h = frameH();
-    const travel = Math.round(innerHeight * 0.9);
+    // Small on purpose. At 0.9 of a screen the move between destinations took
+    // longer than reading one, and you spent most of it looking at two rooms
+    // at once. It is now a little over a third of a screen — enough to feel
+    // like a move, short enough to stay out of the way of the work.
+    const travel = Math.round(innerHeight * 0.42);
     let acc = 0;
     segs = scenes.map((sc, i) => {
       const pan = Math.max(0, contentBottom(sc) - h + 24);
@@ -99,11 +105,13 @@ export function initTravel({ field, scenes, destinations, env, onEnter, startInd
     // t: 0 while reading this destination, 0→1 while travelling to the next
     const t = seg.hold > 0 ? Math.min(Math.max((local - seg.pan) / seg.hold, 0), 1) : 0;
 
-    // The two destinations overlap only briefly, and both dim through the
-    // middle: you pass through the depth of the room rather than watching one
-    // panel wall dissolve into another. An even crossfade read as mud.
-    const out = ramp(0.10, 0.70, t);
-    const inn = ramp(0.30, 0.90, t);
+    // A handoff, not a dissolve. Overlapping the two ramps by 40% of the run
+    // put Identity's paragraphs on top of a project face for a whole screen of
+    // scrolling — unreadable, and it disturbed both designs. They now barely
+    // meet: the room is briefly empty between destinations, which is what
+    // passing through the depth of it should look like.
+    const out = ramp(0.02, 0.52, t);
+    const inn = ramp(0.46, 0.98, t);
     const eased = t * t * (3 - 2 * t);
 
     for (let n = 0; n < scenes.length; n++) {
