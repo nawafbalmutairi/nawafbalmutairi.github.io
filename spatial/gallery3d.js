@@ -71,9 +71,15 @@ export async function createGallery({ canvas, items, onFocus, onOpen }) {
   // Close, and wide. Distance is what makes the perspective steep, so the
   // camera stays near the drum; the field is what decides how much of the room
   // comes with it. At 46° one panel took three quarters of the frame and was
-  // cropped by the stage; at 55° it takes about three fifths — the neighbours
-  // and a long run of floor come with it, which is the whole point.
-  const camera = new THREE.PerspectiveCamera(55, 2, 0.1, 120);
+  // cropped by the stage.
+  //
+  // 60.7° is not a taste call — it is docs/motion-spec.md §4 solved for our
+  // geometry. The reference's cell height is 0.435 × viewport height, confirmed
+  // to three decimals at 1280/1440/1920. Our plane is 2.728 world units, so the
+  // frame has to be 2.728 / 0.435 = 6.271 units tall, and at a camera distance
+  // of 5.35 that is 2·atan(6.271 / (2·5.35)) = 60.7°. At 55° the plane was
+  // 0.490 of the frame — 13% oversized against the spec.
+  const camera = new THREE.PerspectiveCamera(60.7, 2, 0.1, 120);
   const CAM_Z = 5.35, CAM_Y = 0.05;
   camera.position.set(0, CAM_Y, CAM_Z);
 
@@ -97,9 +103,17 @@ export async function createGallery({ canvas, items, onFocus, onOpen }) {
   // two panels meet with a few pixels between them instead of floating apart
   // with empty room in between. STEP a shade under the plane's own angular
   // width (PW / R) is what closes that last gap once perspective is applied.
+  //
+  // The 0.966 is solved, not chosen. docs/motion-spec.md §4 gives the one
+  // gap ratio that survives a redesign: gap ÷ cell height = 0.0182–0.0272.
+  // Against a cell height of 0.435 × 900 = 391.5px that is a 7.1–10.6px gap at
+  // 1440×900. Projecting the neighbour's near edge through the camera puts
+  // 0.966 at 9.5px (ratio 0.0243), mid-band. The curve is steep — 0.96 gives
+  // 6.5px and 1.00 gives 26px — so this is worth carrying as a solved number
+  // rather than an eyeballed one.
   const PW = 4.34, PH = PW * 880 / 1400;
   const R = 5.2;
-  const STEP = (PW / R) * 0.96;
+  const STEP = (PW / R) * 0.966;
   // Left of centre, so the project turning in has the right of the frame — but
   // far enough right that the destination rail never stands on a face.
   const OFFSET = 0.55;
