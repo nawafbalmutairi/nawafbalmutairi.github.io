@@ -11,8 +11,8 @@ import { pipelines } from '../content/pipelines.js';
 import { buildJourney } from '../spatial/pipeline.js';
 import { initTravel } from './travel.js';
 import { buildGallery } from '../spatial/gallery.js';
-import { drawGalleryFace } from '../spatial/galleryfaces.js';
 import { itemFor } from '../spatial/faceitem.js';
+import { buildProjectStory } from './project-story.js';
 
 // The three projects that produced a real artefact. Module scope because both
 // the gallery panels and the project overlay need it.
@@ -446,58 +446,11 @@ function openStudy(id) {
       s.badge ? h('span', { class: 'study-pill', text: s.badge }) : null),
   ].filter(Boolean));
 
-  // Full-width hero, followed by the project's own content.
-  // replaceChildren stringifies null into a literal "null" text node, unlike
-  // h() which skips it — so the optional blocks are filtered out first.
-  const hero = (() => {
-        // No artefact of its own, so its drawn face is the hero. Decorative:
-        // every word on it is written in text elsewhere in this overlay.
-        const fig = h('div', { class: 'study-hero study-hero-drawn', 'aria-hidden': 'true' });
-        const source = itemFor(id);
-        const cv = drawGalleryFace({ ...source, stat: c ? c.figures[0].v : source.stat,
-          metrics: c?.figures, configs: c?.configs, figs: s.fw?.figures }, 1);
-        cv.style.width = '100%'; cv.style.height = 'auto'; cv.style.display = 'block';
-        fig.append(cv);
-        if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
-          const item = { ...source, stat: c ? c.figures[0].v : source.stat,
-            metrics: c?.figures, configs: c?.configs, figs: s.fw?.figures };
-          let previous = 0;
-          const animate = now => {
-            if (!document.hidden && now - previous >= 1000 / 24) {
-              drawGalleryFace(item, 1, now / 1000, cv);
-              previous = now;
-            }
-            studyArtFrame = requestAnimationFrame(animate);
-          };
-          studyArtFrame = requestAnimationFrame(animate);
-        }
-        return fig;
-      })();
-
-  studyMain.replaceChildren(...[
-    hero,
-    s.art ? h('img', { class: 'study-hero', src: s.art, alt: 'Project results', loading: 'lazy', style: 'margin-top:32px' }) : null,
-    c ? h('p', { class: 't-body', style: 'margin:22px 0 18px;max-width:74ch', text: c.body }) : null,
-    c ? h('div', { style: 'display:flex;flex-wrap:wrap;gap:8px;margin-bottom:22px' },
-      c.figures.map(f => h('div', { class: 'fig-chip', style: 'padding:10px 14px' },
-        h('b', { class: 't-num', style: 'font-size:1.3rem', text: f.v }),
-        h('span', { text: f.k }),
-        h('span', { style: 'text-transform:none;letter-spacing:0;color:var(--ink-4)', text: f.n })))) : null,
-    !c ? h('div', { style: 'margin:22px 0 18px' }, furtherFigures(s.fw.figures)) : null,
-    h('div', { class: 'tags', style: 'margin-bottom:22px' },
-      (c ? c.stack : s.fw.tags).map(t => h('span', { class: 'tag', text: t }))),
-
-    // Every case gets its journey; the water-quality one also gets the
-    // full evaluation matrix beneath it.
-    c && pipelines[c.id] ? buildJourney(pipelines[c.id]) : null,
-    c && c.id === 'water-quality' ? studyWaterQuality() : null,
-    c && c.visual.kind === 'figure' ? h('figure', { style: 'margin:0 0 18px' },
-      h('img', { src: c.visual.src, alt: c.visual.alt, loading: 'lazy',
-        style: 'width:100%;height:auto;border-radius:12px;display:block' }),
-      h('figcaption', { class: 't-small', style: 'margin-top:8px', text: c.visual.cap })) : null,
-
-    c && c.note ? h('p', { class: 't-small', style: 'margin:0 0 18px;color:var(--ink-3)', text: c.note }) : null,
-  ].filter(Boolean));
+  studyMain.replaceChildren(buildProjectStory(itemFor(id), s));
+  if (c?.id === 'water-quality') {
+    const evaluation = h('section', { class: 'story-evaluation' }, studyWaterQuality());
+    studyMain.querySelector('.project-story').insertBefore(evaluation, studyMain.querySelector('.project-story').lastElementChild);
+  }
 
   studyMain.scrollTop = 0;
   studyShell.scrollTop = 0;
