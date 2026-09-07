@@ -34,7 +34,6 @@
   font: inherit; font-size: 0.79rem; white-space: nowrap; cursor: pointer;
   transition: background-color 200ms var(--ease), color 200ms var(--ease);
 }
-.gal-tab:hover { background: rgba(255,255,255,0.1); }
 .gal-tab-n {
   font-size: 0.6rem; font-weight: 600; letter-spacing: 0.1em;
   color: var(--ink-4); text-transform: uppercase;
@@ -62,7 +61,6 @@
   cursor: pointer; font-size: 0.82rem; line-height: 1;
   transition: background-color 180ms var(--ease), opacity 180ms var(--ease);
 }
-.gal-nav:hover:not(:disabled) { background: rgba(255,255,255,0.16); }
 .gal-nav:disabled { opacity: 0.25; cursor: default; }
 
 .gal-title { margin: 0 0 6px; font-size: 1.14rem; font-weight: 600; letter-spacing: -0.024em; }
@@ -84,7 +82,6 @@
   background: var(--g); color: #10141a;
   transition: filter 200ms var(--ease), transform 200ms var(--ease);
 }
-.gal-open:hover { filter: brightness(1.12); transform: translateY(-1px); }
 
 #p-gallery { left: 0; right: 0; top: 0; bottom: 0; }
 #p-gallery .panel-in { height: 100%; display: flex; flex-direction: column; padding: 20px; }
@@ -191,7 +188,6 @@ html[data-travel] #p-gallery .gal[data-gl] .gal-stage {
   font-size: 0.64rem; font-weight: 500;
   letter-spacing: 0.15em; text-transform: uppercase; color: var(--ink-2);
 }
-#p-gallery .gal[data-gl] .gal-tab:hover { background: none; color: var(--ink); }
 #p-gallery .gal[data-gl] .gal-tab[data-on] { background: none; color: var(--ink); font-weight: 600; }
 #p-gallery .gal[data-gl] .gal-tab-n { display: none; }
 
@@ -233,3 +229,15 @@ html[data-travel] #p-gallery .gal[data-gl] .gal-stage {
 }
 #p-gallery .gal-lede { max-width: 92ch; }
 
+/* ─── hover, gated on a pointer that can actually hover ───────────
+   docs/motion-spec.md §6: the reference gates its entire hover system
+   behind (hover: hover) and (pointer: fine) [confirmed]. Ours did not,
+   so on a touch screen a tap applied :hover and it stuck until you
+   tapped elsewhere. Moved, not rewritten — and :focus-visible is left
+   outside the gate, because a keyboard has no pointer at all. */
+@media (hover: hover) and (pointer: fine) {
+  .gal-tab:hover { background: rgba(255,255,255,0.1); }
+  .gal-nav:hover:not(:disabled) { background: rgba(255,255,255,0.16); }
+  .gal-open:hover { filter: brightness(1.12); transform: translateY(-1px); }
+  #p-gallery .gal[data-gl] .gal-tab:hover { background: none; color: var(--ink); }
+}

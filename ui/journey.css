@@ -58,7 +58,6 @@
   white-space: nowrap;
   transition: background-color 200ms ease, color 200ms ease;
 }
-.pj-chip:hover { background: rgba(255,255,255,0.1); }
 .pj-chip-n {
   font-size: 0.62rem; font-weight: 600; letter-spacing: 0.08em;
   font-variant-numeric: tabular-nums; color: var(--ink-4, rgba(212,222,234,.63));
@@ -93,7 +92,6 @@
   cursor: pointer; font-size: 0.85rem; line-height: 1;
   transition: background-color 180ms ease, opacity 180ms ease;
 }
-.pj-nav:hover:not(:disabled) { background: rgba(255,255,255,0.16); }
 .pj-nav:disabled { opacity: 0.25; cursor: default; }
 
 .pj-name {
@@ -118,4 +116,15 @@
 @media (prefers-reduced-motion: reduce) {
   .pj-band { display: none !important; }
   .pj-chip, .pj-nav { transition: none; }
+}
+
+/* ─── hover, gated on a pointer that can actually hover ───────────
+   docs/motion-spec.md §6: the reference gates its entire hover system
+   behind (hover: hover) and (pointer: fine) [confirmed]. Ours did not,
+   so on a touch screen a tap applied :hover and it stuck until you
+   tapped elsewhere. Moved, not rewritten — and :focus-visible is left
+   outside the gate, because a keyboard has no pointer at all. */
+@media (hover: hover) and (pointer: fine) {
+  .pj-chip:hover { background: rgba(255,255,255,0.1); }
+  .pj-nav:hover:not(:disabled) { background: rgba(255,255,255,0.16); }
 }

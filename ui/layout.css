@@ -53,7 +53,6 @@
   font-size: 0.62rem; letter-spacing: 0.1em; color: var(--ink-4);
   font-variant-numeric: tabular-nums;
 }
-.rail button:hover { background: rgba(255, 255, 255, 0.06); color: var(--ink-2); }
 .rail button[aria-current='true'] {
   background: rgba(255, 255, 255, 0.1);
   color: var(--ink);
@@ -80,7 +79,6 @@
   white-space: nowrap;
   transition: background-color 220ms var(--ease), color 220ms var(--ease);
 }
-.dock a:hover { background: rgba(255, 255, 255, 0.1); color: var(--ink); }
 .dock .sep { width: 1px; height: 18px; background: var(--panel-line); margin: 0 4px; }
 
 /* ─── the field where destinations compose ───────────────────────── */
@@ -196,7 +194,6 @@
   filter: brightness(0.82) saturate(0.92) contrast(1.04);
   transition: filter 320ms var(--ease);
 }
-.panel[data-interactive]:hover .case-visual img { filter: none; }
 .case-visual[data-accent='teal']   { box-shadow: inset 0 0 0 1px rgba(95,224,204,0.24); }
 .case-visual[data-accent='ochre']  { box-shadow: inset 0 0 0 1px rgba(240,179,87,0.24); }
 .case-visual[data-accent='violet'] { box-shadow: inset 0 0 0 1px rgba(180,156,255,0.24); }
@@ -224,7 +221,6 @@
   background: rgba(255, 255, 255, 0.05);
   transition: background-color 220ms var(--ease);
 }
-.further a:hover { background: rgba(255, 255, 255, 0.085); }
 .further .y { font-size: 0.6rem; letter-spacing: 0.12em; color: var(--ink-4); font-variant-numeric: tabular-nums; }
 .further .t { font-size: 0.78rem; color: var(--ink-2); }
 
@@ -311,7 +307,6 @@
   color: var(--ink); font-size: 1rem; cursor: pointer;
   transition: opacity 220ms var(--ease), background-color 220ms var(--ease);
 }
-.track-nav:hover:not(:disabled) { background: rgba(30, 38, 48, 0.94); }
 .track-nav:disabled { opacity: 0.22; cursor: default; }
 .track-nav.prev { left: -6px; }
 .track-nav.next { right: -6px; }
@@ -327,7 +322,6 @@
   background: rgba(255, 255, 255, 0.05);
   transition: background-color 220ms var(--ease), transform 220ms var(--ease);
 }
-.reach a:hover { background: rgba(255, 255, 255, 0.1); transform: translateX(4px); }
 .reach .h { color: var(--ink-3); font-size: 0.86rem; }
 
 /* ═══ case study overlay — the deeper spatial read ═══ */
@@ -353,7 +347,6 @@
   background: rgba(255,255,255,0.1); color: var(--ink);
   font-size: 1rem; line-height: 1;
 }
-.study-close:hover { background: rgba(255,255,255,0.18); }
 
 .noscript-shell { position: relative; z-index: 5; max-width: 680px; margin: 12vh auto; padding: 32px; }
 .noscript-shell h1 { font-size: 2.4rem; margin-bottom: 12px; }
@@ -373,8 +366,6 @@
   transform: translateY(-3px);
   transition: opacity 260ms var(--ease), transform 260ms var(--ease);
 }
-.panel[data-interactive]:hover .open-hint,
-.panel[data-interactive]:focus-visible .open-hint { opacity: 1; transform: translateY(0); }
 
 #p-further .panel-in { padding: 18px 20px; }
 
@@ -580,4 +571,26 @@ html:not([data-travel]) .travel-cue { display: none; }
 @media (prefers-reduced-motion: reduce) {
   .travel-cue span { animation: none; }
   .rail::after { transition: none; }
+}
+
+/* the non-hover half of the rules moved into the gate below —
+   keyboard focus must not depend on having a fine pointer */
+.panel[data-interactive]:focus-visible .open-hint { opacity: 1; transform: translateY(0); }
+
+
+/* ─── hover, gated on a pointer that can actually hover ───────────
+   docs/motion-spec.md §6: the reference gates its entire hover system
+   behind (hover: hover) and (pointer: fine) [confirmed]. Ours did not,
+   so on a touch screen a tap applied :hover and it stuck until you
+   tapped elsewhere. Moved, not rewritten — and :focus-visible is left
+   outside the gate, because a keyboard has no pointer at all. */
+@media (hover: hover) and (pointer: fine) {
+  .rail button:hover { background: rgba(255, 255, 255, 0.06); color: var(--ink-2); }
+  .dock a:hover { background: rgba(255, 255, 255, 0.1); color: var(--ink); }
+  .panel[data-interactive]:hover .case-visual img { filter: none; }
+  .further a:hover { background: rgba(255, 255, 255, 0.085); }
+  .track-nav:hover:not(:disabled) { background: rgba(30, 38, 48, 0.94); }
+  .reach a:hover { background: rgba(255, 255, 255, 0.1); transform: translateX(4px); }
+  .study-close:hover { background: rgba(255,255,255,0.18); }
+  .panel[data-interactive]:hover .open-hint { opacity: 1; transform: translateY(0); }
 }
