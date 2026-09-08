@@ -7,57 +7,18 @@
 
 export const pipelines = {
 
-  /* ── 01 · Water quality ────────────────────────────────────────────
-     src: ml-water-quality-benchmark/docs — .pl-step strip, plus the
-     Methodology section: "The same preprocessing pipeline ran for all four
-     models: missing-value handling, type coercion, lag-feature generation,
-     and standardisation." */
+  // Water quality: submission report §§6–8; manual renaming clarified by Nawaf.
   'water-quality': {
-    accent: 'teal',
-    title: 'From a broken API to twenty benchmarked runs',
+    accent: 'teal', title: 'From monitoring records to a controlled benchmark',
     stages: [
-      { n: '01', k: 'Collect',
-        name: 'Environment Agency data',
-        d: 'The upstream EA endpoint was deprecated mid-project. Ingestion was rebuilt in Colab against the new beta endpoint, auto-downloading 364 monthly CSVs across 26 years and 14 regions.',
-        stat: '364 CSVs', note: '26 years · 14 regions' },
-
-      { n: '02', k: 'Organise',
-        name: 'Batch rename & verify',
-        d: 'A PowerShell pass renamed every file by region prefix and year. A validation script ran before training and caught a year-number mismatch in the Thames data.',
-        stat: '1 bug caught', note: 'verification before training' },
-
-      { n: '03', k: 'Clean',
-        name: 'Missing values & types',
-        d: 'Missing-value handling and type coercion across all five parameters — applied identically for every model so that architecture, not preprocessing, is the variable under test.',
-        stat: '5 parameters', note: 'identical for all four models' },
-
-      { n: '04', k: 'Reshape',
-        name: 'Long to wide',
-        // TODO(copy-review): described by Nawaf in conversation, 6 Sep 2026 —
-        // the published methodology names the preprocessing steps but not the
-        // reshape explicitly. Confirm wording.
-        d: 'Readings arrive one row per measurement. They are pivoted from long to wide so each timestamp carries all five parameters as columns — the shape a tabular regressor needs.',
-        stat: 'long → wide', note: 'one row per timestamp' },
-
-      { n: '05', k: 'Engineer',
-        name: 'Lag features',
-        d: 'Time features generated from the series itself: autocorrelative lag features plus standardisation. Only lag features are used — no external rainfall or discharge signal.',
-        stat: 'lag + scale', note: 'autocorrelative only' },
-
-      { n: '06', k: 'Split',
-        name: 'Chronological, never random',
-        d: 'Train on 2000–2017, test on 2018–2025. A random split would let the model see the future; forecasting cannot.',
-        stat: '27M / 6M', note: 'train / test rows, all 20 runs' },
-
-      { n: '07', k: 'Benchmark',
-        name: 'Four models × five parameters',
-        d: 'Ridge, Random Forest, MLP and XGBoost, each run against all five targets under the same preprocessing and the same split.',
-        stat: '20 runs', note: 'like-for-like comparison' },
-
-      { n: '08', k: 'Evaluate',
-        name: 'R² · RMSE · MAE',
-        d: 'Three error metrics per combination. Nine of twenty land below zero — worse than predicting the mean — and they are reported, because they are the result.',
-        stat: 'R² 0.785', note: 'XGBoost × Water Temperature' },
+      {n:'01',k:'Collect',name:'Environment Agency records',d:'Monitoring records from 2000–2025 across 14 Environment Agency areas in England, organised by area and year.',stat:'26 years',note:'14 areas · England'},
+      {n:'02',k:'Organise',name:'Manual rename & review',d:'I renamed the downloaded files manually and spotted my own naming mistake: the Thames 2000 and 2001 files were swapped. I corrected them before constructing the final dataset.',stat:'2000 / 2001',note:'Thames filenames corrected manually'},
+      {n:'03',k:'Clean',name:'Handle censored measurements',d:'Retain the five selected parameters. Treat readings marked < or > as missing, because detection limits are not exact measurements.',stat:'5 parameters',note:'avoid false numerical precision'},
+      {n:'04',k:'Reshape',name:'Long to wide',d:'Reshape individual measurements into columns for each sampling point and date. Each target uses its own valid subset, so sample counts differ between targets.',stat:'long → wide',note:'one modelling table per target'},
+      {n:'05',k:'Engineer',name:'Water measurements + calendar features',d:'Predict one parameter using the other four selected water-quality measurements plus year, month and day extracted from the observation date.',stat:'4 + 3 inputs',note:'water parameters + calendar features'},
+      {n:'06',k:'Split',name:'Evaluate on later observations',d:'Train on 2000–2017 and test on 2018–2025. Approximately 6.7 million training and 1.6 million testing samples across the five target datasets, not multiplied by four models.',stat:'6.7M / 1.6M',note:'train / test · approximate target totals'},
+      {n:'07',k:'Benchmark',name:'Four models × five targets',d:'Benchmark Ridge, Random Forest, MLP and XGBoost within the IBM SPSS Modeler workflow. Python, Pandas and NumPy support preparation; scikit-learn and XGBoost support modelling and evaluation.',stat:'20 combinations',note:'shared split and inputs within each target'},
+      {n:'08',k:'Evaluate',name:'Metrics, plots and Power BI',d:'Compare R², RMSE and MAE for every combination. Present the results in the report and an interactive Power BI dashboard. XGBoost leads on R² for four targets; Ridge leads on BOD, although all BOD R² scores are negative.',stat:'R² 0.785',note:'best result · XGBoost × water temperature'},
     ],
   },
 

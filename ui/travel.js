@@ -90,7 +90,8 @@ export function initTravel({ field, scenes, destinations, env, onEnter, startInd
   function offsetOf(i) { return segs[i] ? segs[i].start : 0; }
 
   function apply() {
-    raf = 0;
+      raf = 0;
+      if (!enabled) return;
     const y = scrollY;
 
     // find the segment we are in
@@ -171,7 +172,8 @@ export function initTravel({ field, scenes, destinations, env, onEnter, startInd
   function disable() {
     if (!enabled) return;
     enabled = false;
-    delete document.documentElement.dataset.travel;
+      if (raf) { cancelAnimationFrame(raf); raf = 0; }
+      delete document.documentElement.dataset.travel;
     removeEventListener('scroll', onScroll);
     track.style.height = '0px';
     for (const sc of scenes) {

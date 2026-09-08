@@ -31,9 +31,9 @@ const wants3D = () =>
  * @param {Array} items  {id, kicker, title, lede, stat, statLabel, accent, hex,
  *                        image?, href?, open?}
  */
-export function buildGallery(items, { onOpen }) {
+export function buildGallery(items, { onOpen, label = 'Work' }) {
   let active = 0;
-  const root = h('section', { class: 'gal', 'aria-label': 'Work' });
+  const root = h('section', { class: 'gal', 'aria-label': label });
 
   const use3D = wants3D();
   const canvas = use3D ? h('canvas', { class: 'gal-canvas', 'aria-hidden': 'true' }) : null;

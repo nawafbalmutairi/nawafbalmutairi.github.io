@@ -16,47 +16,128 @@ export const targets = [
 
 // [target][model] -> { r2, rmse, mae }
 // src: ml-water-quality-benchmark/docs/index.html, results table
+// Submission report, Table 1. Order: Ridge, Random Forest, MLP, XGBoost.
 export const results = [
-  [ // Nitrate as N
-    { r2: -0.007, rmse: 22.13, mae: 7.90 },
-    { r2: -0.322, rmse: 16.36, mae: 5.03 },
-    { r2: -1.420, rmse: 14.28, mae: 4.71 },
-    { r2: +0.021, rmse: 14.08, mae: 4.34 },
+  [
+    {
+      "r2": -0.007,
+      "rmse": 14.279,
+      "mae": 4.709
+    },
+    {
+      "r2": -0.322,
+      "rmse": 16.357,
+      "mae": 5.031
+    },
+    {
+      "r2": -1.42,
+      "rmse": 22.13,
+      "mae": 7.905
+    },
+    {
+      "r2": 0.021,
+      "rmse": 14.075,
+      "mae": 4.344
+    }
   ],
-  [ // BOD: 5 Day ATU
-    { r2: -0.007, rmse: 379.93, mae: 89.53 },
-    { r2: -3.487, rmse: 779.77, mae: 83.33 },
-    { r2: -0.065, rmse: 369.34, mae: 95.69 },
-    { r2: -0.269, rmse: 414.71, mae: 75.23 },
+  [
+    {
+      "r2": -0.007,
+      "rmse": 369.339,
+      "mae": 95.691
+    },
+    {
+      "r2": -3.487,
+      "rmse": 779.768,
+      "mae": 83.334
+    },
+    {
+      "r2": -0.065,
+      "rmse": 379.928,
+      "mae": 89.534
+    },
+    {
+      "r2": -0.269,
+      "rmse": 414.71,
+      "mae": 75.232
+    }
   ],
-  [ // Water Temperature
-    { r2: +0.106, rmse: 9.80, mae: 8.16 },
-    { r2: +0.729, rmse: 2.38, mae: 1.84 },
-    { r2: -3.611, rmse: 4.31, mae: 3.44 },
-    { r2: +0.785, rmse: 2.12, mae: 1.61 },   // the one pairing that cleared the bar
+  [
+    {
+      "r2": 0.106,
+      "rmse": 4.315,
+      "mae": 3.441
+    },
+    {
+      "r2": 0.729,
+      "rmse": 2.377,
+      "mae": 1.815
+    },
+    {
+      "r2": -3.611,
+      "rmse": 9.799,
+      "mae": 8.161
+    },
+    {
+      "r2": 0.785,
+      "rmse": 2.116,
+      "mae": 1.607
+    }
   ],
-  [ // Dissolved Oxygen
-    { r2: +0.357, rmse: 1.71, mae: 1.21 },
-    { r2: +0.179, rmse: 2.10, mae: 1.21 },
-    { r2: +0.460, rmse: 1.86, mae: 1.33 },
-    { r2: +0.503, rmse: 1.64, mae: 1.13 },
+  [
+    {
+      "r2": 0.357,
+      "rmse": 1.861,
+      "mae": 1.334
+    },
+    {
+      "r2": 0.179,
+      "rmse": 2.103,
+      "mae": 1.214
+    },
+    {
+      "r2": 0.46,
+      "rmse": 1.706,
+      "mae": 1.211
+    },
+    {
+      "r2": 0.503,
+      "rmse": 1.636,
+      "mae": 1.129
+    }
   ],
-  [ // pH
-    { r2: -0.012, rmse: 0.42, mae: 0.29 },
-    { r2: +0.163, rmse: 0.30, mae: 0.23 },
-    { r2: +0.083, rmse: 0.28, mae: 0.23 },
-    { r2: +0.225, rmse: 0.37, mae: 0.25 },
-  ],
+  [
+    {
+      "r2": -0.012,
+      "rmse": 0.418,
+      "mae": 0.294
+    },
+    {
+      "r2": 0.163,
+      "rmse": 0.38,
+      "mae": 0.261
+    },
+    {
+      "r2": 0.083,
+      "rmse": 0.398,
+      "mae": 0.281
+    },
+    {
+      "r2": 0.225,
+      "rmse": 0.366,
+      "mae": 0.247
+    }
+  ]
 ];
 
 export const best = { target: 2, model: 3 };   // Water Temperature × XGBoost
 
-// src(pre-redesign index.html #journey) — the six stages of the pipeline.
+// Compact view of the same submission-backed workflow.
 export const pipeline = [
-  { n: '01', k: 'DATA',          v: '8.3M samples', d: '26 years of Environment Agency readings across 14 regions.' },
-  { n: '02', k: 'PREPROCESSING', v: '364 CSVs',     d: 'The upstream API was deprecated mid-project. Rebuilt ingestion in Colab.' },
-  { n: '03', k: 'FEATURES',      v: '2000 → 2025',  d: 'Chronological split, never random. Forecasting cannot see the future.' },
-  { n: '04', k: 'MODELS',        v: '4 × 5 runs',   d: 'Ridge, Random Forest, MLP, XGBoost — identical preprocessing throughout.' },
-  { n: '05', k: 'EVALUATION',    v: 'R² · RMSE · MAE', d: 'Three error metrics per combination, twenty combinations.' },
-  { n: '06', k: 'RESULTS',       v: 'R² 0.785',     d: 'One pairing of twenty cleared the threshold. A dashboard is only useful if it ends in an action.' },
+ {n:'01',k:'DATA',v:'14 areas',d:'Environment Agency records from 2000–2025, organised by area and year.'},
+ {n:'02',k:'PREPROCESSING',v:'Long → wide',d:'Treat censored values as missing and retain target-specific valid records.'},
+ {n:'03',k:'INPUTS',v:'4 + 3 features',d:'Other four measurements plus year, month and day; train 2000–2017, test 2018–2025.'},
+ {n:'04',k:'MODELS',v:'4 × 5',d:'Ridge, Random Forest, MLP and XGBoost in a consistent benchmark workflow.'},
+ {n:'05',k:'EVALUATION',v:'R² · RMSE · MAE',d:'All twenty combinations reported in the study and Power BI dashboard.'},
+ {n:'06',k:'RESULTS',v:'Best R² 0.785',d:'XGBoost leads on four targets. All models struggle with BOD.'},
 ];

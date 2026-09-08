@@ -83,13 +83,13 @@
   transition: filter 200ms var(--ease), transform 200ms var(--ease);
 }
 
-#p-gallery { left: 0; right: 0; top: 0; bottom: 0; }
-#p-gallery .panel-in { height: 100%; display: flex; flex-direction: column; padding: 20px; }
+:is(#p-gallery, .ribbon-panel) { left: 0; right: 0; top: 0; bottom: 0; }
+:is(#p-gallery, .ribbon-panel) .panel-in { height: 100%; display: flex; flex-direction: column; padding: 20px; }
 
 @media (max-width: 1100px) {
   .gal { height: auto; grid-template-rows: none; }
   .gal-stage { display: none; }
-  #p-gallery .panel-in { height: auto; }
+  :is(#p-gallery, .ribbon-panel) .panel-in { height: auto; }
 }
 @media (prefers-reduced-motion: reduce) {
   .gal-stage { display: none; }
@@ -124,14 +124,14 @@
    has actually booted. Without that guard a blocked WebGL context left an
    opaque, empty room with the strip stranded at the bottom of it.
    ═══════════════════════════════════════════════════════════════════ */
-#p-gallery {
+:is(#p-gallery, .ribbon-panel) {
   background: transparent !important;
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
   box-shadow: none !important;
 }
-#p-gallery .panel-in { padding: 0; height: 100%; }
-#p-gallery .gal { position: relative; }
+:is(#p-gallery, .ribbon-panel) .panel-in { padding: 0; height: 100%; }
+:is(#p-gallery, .ribbon-panel) .gal { position: relative; }
 
 /* Desktop only, all of it. Below 1101px the destination is a scrolling
    column and none of this applies — a stray :not() that outranked the
@@ -139,14 +139,14 @@
    phone screen. */
 @media (min-width: 1101px) {
   /* No room: no floating. The section is a project list, and it reads. */
-  #p-gallery .gal:not([data-gl]) {
+  :is(#p-gallery, .ribbon-panel) .gal:not([data-gl]) {
     display: flex; flex-direction: column; justify-content: flex-end;
     gap: 12px; height: 100%;
   }
-  #p-gallery .gal:not([data-gl]) .gal-stage { display: none; }
+  :is(#p-gallery, .ribbon-panel) .gal:not([data-gl]) .gal-stage { display: none; }
 
-  #p-gallery .gal[data-gl] { display: block; height: 100%; gap: 0; }
-  #p-gallery .gal[data-gl] .gal-stage {
+  :is(#p-gallery, .ribbon-panel) .gal[data-gl] { display: block; height: 100%; gap: 0; }
+  :is(#p-gallery, .ribbon-panel) .gal[data-gl] .gal-stage {
     position: absolute; inset: 0; z-index: 0;
     border-radius: 0; height: auto; min-height: 0;
   }
@@ -155,7 +155,7 @@
 /* Under travel the scene no longer clips, so the room runs to the edges of
    the window and the rail and the dock float on it — the room is the window,
    and the chrome is furniture standing in it. */
-html[data-travel] #p-gallery .gal[data-gl] .gal-stage {
+html[data-travel] :is(#p-gallery, .ribbon-panel) .gal[data-gl] .gal-stage {
   top: calc(var(--gutter-t) * -1);
   right: calc(var(--gutter-r) * -1);
   bottom: calc(var(--gutter-b) * -1);
@@ -188,13 +188,13 @@ html[data-travel] #p-gallery .gal[data-gl] .gal-stage {
    and at 10.24px it was under the legibility floor too. On the keyboard-only
    route, of all places. The list now looks like every other tab list on this
    site: our pills, our type scale, sentence case. */
-#p-gallery .gal[data-gl] .gal-rail {
+:is(#p-gallery, .ribbon-panel) .gal[data-gl] .gal-rail {
   position: absolute; z-index: 2; left: 0; right: 0; bottom: 44px;
   margin: 0; padding: 0; gap: 6px;
   height: 1px; overflow: hidden;
   clip-path: inset(50%); pointer-events: none;
 }
-#p-gallery .gal[data-gl] .gal-rail:focus-within {
+:is(#p-gallery, .ribbon-panel) .gal[data-gl] .gal-rail:focus-within {
   height: auto; overflow-x: auto; clip-path: none; pointer-events: auto;
   padding: 0 2px 4px;
 }
@@ -207,7 +207,7 @@ html[data-travel] #p-gallery .gal[data-gl] .gal-stage {
    It stays in the DOM in full — name, kind, lede, count, the open button — and
    comes back the moment a keyboard reaches it, exactly like the project list
    above. Nothing is lost to a screen reader or to find-in-page. */
-#p-gallery .gal[data-gl] .gal-detail {
+:is(#p-gallery, .ribbon-panel) .gal[data-gl] .gal-detail {
   position: absolute; z-index: 2; left: 0; right: 0; bottom: 0;
   padding: 0; background: none;
   backdrop-filter: none; -webkit-backdrop-filter: none;
@@ -215,7 +215,7 @@ html[data-travel] #p-gallery .gal[data-gl] .gal-stage {
   height: 1px; overflow: hidden;
   clip-path: inset(50%); pointer-events: none;
 }
-#p-gallery .gal[data-gl] .gal-detail:focus-within {
+:is(#p-gallery, .ribbon-panel) .gal[data-gl] .gal-detail:focus-within {
   height: auto; overflow: visible; clip-path: none; pointer-events: auto;
   padding: 13px 17px;
   background: rgba(6, 9, 13, 0.72);
@@ -223,32 +223,32 @@ html[data-travel] #p-gallery .gal[data-gl] .gal-stage {
   -webkit-backdrop-filter: blur(26px) saturate(1.3);
   box-shadow: inset 0 1px 0 rgba(255,255,255,0.12), inset 0 0 0 1px rgba(255,255,255,0.05);
 }
-#p-gallery .gal[data-gl] .gal-detail-head { margin: 0; }
-#p-gallery .gal[data-gl] .gal-title { margin: 3px 0 0; }
-#p-gallery .gal[data-gl] .gal-nav { background: rgba(255, 255, 255, 0.08); }
+:is(#p-gallery, .ribbon-panel) .gal[data-gl] .gal-detail-head { margin: 0; }
+:is(#p-gallery, .ribbon-panel) .gal[data-gl] .gal-title { margin: 3px 0 0; }
+:is(#p-gallery, .ribbon-panel) .gal[data-gl] .gal-nav { background: rgba(255, 255, 255, 0.08); }
 
 /* Present, not shown: the face is carrying these, and clicking the panel is
    how you open a project — the same gesture the reference uses. */
-#p-gallery .gal[data-gl] .gal-lede,
-#p-gallery .gal[data-gl] .gal-foot {
+:is(#p-gallery, .ribbon-panel) .gal[data-gl] .gal-lede,
+:is(#p-gallery, .ribbon-panel) .gal[data-gl] .gal-foot {
   position: absolute; width: 1px; height: 1px;
   margin: -1px; padding: 0; border: 0;
   clip-path: inset(50%); overflow: hidden; white-space: nowrap;
 }
 /* …except to a keyboard, where the button is the only way in. */
-#p-gallery .gal[data-gl] .gal-foot:focus-within {
+:is(#p-gallery, .ribbon-panel) .gal[data-gl] .gal-foot:focus-within {
   position: static; width: auto; height: auto;
   margin: 8px 0 0; clip-path: none; white-space: normal;
 }
 
-#p-gallery .gal-detail {
+:is(#p-gallery, .ribbon-panel) .gal-detail {
   padding: 13px 17px;
   background: rgba(6, 9, 13, 0.66);
   backdrop-filter: blur(26px) saturate(1.3);
   -webkit-backdrop-filter: blur(26px) saturate(1.3);
   box-shadow: inset 0 1px 0 rgba(255,255,255,0.12), inset 0 0 0 1px rgba(255,255,255,0.05);
 }
-#p-gallery .gal-lede { max-width: 92ch; }
+:is(#p-gallery, .ribbon-panel) .gal-lede { max-width: 92ch; }
 
 /* ─── hover, gated on a pointer that can actually hover ───────────
    docs/motion-spec.md §6: the reference gates its entire hover system
@@ -260,48 +260,49 @@ html[data-travel] #p-gallery .gal[data-gl] .gal-stage {
   .gal-tab:hover { background: rgba(255,255,255,0.1); }
   .gal-nav:hover:not(:disabled) { background: rgba(255,255,255,0.16); }
   .gal-open:hover { filter: brightness(1.12); transform: translateY(-1px); }
-  #p-gallery .gal[data-gl] .gal-tab:hover { background: none; color: var(--ink); }
+  :is(#p-gallery, .ribbon-panel) .gal[data-gl] .gal-tab:hover { background: none; color: var(--ink); }
 }
 
 /* The enhanced Work view adopts the reference's quiet, edge-aligned chrome.
    Scope to a successfully mounted desktop canvas so the fallback stays usable. */
 @media (min-width: 1101px) {
-  html:has(.scene[data-id="work"][data-active] .gal[data-gl]) { scrollbar-width: none; }
-  html:has(.scene[data-id="work"][data-active] .gal[data-gl])::-webkit-scrollbar { display: none; }
-  html[data-travel] #p-gallery .gal[data-gl] .gal-stage { background: #000; }
+  html:has(.scene[data-active] :is(.gal[data-gl], .spatial-experience[data-ready])) { scrollbar-width: none; }
+  html:has(.scene[data-active] :is(.gal[data-gl], .spatial-experience[data-ready]))::-webkit-scrollbar { display: none; }
+  /* Reveal the same environment plate used by Identity and Stack. */
+  html[data-travel] :is(#p-gallery, .ribbon-panel) .gal[data-gl] .gal-stage { background: transparent; }
   body:has(.gal[data-gl]) .sig-work { display: none; }
-  body:has(.scene[data-id="work"][data-active] .gal[data-gl]) .rail {
+  body:has(.scene[data-active] :is(.gal[data-gl], .spatial-experience[data-ready])) .rail {
     top: 5vh; left: 5.2vw; right: 5.2vw; width: auto; padding: 0;
     transform: none; border-radius: 0; background: none; box-shadow: none;
     backdrop-filter: none; -webkit-backdrop-filter: none; overflow: visible;
   }
-  body:has(.scene[data-id="work"][data-active] .gal[data-gl]) .rail .panel-in {
+  body:has(.scene[data-active] :is(.gal[data-gl], .spatial-experience[data-ready])) .rail .panel-in {
     display: flex; justify-content: space-between; align-items: center; padding: 0;
   }
-  body:has(.scene[data-id="work"][data-active] .gal[data-gl]) .rail-mark {
+  body:has(.scene[data-active] :is(.gal[data-gl], .spatial-experience[data-ready])) .rail-mark {
     padding: 0; margin: 0; border: 0;
   }
-  body:has(.scene[data-id="work"][data-active] .gal[data-gl]) .rail-mark b {
+  body:has(.scene[data-active] :is(.gal[data-gl], .spatial-experience[data-ready])) .rail-mark b {
     font-size: 12px; text-transform: uppercase; white-space: nowrap;
   }
-  body:has(.scene[data-id="work"][data-active] .gal[data-gl]) .rail-mark span,
-  body:has(.scene[data-id="work"][data-active] .gal[data-gl]) .rail .n,
-  body:has(.scene[data-id="work"][data-active] .gal[data-gl]) .rail::after { display: none; }
-  body:has(.scene[data-id="work"][data-active] .gal[data-gl]) .rail ol { display: flex; gap: 20px; }
-  body:has(.scene[data-id="work"][data-active] .gal[data-gl]) .rail button {
+  body:has(.scene[data-active] :is(.gal[data-gl], .spatial-experience[data-ready])) .rail-mark span,
+  body:has(.scene[data-active] :is(.gal[data-gl], .spatial-experience[data-ready])) .rail .n,
+  body:has(.scene[data-active] :is(.gal[data-gl], .spatial-experience[data-ready])) .rail::after { display: none; }
+  body:has(.scene[data-active] :is(.gal[data-gl], .spatial-experience[data-ready])) .rail ol { display: flex; gap: 20px; }
+  body:has(.scene[data-active] :is(.gal[data-gl], .spatial-experience[data-ready])) .rail button {
     display: block; padding: 6px 0; font-size: 12px; text-transform: uppercase;
     border-radius: 0; background: none; box-shadow: none;
   }
-  body:has(.scene[data-id="work"][data-active] .gal[data-gl]) .dock {
+  body:has(.scene[data-active] :is(.gal[data-gl], .spatial-experience[data-ready])) .dock {
     left: auto; right: 5.2vw; bottom: 5vh; padding: 0; transform: none;
     background: none; box-shadow: none; backdrop-filter: none; border-radius: 0;
   }
-  body:has(.scene[data-id="work"][data-active] .gal[data-gl]) .dock a {
+  body:has(.scene[data-active] :is(.gal[data-gl], .spatial-experience[data-ready])) .dock a {
     padding: 6px 8px; font-size: 12px; text-transform: uppercase;
   }
-  body:has(.scene[data-id="work"][data-active] .gal[data-gl]) .dock .sep { display: none; }
-  #p-gallery .gal[data-gl] .gal-hint { left: 5.2vw; right: auto; bottom: 5vh; font-size: 11px; letter-spacing: 0.02em; color: #999; }
-  #p-gallery { transform: none !important; }
+  body:has(.scene[data-active] :is(.gal[data-gl], .spatial-experience[data-ready])) .dock .sep { display: none; }
+  :is(#p-gallery, .ribbon-panel) .gal[data-gl] .gal-hint { left: 5.2vw; right: auto; bottom: 5vh; font-size: 11px; letter-spacing: 0.02em; color: #999; }
+  :is(#p-gallery, .ribbon-panel) { transform: none !important; }
 }
 
 /* Project panels unfold into an editorial page, continuous with the gallery. */

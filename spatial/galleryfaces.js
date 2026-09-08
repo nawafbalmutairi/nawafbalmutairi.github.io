@@ -1,5 +1,6 @@
 // Art-directed project covers, drawn as native canvas graphics. These are
 // portfolio compositions, not screenshots or reproductions of project UIs.
+import { drawSectionFace } from './sectionfaces.js';
 const W = 1400, H = 1050;
 const SANS = '"Instrument Sans", sans-serif';
 function text(x, value, px, py, size = 24, color = '#fff', font = SANS, weight = 500) {
@@ -39,7 +40,7 @@ function water(x, item, time) {
   text(x, 'A machine-learning study of UK water quality.', 73, 558, 25, '#315e54');
   box(x, 75, 651, 570, 205, '#163f3a', 6);
   text(x, item.stat, 103, 757, 96, '#e6f4df');
-  text(x, 'ENVIRONMENT AGENCY SAMPLES', 106, 806, 20, '#a7cdb7');
+  text(x, 'TARGET SAMPLES / APPROX. TOTAL', 106, 806, 20, '#a7cdb7');
   box(x, 810, 618, 415, 216, '#f6f8e9', 6);
   text(x, 'XGBOOST × WATER TEMPERATURE', 839, 660, 18, '#45655c');
   text(x, '+0.785', 835, 756, 88, '#163f3a');
@@ -130,7 +131,7 @@ function retail(x,item,time) {
 function register(x,item,time) {
   box(x,0,0,W,H,'#dfe6ef'); header(x,'ABONA TARN / OPERATIONS','ITIL 4  /  CONFIGURATION MANAGEMENT','#233b5d');
   text(x,'Everything',64,251,133,'#233b5d'); text(x,'in its place.',64,387,133,'#233b5d');
-  const metrics=[[String(item.figs?.stores||87),'STORES'],[String(item.figs?.kpis||7),'DESIGNED KPIs'],[item.figs?.accuracy||'95%+','CI ACCURACY']];
+  const metrics=[[String(item.figs?.stores||87),'STORES'],[String(item.figs?.kpis||7),'DESIGNED KPIs'],[item.figs?.accuracy||'95%+','CI ACCURACY TARGET']];
   metrics.forEach(([value,label],i)=>{
     const px=72+i*430;
     box(x,px,519,398,290,['#263e60','#597999','#f8f7ef'][i],12);
@@ -215,6 +216,7 @@ function detail(x,item,time) {
 }
 
 export function drawGalleryFace(item, dpr = 1, time = 0, existing = null) {
+  if (item.sectionKind) return drawSectionFace(item,dpr,time,existing);
   const c = existing || document.createElement('canvas');
   if (!existing) { c.width=W*dpr; c.height=H*dpr; }
   const x=c.getContext('2d'); x.setTransform(dpr,0,0,dpr,0,0);

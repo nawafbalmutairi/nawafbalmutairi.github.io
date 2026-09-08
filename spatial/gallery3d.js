@@ -75,7 +75,7 @@ export async function createGallery({ canvas, items, onFocus, onOpen }) {
 
   const scene = new THREE.Scene();
   // Depth cue for the floor: the grid dissolves rather than ending at an edge.
-  scene.fog = new THREE.Fog(0x000000, 8, 28);
+  scene.fog = new THREE.Fog(0x0e141b, 8, 28);
 
   // Match the reference ribbon height against the full viewport.
   const camera = new THREE.PerspectiveCamera(53.4, 2, 0.1, 120);
@@ -83,11 +83,11 @@ export async function createGallery({ canvas, items, onFocus, onOpen }) {
   camera.position.set(0, CAM_Y, CAM_Z);
 
   /* ── the floor: a grid running away under the work ──────────────── */
-  const grid = new THREE.GridHelper(100, 100, 0x282727, 0x282727);
+  const grid = new THREE.GridHelper(100, 100, 0x647386, 0x647386);
   grid.position.y = -2.08;
   grid.rotation.y = 0.13;
   grid.material.transparent = true;
-  grid.material.opacity = 0.65;
+  grid.material.opacity = 0.35;
   grid.material.fog = true;
   scene.add(grid);
 
@@ -205,7 +205,7 @@ export async function createGallery({ canvas, items, onFocus, onOpen }) {
       m.visible = (facing > 0.004) || isOpening;
 
     }
-    grid.material.opacity = 0.65 * (opening < 0 ? 1 : 1 - openT);
+    grid.material.opacity = 0.35 * (opening < 0 ? 1 : 1 - openT);
   }
 
 

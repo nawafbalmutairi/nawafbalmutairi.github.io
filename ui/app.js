@@ -12,6 +12,7 @@ import { buildJourney } from '../spatial/pipeline.js';
 import { initTravel } from './travel.js';
 import { buildGallery } from '../spatial/gallery.js';
 import { itemFor } from '../spatial/faceitem.js';
+import { buildSpatialExperience } from './spatial-experience.js';
 import { buildProjectStory } from './project-story.js';
 
 // The three projects that produced a real artefact. Module scope because both
@@ -190,107 +191,23 @@ function sceneWork() {
 }
 
 /* ═══ 03 — STACK ═══════════════════════════════════════════════════
-   Four clusters at four depths. Weight comes from the data, so the
-   tools used daily are literally nearer the camera. */
-function sceneStack() {
-  const s = h('section', { class: 'scene', data: { id: 'stack' }, 'aria-label': 'Stack' });
-  const place = [
-    { id: 'p-stack-a', plane: 'near', tilt: -4 },
-    { id: 'p-stack-b', plane: 'mid',  tilt: 3, rot: 0.8 },
-    { id: 'p-stack-c', plane: 'mid',  tilt: -2 },
-    { id: 'p-stack-d', plane: 'far',  tilt: 5, rot: -1 },
-  ];
-  groups.forEach((g, i) => {
-    const cfg = place[i];
-    const p = panel({ plane: cfg.plane, tilt: cfg.tilt, rot: cfg.rot });
-    p.id = cfg.id;
-    p.content.append(
-      h('div', { class: 't-label', text: `0${i + 1} · ${g.note}` }),
-      h('h3', { class: 't-h3', style: 'margin-top:8px', text: g.label }),
-      h('div', { class: 'tools' },
-        g.tools.map(t => h('span', { class: 'tool', data: { w: String(t.w) }, text: t.n }))),
-    );
-    s.append(p);
-  });
-  return s;
+   Browse disciplines, then inspect the projects where they were applied. */
+function experienceScene(kind, entries) {
+ const s=h('section',{class:'scene',data:{id:kind},'aria-label':kind==='stack'?'Stack':'Journey'});
+ const p=panel({plane:'near'});p.classList.add('experience-panel');
+ p.content.append(buildSpatialExperience({kind,entries,onProject:openStudy,certificates:certificates.items}));s.append(p);return s;
 }
-
-
-/* A horizontal track is only usable if it can actually be driven. A vertical
-   wheel does nothing to one by default, and the right-hand stops were simply
-   unreachable — so the wheel is mapped onto it, arrows are provided for the
-   pointer, and the whole strip stays keyboard-focusable. */
-function trackWrap(...stops) {
-  const track = h('div', {
-    class: 'track', tabindex: '0', role: 'group',
-    'aria-label': 'Timeline — scroll or use the arrows to move through it',
-  }, ...stops);
-
-  const page = dir => track.scrollBy({ left: dir * Math.round(track.clientWidth * 0.8), behavior: 'smooth' });
-
-  const prev = h('button', { class: 'track-nav prev', type: 'button',
-    'aria-label': 'Earlier', onclick: () => page(-1) }, '←');
-  const next = h('button', { class: 'track-nav next', type: 'button',
-    'aria-label': 'Later', onclick: () => page(1) }, '→');
-
-  track.addEventListener('wheel', e => {
-    // Only hijack a vertical wheel while the track still has somewhere to go,
-    // so the destination itself can still be scrolled at either end.
-    if (Math.abs(e.deltaY) <= Math.abs(e.deltaX)) return;
-    const max = track.scrollWidth - track.clientWidth;
-    const next2 = track.scrollLeft + e.deltaY;
-    if (next2 < 0 || next2 > max) return;
-    e.preventDefault();
-    track.scrollLeft = next2;
-    sync();
-  }, { passive: false });
-
-  track.addEventListener('scroll', sync, { passive: true });
-
-  function sync() {
-    const max = track.scrollWidth - track.clientWidth;
-    prev.disabled = track.scrollLeft < 4;
-    next.disabled = track.scrollLeft > max - 4;
-    wrap.dataset.more = next.disabled ? 'no' : 'yes';
-  }
-
-  const wrap = h('div', { class: 'track-wrap' }, track, prev, next);
-  requestAnimationFrame(sync);
-  addEventListener('resize', sync, { passive: true });
-  return wrap;
+function evidence(ids){return ids.map(id=>({id,title:itemFor(id).short||itemFor(id).title}));}
+function sceneStack(){
+ const projects=[['water-quality','nvidia-bi','US Retail Sales Analysis'],['water-quality','face-classifier'],['Conference Microservices'],['UCD Work-Life App','ITIL Config Management']];
+ const descriptions=['I turn raw records into comparable data, then into decisions: cleaning in Python, modelling with SQL and DAX, and communicating through Power BI.','I build reproducible comparisons: consistent preparation, explicit evaluation, and reporting failures alongside the strongest results.','I explore how systems fit together: service boundaries, interfaces, storage and deployment. These tools support my software architecture coursework.','I connect implementation to people and operations: research and prototypes in UCD, configuration management with ITIL, and version control throughout.'];
+ const names=['Data / BI','Machine learning','Architecture','Process / design'];
+ return experienceScene('stack',groups.map((g,i)=>({label:names[i],sceneLabel:names[i].toUpperCase(),title:g.label,eyebrow:g.note,description:descriptions[i],tools:g.tools.map(t=>t.n),projects:evidence(projects[i])})));
 }
-
-/* ═══ 04 — JOURNEY ═════════════════════════════════════════════════ */
-function sceneJourney() {
-  const s = h('section', { class: 'scene', data: { id: 'journey' }, 'aria-label': 'Journey' });
-  const p = panel({ plane: 'near' });
-  p.id = 'p-journey';
-  p.content.append(
-    h('div', {},
-      h('div', { class: 't-label', text: 'Journey' }),
-      h('h2', { class: 't-h1', style: 'margin-top:8px', text: 'Sep 2023 → now.' })),
-    trackWrap(
-      journey.map(j =>
-        h('article', { class: 'stop', data: { kind: j.kind } },
-          h('div', { class: 't', text: j.t }),
-          h('h3', { text: j.title }),
-          h('p', { class: 't-small', style: 'margin:0', text: j.d }))),
-      ),
-  );
-
-  // Certificates are a different kind of fact from a dated milestone, so they
-  // sit as their own object rather than as one more stop on the track.
-  const c = panel({ plane: 'mid', tilt: 4 });
-  c.id = 'p-certs';
-  c.content.append(
-    h('div', { class: 't-label', text: certificates.note }),
-    h('h3', { class: 't-h3', style: 'margin:8px 0 10px', text: certificates.label }),
-    h('div', { class: 'tags' },
-      certificates.items.map(i => h('span', { class: 'tag', text: i }))),
-  );
-
-  s.append(p, c);
-  return s;
+function sceneJourney(){
+ const projects=[[],['US Retail Sales Analysis'],['face-classifier'],['nvidia-bi'],['Conference Microservices','ITIL Config Management','UCD Work-Life App'],['water-quality'],[],[]];
+ const facts=[null,['2,121','transactions analysed'],['86.67%','real-time inference accuracy'],['96.4%','forecast accuracy'],['3','connected coursework disciplines'],['20','model × target experiments'],null,null];
+ return experienceScene('journey',journey.map((j,i)=>({label:j.t,title:j.title,eyebrow:j.kind==='edu'?'Education':j.kind==='now'?'The next chapter':'Applied learning',description:j.d,projects:evidence(projects[i]),fact:facts[i],showCertificates:i===6})));
 }
 
 /* ═══ 05 — CONTACT ═════════════════════════════════════════════════ */

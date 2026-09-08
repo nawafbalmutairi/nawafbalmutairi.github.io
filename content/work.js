@@ -14,26 +14,19 @@ export const cases = [
     kind: 'Machine Learning · Dissertation',
     // src(pre-redesign index.html #case-01)
     meta: 'KV6013 · 2026 · Final-year project',
-    title: 'Four models, five parameters, one that worked.',
+    title: 'Four models. Five targets. Measured results.',
     lede:
-      'Benchmarking four machine-learning models on 8.3 million UK Environment ' +
-      'Agency water-quality samples, 2000–2025.',
-    body:
-      'Mid-project the upstream API was deprecated, so I rebuilt ingestion in ' +
-      'Colab, batch-renamed 364 CSVs across 14 regions, and ran a chronological ' +
-      'train/test split to benchmark Ridge, Random Forest, MLP and XGBoost. ' +
-      'The break became a system-design problem.',
-    stack: ['Python', 'XGBoost', 'scikit-learn', 'PyTorch', 'Pandas', 'Power BI'],
-    // src(pre-redesign index.html #case-01, #journey)
+      'Benchmarking four machine-learning models on approximately 8.3 million target-specific ' +
+      'samples from Environment Agency records, 2000–2025.',
+    body: 'I prepared monitoring records from 14 areas in England, handled censored readings, and reshaped the data from long to wide. Each target uses the other four measurements plus year, month and day. Four models are compared on a shared chronological split, with results presented in Power BI.',
+    stack: ['Python', 'Pandas', 'NumPy', 'scikit-learn', 'XGBoost', 'IBM SPSS Modeler', 'Matplotlib', 'Power BI'],
     figures: [
-      { k: 'Samples',            v: '8.3M',  n: 'UK Environment Agency, 2000–2025' },
-      { k: 'Train rows',         v: '27M',   n: 'cumulative across 20 runs' },
-      { k: 'Test rows',          v: '6M',    n: 'cumulative across 20 runs' },
-      { k: 'Best R²',            v: '0.785', n: 'XGBoost × Water Temperature' },
+      {k:'Target samples',v:'8.3M',n:'approximate total across five target datasets'},
+      {k:'Train samples',v:'6.7M',n:'approximately · 2000–2017'},
+      {k:'Test samples',v:'1.6M',n:'approximately · 2018–2025'},
+      {k:'Best R²',v:'0.785',n:'XGBoost × Water Temperature'},
     ],
-    note:
-      'Row counts are cumulative across all 20 model × target combinations ' +
-      '(4 models × 5 parameters). The source dataset is 8.3M samples.',
+    note: 'Approximate sample counts are summed across the five target datasets. Targets have different valid subsets; these are not counts of distinct sampling events or totals multiplied by four models.',
     visual: { kind: 'matrix' },   // the 20-cell R²/RMSE/MAE surface — see water-quality.js
     href: 'https://nawafbalmutairi.github.io/ml-water-quality-benchmark/',
     accent: 'teal',
@@ -128,7 +121,7 @@ export const cases = [
 export const further = [
   { y: '2025', title: 'Conference Microservices', face: 'blueprint', figures: { endpoints: 5, score: '86%', model: 'Kruchten 4+1', host: 'Kubernetes on AWS' }, note: 'PHP REST API, 5 endpoints. Kruchten 4+1 architecture, Kubernetes on AWS. Final score 86%.', tags: ['PHP', 'REST', 'AWS', 'K8s'], href: 'https://nawafbalmutairi.github.io/Conference-Info-Platform/' },
   { y: '2024', title: 'US Retail Sales Analysis', face: 'analytics', figures: { rows: '2,121', unit: 'transactions', focus: 'discount → profit' }, note: '2,121 transactions in Python/Pandas. ETL pipeline, time-series breakdown, discount–profit correlation surfaced.', tags: ['Python', 'Pandas', 'Chart.js'], href: 'https://nawafbalmutairi.github.io/furniture-sales-dashboard/' },
-  { y: '2025', title: 'ITIL Config Management', face: 'register', figures: { stores: 87, kpis: 7, accuracy: '95%+' }, note: 'CMDB strategy for an 87-store retailer. 7 KPIs designed, CI accuracy maintained above 95%.', tags: ['ITIL 4', 'CMDB', 'ITSM'], href: 'https://nawafbalmutairi.github.io/ITIL-Configuratio-Management-Abona-Tarn-PLC/index.html' },
+  { y: '2025', title: 'ITIL Config Management', face: 'register', figures: { stores: 87, kpis: 7, accuracy: '95%+' }, note: 'CMDB strategy for an 87-store retailer. 7 KPIs designed, CI accuracy target above 95%.', tags: ['ITIL 4', 'CMDB', 'ITSM'], href: 'https://nawafbalmutairi.github.io/ITIL-Configuratio-Management-Abona-Tarn-PLC/index.html' },
   { y: '2025', title: 'UCD Work-Life App', face: 'screens', figures: { steps: ['Personas', 'MoSCoW', 'Figma prototype', 'Cognitive walkthrough'] }, note: 'Personas, MoSCoW prioritisation, Figma prototype and cognitive walkthrough — full UCD methodology end to end.', tags: ['Figma', 'UCD', 'Prototyping'], href: 'https://nawafbalmutairi.github.io/UCD-Practical-Work-Work-Life-Balance-App/index.html' },
   { y: '2025', title: 'Vision 2030 KPI Tracker', face: 'dials', figures: { subject: 'Saudi Vision 2030', tool: 'Power BI' }, note: 'Saudi Vision 2030 indicators visualised in an interactive Power BI dashboard. Published on LinkedIn.', tags: ['Power BI', 'DAX', 'Public Sector'], href: 'https://www.linkedin.com/in/nawaf-almutairi-907766290/' },
   { y: 'Ongoing', title: 'GitHub Portfolio', face: 'commits', figures: { repos: '15+', scope: 'data · ML · BI · architecture · ITSM' }, note: '15+ public repositories spanning data analysis, ML, BI, software architecture and ITSM frameworks. All sources open.', tags: ['Git', 'Open source'], href: 'https://github.com/nawafbalmutairi' },
